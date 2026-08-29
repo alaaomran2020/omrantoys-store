@@ -66,6 +66,42 @@ npm run preview
 
 ---
 
+## 🏭 بوابة الجملة B2B (Omran Trading)
+
+بوابة طلبات جملة مستقلة للموزعين، بتصميم **Digital Brutalism** (وضع داكن — رمادي فحمي مع أزرق كهربائي)، والواجهة كاملة باللغة العربية.
+
+- **الرابط:** `/b2b/` على نفس الاستضافة (تحت `public/b2b/`)
+- **الملفات:** `index.html` + `app.js` (Vanilla JS) + `data.js` (الكتالوج) + `supabase-config.js`
+- **المزايا:**
+  1. **مصادقة B2B** عبر Supabase Auth (دخول/حساب جديد لاسم الشركة)، مع **وضع تجريبي** يعمل بدون خادم إذا لم يُربط Supabase.
+  2. **بحث وفلترة فورية** بالاسم أو SKU + فلتر الفئة + فلتر التوفر — بدون إعادة تحميل.
+  3. **سلة جملة بالصناديق** محفوظة محلياً: عداد صناديق لكل صنف، حساب فوري للإجماليات، فرض **أدنى طلب لكل صنف** و**أدنى قيمة للطلب (5,000 ج.م)**.
+
+### ربط Supabase
+1. أنشئ مشروعاً على [supabase.com](https://supabase.com) وانسخ `URL` و `anon key`.
+2. ضعهما في `public/b2b/supabase-config.js`.
+3. أنشئ جدول الطلبات من SQL Editor:
+
+```sql
+create table public.orders (
+  id            bigint generated always as identity primary key,
+  client_email  text not null,
+  client_name   text,
+  items         jsonb not null default '[]',
+  total         numeric(12,2) not null,
+  status        text not null default 'pending',
+  created_at    timestamptz not null default now()
+);
+alter table public.orders enable row level security;
+-- سياسات RLS حسب متطلباتك (مثال: إدراج فقط للمستخدمين المسجلين)
+create policy "registered_insert" on public.orders
+  for insert to authenticated with check (true);
+```
+
+> قبل الربط، تعمل البوابة بوضع تجريبي (أي بريد صحيح + كلمة مرور 6+ أحرف) وتُحفظ البيانات محلياً في المتصفح.
+
+---
+
 ## 🛠️ التقنيات المستخدمة
 
 - **React 19**

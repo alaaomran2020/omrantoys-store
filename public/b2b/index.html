@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بوابة الجملة B2B | شركة عمران التجارية</title>
+  <meta name="description" content="بوابة الطلبات الجماعية (B2B) لشركة عمران التجارية — أسعار جملة، سلة صناديق، وأدنى طلبات واضحة للموزعين المعتمدين." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- الخطوط -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#111318', surface: '#1A1D24', raised: '#22262F',
+            line: '#363C48', line2: '#4A5262',
+            ink: '#F2F5FA', muted: '#8B94A7',
+            electric: '#2F6BFF', electric2: '#6FA0FF', neon: '#00E5FF',
+            ok: '#2BD576', bad: '#FF4D5E', warn: '#F5B841',
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          boxShadow: {
+            brute: '6px 6px 0 0 rgba(5,7,10,.9)',
+            bruteSm: '3px 3px 0 0 rgba(5,7,10,.9)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 34px 34px;
+    }
+    ::selection { background: #2F6BFF; color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #111318; }
+    ::-webkit-scrollbar-thumb { background: #363C48; border: 2px solid #111318; }
+    ::-webkit-scrollbar-thumb:hover { background: #4A5262; }
+
+    /* أزرار (Digital Brutalism) */
+    .btn-primary {
+      background: #2F6BFF; color: #fff; border: 2px solid #05070A;
+      box-shadow: 4px 4px 0 #05070A; font-weight: 800;
+      padding: .625rem 1.15rem; cursor: pointer;
+      transition: transform .12s, box-shadow .12s, background .12s;
+    }
+    .btn-primary:hover:not(:disabled) { background: #4D82FF; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #05070A; }
+    .btn-primary:active:not(:disabled) { transform: translate(0,0); box-shadow: 2px 2px 0 #05070A; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-line {
+      background: #22262F; color: #F2F5FA; border: 2px solid #363C48;
+      box-shadow: 4px 4px 0 #05070A; font-weight: 800;
+      padding: .625rem 1.15rem; cursor: pointer;
+      transition: transform .12s, box-shadow .12s, border-color .12s;
+    }
+    .btn-line:hover:not(:disabled) { border-color: #6FA0FF; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #05070A; }
+    .btn-line:active:not(:disabled) { transform: translate(0,0); box-shadow: 2px 2px 0 #05070A; }
+    .btn-line:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* عداد الكمية */
+    .stepper-btn {
+      width: 2.35rem; height: 2.35rem; display: grid; place-items: center;
+      background: #111318; color: #F2F5FA; font-weight: 800; font-size: 1rem;
+      cursor: pointer; transition: background .12s;
+    }
+    .stepper-btn:not(:disabled):hover { background: #2F6BFF; }
+    .stepper-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+    /* قوائم الاختيار */
+    .b2b-select {
+      appearance: none; -webkit-appearance: none;
+      background-color: #1A1D24; color: #F2F5FA;
+      border: 2px solid #363C48; box-shadow: 3px 3px 0 #05070A;
+      font-weight: 700; padding: .55rem 2.4rem .55rem 1rem; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B94A7' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: left .7rem center;
+    }
+    .b2b-select:focus { outline: 2px solid #2F6BFF; outline-offset: 2px; }
+
+    input:focus { outline: 2px solid #2F6BFF; outline-offset: 2px; }
+
+    /* شارات الحالة */
+    .badge { display: inline-block; padding: .18rem .6rem; border: 1.5px solid #4A5262; font-size: .68rem; font-weight: 700; color: #8B94A7; white-space: nowrap; }
+    .stamp-ok  { display: inline-block; padding: .18rem .6rem; border: 1.5px solid #2BD576; color: #2BD576; font-size: .7rem; font-weight: 800; white-space: nowrap; }
+    .stamp-bad { display: inline-block; padding: .18rem .6rem; border: 1.5px solid #FF4D5E; color: #FF4D5E; font-size: .7rem; font-weight: 800; white-space: nowrap; }
+
+    @keyframes toast-in { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .toast { animation: toast-in .2s ease-out; }
+
+    @keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    .pop { animation: pop .3s ease-out; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-bg text-ink font-cairo antialiased">
+
+  <!-- شريط الوضع التجريبي -->
+  <div id="demoBanner" class="hidden bg-warn text-black text-center text-sm font-extrabold py-1.5 px-3">
+    ⚠ وضع تجريبي — لم يتم ربط Supabase بعد. أضف بيانات مشروعك في <span class="font-mono" dir="ltr">supabase-config.js</span> لتفعيل تسجيل الدخول الحقيقي.
+  </div>
+
+  <!-- الرأس -->
+  <header class="sticky top-0 z-30 border-b-2 border-line bg-surface/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-3 min-w-0">
+        <img src="/favicon.svg" alt="" class="w-10 h-10 border-2 border-line2 bg-bg" />
+        <span class="min-w-0">
+          <span class="block text-lg sm:text-xl font-black leading-none truncate">شركة عمران التجارية</span>
+          <span class="block text-[11px] font-bold text-muted mt-1 truncate">بوابة الجملة B2B — لعب أطفال - هدايا</span>
+        </span>
+      </a>
+      <div class="flex items-center gap-3 shrink-0">
+        <div id="authArea"></div>
+        <button id="cartBtn" class="btn-line !py-2.5 relative flex items-center gap-2 text-sm" aria-label="سلة الطلبيات">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.5"/><circle cx="19" cy="21" r="1.5"/><path d="M2.5 3h2l2.4 12.5a1.5 1.5 0 0 0 1.5 1.2h9.7a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>
+          السلة
+          <span id="cartBadge" class="absolute -top-2.5 -left-2.5 min-w-6 h-6 px-1 grid place-items-center bg-electric text-white font-mono text-xs font-bold border-2 border-black">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- العنوان + البحث -->
+  <section class="max-w-7xl mx-auto px-4 pt-6 pb-2">
+    <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-black">كتالوج الجملة</h1>
+        <p class="text-muted text-sm font-bold mt-1">أسعار جملة للموزعين المعتمدين — الطلب بالصناديق · الشحن لجميع المحافظات</p>
+      </div>
+      <span class="font-mono text-[11px] text-muted border-2 border-line px-2 py-1" dir="ltr">WHOLESALE PORTAL v1.0</span>
+    </div>
+
+    <!-- شريط البحث -->
+    <label for="searchInput" class="sr-only">بحث عن صنف أو SKU</label>
+    <div class="relative">
+      <input id="searchInput" type="search" autocomplete="off" placeholder="ابحث عن صنف أو SKU…"
+        class="w-full h-14 bg-surface border-2 border-line2 text-lg font-bold px-12 pl-4 placeholder:text-muted/70" />
+      <svg class="w-6 h-6 text-muted absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    </div>
+
+    <!-- الفلاتر -->
+    <div class="mt-3 flex flex-wrap items-center gap-3">
+      <label for="categoryFilter" class="sr-only">الفئة</label>
+      <select id="categoryFilter" class="b2b-select text-sm"><option value="all">الفئة: الكل</option></select>
+      <label for="stockFilter" class="sr-only">حالة المخزون</label>
+      <select id="stockFilter" class="b2b-select text-sm">
+        <option value="all">المخزون: الكل</option>
+        <option value="in">المتوفر فقط</option>
+      </select>
+      <span id="resultCount" class="text-sm text-muted font-bold mr-auto"></span>
+    </div>
+  </section>
+
+  <!-- شبكة البيانات -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="border-2 border-line bg-surface shadow-brute">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[960px] text-sm">
+          <thead>
+            <tr class="bg-raised border-b-2 border-line text-muted text-[13px]">
+              <th class="px-4 py-3 text-right font-extrabold">الصنف</th>
+              <th class="px-4 py-3 text-right font-extrabold">SKU</th>
+              <th class="px-4 py-3 text-right font-extrabold">الفئة</th>
+              <th class="px-4 py-3 text-right font-extrabold">سعر الوحدة</th>
+              <th class="px-4 py-3 text-right font-extrabold">سعر الصندوق</th>
+              <th class="px-4 py-3 text-right font-extrabold">المخزون</th>
+              <th class="px-4 py-3 text-right font-extrabold">الكمية (صناديق)</th>
+              <th class="px-4 py-3 text-left font-extrabold">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="gridBody"></tbody>
+        </table>
+      </div>
+      <div id="gridEmpty" class="hidden p-12 text-center">
+        <div class="text-4xl mb-3">📦</div>
+        <div class="text-muted font-extrabold">لا توجد نتائج مطابقة — جرّب كلمة بحث أو فلاتر أخرى</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- التذييل -->
+  <footer class="border-t-2 border-line mt-4">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-wrap items-center justify-between gap-3 text-sm text-muted font-bold">
+      <span>© 2026 شركة عمران التجارية — لعب أطفال - هدايا</span>
+      <a href="/" class="text-electric2 hover:text-neon font-extrabold">العودة إلى متجر التجزئة ←</a>
+    </div>
+  </footer>
+
+  <!-- غطاء (Overlay) -->
+  <div id="overlay" class="hidden fixed inset-0 z-40 bg-black/70"></div>
+
+  <!-- سلة الطلبيات -->
+  <aside id="cartDrawer" aria-label="سلة الطلبيات"
+    class="fixed inset-y-0 left-0 z-50 w-full max-w-md bg-surface border-r-2 border-line2 shadow-brute -translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="flex items-center justify-between px-5 h-16 border-b-2 border-line bg-raised">
+      <h2 class="text-lg font-black">سلة الطلبيات <span class="text-muted text-xs font-bold">— بالصناديق</span></h2>
+      <button id="closeCart" class="w-9 h-9 grid place-items-center border-2 border-line font-black hover:border-bad hover:text-bad transition-colors" aria-label="إغلاق السلة">✕</button>
+    </div>
+
+    <div id="cartItems" class="flex-1 overflow-y-auto"></div>
+
+    <div class="border-t-2 border-line p-5 space-y-3 bg-raised/40">
+      <div id="cartTotals"></div>
+      <div>
+        <div class="flex justify-between text-xs font-extrabold mb-1.5">
+          <span id="minOrderText" class="text-warn"></span>
+        </div>
+        <div class="h-3 bg-bg border-2 border-line">
+          <div id="minOrderFill" class="h-full bg-electric transition-all duration-300" style="width:0%"></div>
+        </div>
+      </div>
+      <button id="checkoutBtn" class="btn-primary w-full text-base">إتمام الطلب</button>
+      <button id="clearCartBtn" class="w-full text-center text-muted text-xs font-bold hover:text-bad transition-colors">إفراغ السلة</button>
+    </div>
+  </aside>
+
+  <!-- نافذة المصادقة -->
+  <div id="authModal" class="hidden fixed inset-0 z-[60] overflow-y-auto bg-black/75 flex items-start justify-center p-4 pt-[8vh]">
+    <div class="relative w-full max-w-md bg-surface border-2 border-line2 shadow-brute">
+        <div class="flex items-center justify-between px-5 py-4 border-b-2 border-line bg-raised">
+          <h2 class="font-black text-lg">بوابة الموزعين</h2>
+          <button id="closeAuth" class="w-9 h-9 grid place-items-center border-2 border-line font-black hover:border-bad hover:text-bad transition-colors" aria-label="إغلاق">✕</button>
+        </div>
+
+        <div class="p-5">
+          <p id="authNote" class="hidden text-warn text-sm font-extrabold mb-3"></p>
+
+          <!-- تبويب دخول/حساب جديد -->
+          <div class="grid grid-cols-2 border-2 border-line mb-4">
+            <button id="loginTab" type="button" class="py-2.5 font-extrabold text-sm transition-colors">تسجيل الدخول</button>
+            <button id="signupTab" type="button" class="py-2.5 font-extrabold text-sm transition-colors">حساب جديد</button>
+          </div>
+
+          <form id="authForm" class="space-y-4" novalidate>
+            <div id="authCompanyRow" class="hidden">
+              <label class="block text-xs font-extrabold text-muted mb-1.5" for="authCompany">اسم الشركة / الموزع</label>
+              <input id="authCompany" type="text" placeholder="مثال: مؤسسة النور للتوزيع" class="w-full bg-bg border-2 border-line px-3 py-2.5 font-bold placeholder:text-muted/50" />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-muted mb-1.5" for="authEmail">البريد الإلكتروني</label>
+              <input id="authEmail" type="email" dir="ltr" placeholder="you@company.com" class="w-full bg-bg border-2 border-line px-3 py-2.5 font-mono text-sm font-bold placeholder:text-muted/50" />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-muted mb-1.5" for="authPassword">كلمة المرور</label>
+              <input id="authPassword" type="password" dir="ltr" placeholder="••••••••" class="w-full bg-bg border-2 border-line px-3 py-2.5 font-mono text-sm font-bold placeholder:text-muted/50" />
+            </div>
+
+            <div id="authDemoBox" class="hidden bg-bg border-2 border-warn/60 p-3 text-xs font-bold text-warn leading-relaxed">
+              وضع تجريبي: أي بريد صحيح وكلمة مرور (6+ أحرف) يعمل دون خادم.
+              <button type="button" id="demoFill" class="block mt-2 btn-line !py-1.5 !px-3 text-xs">تعبئة بيانات تجريبية</button>
+            </div>
+
+            <p id="authError" class="hidden text-bad text-sm font-extrabold"></p>
+
+            <button id="authSubmit" type="submit" class="btn-primary w-full">تسجيل الدخول</button>
+          </form>
+        </div>
+      </div>
+  </div>
+
+  <!-- نافذة نجاح الطلب -->
+  <div id="successModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-surface border-2 border-line2 shadow-brute p-6 text-center">
+      <div class="w-14 h-14 mx-auto grid place-items-center bg-ok text-black text-2xl font-black border-2 border-black shadow-bruteSm">✓</div>
+      <h2 class="text-xl font-black mt-4">تم إرسال طلبك بنجاح</h2>
+      <p class="text-muted text-sm font-bold mt-1">رقم الطلب</p>
+      <div id="successRef" class="font-mono text-2xl font-bold text-neon my-2" dir="ltr"></div>
+      <p class="text-muted text-xs font-bold leading-relaxed mb-5">سيتواصل معك فريق المبيعات خلال 24 ساعة لتأكيد الشحن والفوترة الضريبية.</p>
+      <button id="successClose" class="btn-primary w-full">حسناً</button>
+    </div>
+  </div>
+
+  <!-- التنبيهات -->
+  <div id="toasts" class="fixed bottom-4 right-4 z-[70] space-y-2" aria-live="polite"></div>
+
+  <!-- السكربتات -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./data.js"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

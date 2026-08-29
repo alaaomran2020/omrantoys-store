@@ -119,6 +119,15 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
+                <a
+                  href="/b2b/"
+                  className="hover:text-toy-yellow transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span className="text-toy-yellow">🏭</span>
+                  بوابة الجملة B2B (للموزعين)
+                </a>
+              </li>
+              <li>
                 <button
                   onClick={() => setIsTrackingOpen(true)}
                   className="hover:text-toy-yellow transition-colors cursor-pointer"
