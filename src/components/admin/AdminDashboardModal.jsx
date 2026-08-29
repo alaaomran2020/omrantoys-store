@@ -12,7 +12,9 @@ import {
   Check, 
   AlertTriangle,
   RotateCcw,
-  Search
+  Search,
+  Save,
+  RefreshCw
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories, ageGroups } from '../../data/categories';
@@ -28,10 +30,13 @@ export default function AdminDashboardModal() {
     updateProduct,
     deleteProduct,
     updateOrderStatus,
-    formatPrice
+    formatPrice,
+    showToast
   } = useStore();
 
   const [activeTab, setActiveTab] = useState('products');
+  const [saveState, setSaveState] = useState('idle');
+  const [syncState, setSyncState] = useState('idle');
   const [orderSearch, setOrderSearch] = useState('');
 
   const normalizePhone = (value) => {
@@ -129,6 +134,36 @@ export default function AdminDashboardModal() {
     setEditingId(null);
   };
 
+  const handleSaveChanges = () => {
+    try {
+      localStorage.setItem('omran_toys_products', JSON.stringify(products));
+      localStorage.setItem('omran_toys_orders', JSON.stringify(orders));
+      localStorage.setItem('omran_toys_last_saved', new Date().toISOString());
+      setSaveState('saved');
+      showToast?.('تم حفظ المنتجات والطلبات على هذا الجهاز');
+      window.setTimeout(() => setSaveState('idle'), 2200);
+    } catch {
+      showToast?.('حصلت مشكلة في الحفظ، جرّب مرة تانية');
+    }
+  };
+
+  const handleSyncData = () => {
+    setSyncState('syncing');
+    window.setTimeout(() => {
+      try {
+        localStorage.setItem('omran_toys_products', JSON.stringify(products));
+        localStorage.setItem('omran_toys_orders', JSON.stringify(orders));
+        localStorage.setItem('omran_toys_last_sync', new Date().toISOString());
+        setSyncState('synced');
+        showToast?.('تمت مزامنة بيانات المتجر على هذا الجهاز');
+        window.setTimeout(() => setSyncState('idle'), 2200);
+      } catch {
+        setSyncState('idle');
+        showToast?.('تعذر مزامنة البيانات حاليًا');
+      }
+    }, 350);
+  };
+
   const handleResetCatalog = () => {
     if (window.confirm('هل تود استعادة كتالوج الألعاب الافتراضي بالجنيه المصري؟')) {
       localStorage.removeItem('omran_toys_products');
@@ -160,7 +195,28 @@ export default function AdminDashboardModal() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={handleSaveChanges}
+              className={`hidden sm:flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-colors cursor-pointer ${saveState === 'saved' ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              title="حفظ المنتجات والطلبات على هذا الجهاز"
+            >
+              {saveState === 'saved' ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+              <span>{saveState === 'saved' ? 'اتحفظت' : 'حفظ'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSyncData}
+              disabled={syncState === 'syncing'}
+              className={`hidden sm:flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-colors cursor-pointer disabled:cursor-wait ${syncState === 'synced' ? 'bg-blue-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              title="مزامنة بيانات المتجر المحفوظة على هذا الجهاز"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${syncState === 'syncing' ? 'animate-spin' : ''}`} />
+              <span>{syncState === 'syncing' ? 'جاري المزامنة...' : syncState === 'synced' ? 'اتزامنت' : 'مزامنة'}</span>
+            </button>
+
             <button
               onClick={handleResetCatalog}
               className="text-xs text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
