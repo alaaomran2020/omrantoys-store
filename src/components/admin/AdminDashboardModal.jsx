@@ -38,6 +38,34 @@ export default function AdminDashboardModal() {
   const [saveState, setSaveState] = useState('idle');
   const [syncState, setSyncState] = useState('idle');
   const [orderSearch, setOrderSearch] = useState('');
+  const [marketingSettings, setMarketingSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('omran_toys_marketing_settings')) || {
+        heroTitle: 'ألعاب تفرّحهم وهدايا تفضل فاكرينها',
+        heroSubtitle: 'اختيارات حلوة لكل مناسبة، وطلب سهل على WhatsApp.',
+        announcement: 'الشحن متاح لكل محافظات مصر',
+        urgencyEnabled: true,
+        urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
+        couponCode: 'TOY10',
+        couponDiscount: 10,
+        metaPixelId: '',
+        ga4Id: ''
+      };
+    } catch {
+      return {
+        heroTitle: 'ألعاب تفرّحهم وهدايا تفضل فاكرينها',
+        heroSubtitle: 'اختيارات حلوة لكل مناسبة، وطلب سهل على WhatsApp.',
+        announcement: 'الشحن متاح لكل محافظات مصر',
+        urgencyEnabled: true,
+        urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
+        couponCode: 'TOY10',
+        couponDiscount: 10,
+        metaPixelId: '',
+        ga4Id: ''
+      };
+    }
+  });
+  const [marketingSaved, setMarketingSaved] = useState(false);
 
   const normalizePhone = (value) => {
     const digits = String(value || '').replace(/\D/g, '');
@@ -164,6 +192,14 @@ export default function AdminDashboardModal() {
     }, 350);
   };
 
+  const handleSaveMarketing = (event) => {
+    event.preventDefault();
+    localStorage.setItem('omran_toys_marketing_settings', JSON.stringify(marketingSettings));
+    setMarketingSaved(true);
+    showToast?.('إعدادات التسويق اتحفظت بنجاح');
+    window.setTimeout(() => setMarketingSaved(false), 2200);
+  };
+
   const handleResetCatalog = () => {
     if (window.confirm('هل تود استعادة كتالوج الألعاب الافتراضي بالجنيه المصري؟')) {
       localStorage.removeItem('omran_toys_products');
@@ -288,6 +324,18 @@ export default function AdminDashboardModal() {
             }`}
           >
             الطلبات الواردة ({orders.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('marketing')}
+            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors flex items-center gap-1.5 ${
+              activeTab === 'marketing'
+                ? 'border-toy-red text-toy-red'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <TrendingUp className="w-4 h-4" />
+            <span>التسويق والإعدادات</span>
           </button>
 
           <button
@@ -501,7 +549,53 @@ export default function AdminDashboardModal() {
             </div>
           )}
 
-          {/* 3. Add New Product Tab */}
+          {/* 3. Marketing & Settings Tab */}
+          {activeTab === 'marketing' && (
+            <form onSubmit={handleSaveMarketing} className="max-w-3xl mx-auto space-y-4">
+              <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
+                <h3 className="text-sm font-black text-slate-900">أدوات ذكية لتحويل الزوار لعملاء</h3>
+                <p className="mt-1 text-xs leading-6 text-slate-500">عدّل رسالة الصفحة البيعية والعروض من مكان واحد. كل القيم بالجنيه المصري عند الحاجة.</p>
+              </div>
+
+              <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2">
+                <label className="sm:col-span-2 text-xs font-bold text-slate-700">عنوان الصفحة الرئيسية
+                  <input value={marketingSettings.heroTitle} onChange={(e) => setMarketingSettings({ ...marketingSettings, heroTitle: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm font-bold outline-none focus:border-toy-red" />
+                </label>
+                <label className="sm:col-span-2 text-xs font-bold text-slate-700">الوصف البيعي
+                  <textarea rows="2" value={marketingSettings.heroSubtitle} onChange={(e) => setMarketingSettings({ ...marketingSettings, heroSubtitle: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">شريط الإعلان
+                  <input value={marketingSettings.announcement} onChange={(e) => setMarketingSettings({ ...marketingSettings, announcement: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">كود الكوبون
+                  <input value={marketingSettings.couponCode} onChange={(e) => setMarketingSettings({ ...marketingSettings, couponCode: e.target.value.toUpperCase() })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm font-black uppercase outline-none focus:border-toy-red" dir="ltr" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">نسبة الخصم %
+                  <input type="number" min="0" max="100" value={marketingSettings.couponDiscount} onChange={(e) => setMarketingSettings({ ...marketingSettings, couponDiscount: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">Meta Pixel ID (اختياري)
+                  <input value={marketingSettings.metaPixelId} onChange={(e) => setMarketingSettings({ ...marketingSettings, metaPixelId: e.target.value })} placeholder="ضع الـ ID عند توفره" className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">Google Analytics ID (اختياري)
+                  <input value={marketingSettings.ga4Id} onChange={(e) => setMarketingSettings({ ...marketingSettings, ga4Id: e.target.value })} placeholder="G-XXXXXXXXXX" className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
+                </label>
+                <label className="sm:col-span-2 flex cursor-pointer items-center gap-3 rounded-xl bg-amber-50 p-3 text-xs font-bold text-amber-900">
+                  <input type="checkbox" checked={marketingSettings.urgencyEnabled} onChange={(e) => setMarketingSettings({ ...marketingSettings, urgencyEnabled: e.target.checked })} className="h-4 w-4 accent-amber-500" />
+                  تفعيل رسالة الإلحاح والكمية المحدودة
+                </label>
+                <label className="sm:col-span-2 text-xs font-bold text-slate-700">نص الإلحاح
+                  <input value={marketingSettings.urgencyText} onChange={(e) => setMarketingSettings({ ...marketingSettings, urgencyText: e.target.value })} disabled={!marketingSettings.urgencyEnabled} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none disabled:bg-slate-100" />
+                </label>
+              </div>
+
+              <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-xs font-black text-white transition-colors hover:bg-toy-red">
+                {marketingSaved ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                {marketingSaved ? 'الإعدادات اتحفظت' : 'حفظ إعدادات التسويق'}
+              </button>
+            </form>
+          )}
+
+          {/* 4. Add New Product Tab */}
           {activeTab === 'add' && (
             <form onSubmit={handleCreateProduct} className="max-w-2xl mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
               <h3 className="text-sm font-black text-slate-900 pb-2 border-b border-slate-200 flex items-center gap-2">
