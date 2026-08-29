@@ -13,28 +13,38 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
+const normalizeEgyptianPhone = (value) => {
+  const digits = String(value || '').replace(/\D/g, '');
+  if (digits.startsWith('20')) return digits;
+  if (digits.startsWith('0')) return `20${digits.slice(1)}`;
+  return digits;
+};
+
 export default function OrderTrackingModal() {
   const { isTrackingOpen, setIsTrackingOpen, orders, formatPrice } = useStore();
-  const [trackingInput, setTrackingInput] = useState('OMR-8842');
-  const [searchedOrder, setSearchedOrder] = useState(() => orders[0] || null);
+  const [trackingInput, setTrackingInput] = useState('');
+  const [searchedOrder, setSearchedOrder] = useState(null);
+  const [searchedOrders, setSearchedOrders] = useState([]);
   const [notFound, setNotFound] = useState(false);
 
   if (!isTrackingOpen) return null;
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const query = trackingInput.trim().toUpperCase().replace('#', '');
-    const found = orders.find(
-      o => o.id.toUpperCase() === query || (o.phone && o.phone.includes(trackingInput.trim()))
-    );
+    const rawQuery = trackingInput.trim();
+    const queryId = rawQuery.toUpperCase().replace('#', '');
+    const queryPhone = normalizeEgyptianPhone(rawQuery);
+    const foundOrders = orders
+      .filter((order) => {
+        const matchesId = order.id?.toUpperCase() === queryId;
+        const matchesPhone = queryPhone.length >= 10 && normalizeEgyptianPhone(order.phone) === queryPhone;
+        return matchesId || matchesPhone;
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    if (found) {
-      setSearchedOrder(found);
-      setNotFound(false);
-    } else {
-      setSearchedOrder(null);
-      setNotFound(true);
-    }
+    setSearchedOrders(foundOrders);
+    setSearchedOrder(foundOrders[0] || null);
+    setNotFound(foundOrders.length === 0);
   };
 
   const steps = [
@@ -91,7 +101,7 @@ export default function OrderTrackingModal() {
                 type="text"
                 value={trackingInput}
                 onChange={(e) => setTrackingInput(e.target.value)}
-                placeholder="أدخل رقم الطلب (مثال: OMR-8842) أو رقم الجوال..."
+                placeholder="رقم الطلب أو رقم الموبايل (مثال: 01555570269)..."
                 className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
               <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -109,6 +119,23 @@ export default function OrderTrackingModal() {
         <div className="overflow-y-auto p-4 sm:p-6 flex-1 space-y-6">
           {searchedOrder ? (
             <div className="space-y-6">
+              {searchedOrders.length > 1 && (
+                <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-3">
+                  <p className="mb-2 text-xs font-bold text-blue-900">لقينا {searchedOrders.length} طلبات بنفس رقم الموبايل — اختار الطلب اللي عايز تتابعه:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {searchedOrders.map((order) => (
+                      <button
+                        key={order.id}
+                        type="button"
+                        onClick={() => setSearchedOrder(order)}
+                        className={`rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${searchedOrder.id === order.id ? 'border-blue-600 bg-blue-600 text-white' : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-100'}`}
+                      >
+                        #{order.id} · {order.status}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {/* Status Header */}
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -226,7 +253,13 @@ export default function OrderTrackingModal() {
                 يرجى التأكد من كتابة رقم الطلب بالشكل الصحيح أو رقم الجوال المستخدم أثناء إتمام الطلب.
               </p>
             </div>
-          ) : null}
+          ) : (
+            <div className="py-12 text-center">
+              <Search className="w-12 h-12 text-blue-200 mx-auto mb-3" />
+              <h3 className="text-sm font-bold text-slate-800 mb-1">اعرف طلبك فين بسهولة</h3>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">اكتب رقم الموبايل اللي سجلت بيه الطلب أو رقم الطلب، وإحنا هنقولك آخر تحديث.</p>
+            </div>
+          )}
         </div>
 
       </div>
