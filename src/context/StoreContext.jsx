@@ -16,7 +16,13 @@ export const StoreProvider = ({ children }) => {
         return initialProducts;
       }
       const saved = localStorage.getItem('omran_toys_products');
-      return saved ? JSON.parse(saved) : initialProducts;
+      if (!saved) return initialProducts;
+      const savedProducts = JSON.parse(saved);
+      const savedIds = new Set(savedProducts.map(product => product.id));
+      return [
+        ...initialProducts.filter(product => !savedIds.has(product.id)),
+        ...savedProducts
+      ];
     } catch {
       return initialProducts;
     }

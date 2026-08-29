@@ -5,7 +5,7 @@ export const categories = [
     nameEn: 'All Toys',
     icon: 'Sparkles',
     color: 'from-amber-400 to-orange-500',
-    count: 24,
+    count: 27,
     description: 'استكشف تشكيلتنا الشاملة من أفضل الألعاب المختارة بعناية لأحبائنا الصغار'
   },
   {
@@ -41,7 +41,7 @@ export const categories = [
     nameEn: 'Dolls & Action Figures',
     icon: 'HeartHandshake',
     color: 'from-pink-400 to-rose-600',
-    count: 4,
+    count: 6,
     description: 'شخصيات أبطال خارقين، دمى لطيفة، وبيوت دمى خيالية'
   },
   {
@@ -77,7 +77,7 @@ export const categories = [
     nameEn: 'Arts & Crafts',
     icon: 'Palette',
     color: 'from-fuchsia-500 to-pink-600',
-    count: 3,
+    count: 4,
     description: 'ألوان سحرية، صلصال طبيعي، وأدوات تصميم تفجر إبداع طفلك'
   }
 ];
