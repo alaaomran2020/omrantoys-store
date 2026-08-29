@@ -8,6 +8,7 @@ import FlashDeals from './components/home/FlashDeals';
 import ProductGrid from './components/product/ProductGrid';
 import TestimonialsSection from './components/home/TestimonialsSection';
 import PoliciesSection from './components/home/PoliciesSection';
+import ImportedProductsSection from './components/home/ImportedProductsSection';
 import FaqSection from './components/home/FaqSection';
 import Footer from './components/layout/Footer';
 
@@ -40,6 +41,7 @@ function StoreApp() {
         <CategoryShowcase />
         <FlashDeals />
         <ProductGrid />
+        <ImportedProductsSection />
         <PoliciesSection />
         <TestimonialsSection />
         <FaqSection />
