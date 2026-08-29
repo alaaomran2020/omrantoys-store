@@ -20,6 +20,7 @@ import WishlistModal from './components/common/WishlistModal';
 import OrderTrackingModal from './components/common/OrderTrackingModal';
 import AdminDashboardModal from './components/admin/AdminDashboardModal';
 import LiveSalesNotification from './components/common/LiveSalesNotification';
+import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import Toast from './components/common/Toast';
 
 function StoreApp() {
@@ -46,6 +47,7 @@ function StoreApp() {
 
       {/* Footer */}
       <Footer />
+      <FloatingWhatsApp />
 
       {/* Interactive Modals */}
       <ProductDetailModal />
