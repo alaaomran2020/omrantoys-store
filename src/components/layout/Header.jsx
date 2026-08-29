@@ -108,17 +108,15 @@ export default function Header() {
             </button>
 
             <a href="#" className="flex items-center gap-2.5 group">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-toy-red via-toy-yellow to-toy-purple p-0.5 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center">
-                <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center text-xl sm:text-2xl font-black text-toy-red shadow-inner">
-                  🧸
-                </div>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white border border-slate-100 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden">
+                <img src="/omran-brand-mark.png" alt="شعار شركة عمران التجارية" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-tight">
                   عمران <span className="text-toy-red">للألعاب</span>
                 </span>
-                <span className="text-[10px] sm:text-xs text-slate-500 font-medium tracking-wide">
-                  OMRAN TOYS STORE • EGYPT
+                <span className="text-[10px] sm:text-xs text-slate-500 font-bold tracking-wide">
+                  شركة عمران التجارية • لعب أطفال - هدايا
                 </span>
               </div>
             </a>

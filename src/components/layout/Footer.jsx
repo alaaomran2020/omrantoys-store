@@ -67,15 +67,18 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-toy-red via-toy-yellow to-toy-purple flex items-center justify-center text-xl shadow">
-                🧸
+              <div className="w-12 h-12 rounded-xl bg-white border border-slate-700 flex items-center justify-center shadow overflow-hidden">
+                <img src="/omran-brand-mark.png" alt="شعار شركة عمران التجارية" className="w-full h-full object-contain" />
               </div>
-              <span className="text-2xl font-black text-white tracking-tight">
-                عمران <span className="text-toy-red">للألعاب</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black text-white tracking-tight">
+                  عمران <span className="text-toy-red">للألعاب</span>
+                </span>
+                <span className="text-[11px] font-bold text-toy-yellow">شركة عمران التجارية • لعب أطفال - هدايا</span>
+              </div>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              وجهتكم الأولى في مصر لأفضل ألعاب الأطفال التعليمية والترفيهية. نوفر منتجات أصلية، تغليف هدايا مجاني، وتوصيل سريع لكافة المحافظات بالجنيه المصري.
+              شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال والهدايا. نوفر تشكيلة مختارة، تغليف هدايا مجاني، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700">
@@ -157,7 +160,7 @@ export default function Footer() {
             <div className="space-y-3 text-xs sm:text-sm text-slate-400">
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-toy-green" />
-                <span dir="ltr">+20 10 1234 5678</span>
+                <a href="https://wa.me/201555570269" target="_blank" rel="noreferrer" dir="ltr" className="hover:text-toy-green transition-colors">+20 15 5555 70269</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-toy-yellow" />
