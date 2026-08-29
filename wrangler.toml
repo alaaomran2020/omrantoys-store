@@ -1,0 +1,15 @@
+name = "omrantoys-store"
+compatibility_date = "2025-06-01"
+
+# ============================================
+# Cloudflare D1 Database (SQLite at the edge)
+# ============================================
+# للاختبار المحلي: database_id اختياري (يُستخدم وضع --local)
+# للنشر الفعلي:
+#   npx wrangler d1 create omran-toys-db
+#   ← انسخ الـ database_id الحقيقي هنا
+#   npx wrangler d1 execute DB --remote --file=cloudflare/d1-schema.sql
+[[d1_databases]]
+binding = "DB"
+database_name = "omran-toys-db"
+database_id = "00000000-0000-0000-0000-000000000000"
