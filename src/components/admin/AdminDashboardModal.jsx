@@ -11,7 +11,8 @@ import {
   Edit, 
   Check, 
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  Search
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories, ageGroups } from '../../data/categories';
@@ -31,6 +32,25 @@ export default function AdminDashboardModal() {
   } = useStore();
 
   const [activeTab, setActiveTab] = useState('products');
+  const [orderSearch, setOrderSearch] = useState('');
+
+  const normalizePhone = (value) => {
+    const digits = String(value || '').replace(/\D/g, '');
+    if (digits.startsWith('20')) return digits;
+    if (digits.startsWith('0')) return `20${digits.slice(1)}`;
+    return digits;
+  };
+
+  const normalizedOrderSearch = orderSearch.trim();
+  const filteredOrders = orders.filter((order) => {
+    if (!normalizedOrderSearch) return true;
+    const query = normalizedOrderSearch.toLowerCase();
+    return (
+      order.id?.toLowerCase().includes(query) ||
+      order.customerName?.toLowerCase().includes(query) ||
+      normalizePhone(order.phone).includes(normalizePhone(normalizedOrderSearch))
+    );
+  });
 
   // New Product Form State in EGP
   const [newToy, setNewToy] = useState({
@@ -341,7 +361,24 @@ export default function AdminDashboardModal() {
           {/* 2. Orders Management Tab */}
           {activeTab === 'orders' && (
             <div className="space-y-3">
-              {orders.length > 0 ? (
+              <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="text-sm font-black text-slate-900">ابحث عن طلب بسرعة</h3>
+                  <p className="mt-1 text-[11px] text-slate-500">بالموبايل، اسم العميل، أو رقم الطلب.</p>
+                </div>
+                <div className="relative w-full sm:max-w-xs">
+                  <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="search"
+                    value={orderSearch}
+                    onChange={(e) => setOrderSearch(e.target.value)}
+                    placeholder="مثال: 01555570269 أو OMR-..."
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-3 pr-10 text-xs font-bold text-slate-800 outline-none focus:border-toy-red focus:ring-2 focus:ring-toy-red/10"
+                    dir="auto"
+                  />
+                </div>
+              </div>
+              {orders.length > 0 && filteredOrders.length > 0 ? (
                 <div className="overflow-x-auto rounded-2xl border border-slate-200">
                   <table className="w-full text-right text-xs">
                     <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
@@ -355,7 +392,7 @@ export default function AdminDashboardModal() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {orders.map((o) => (
+                      {filteredOrders.map((o) => (
                         <tr key={o.id} className="hover:bg-slate-50">
                           <td className="p-3 font-mono font-bold text-slate-900">
                             #{o.id}
@@ -397,7 +434,12 @@ export default function AdminDashboardModal() {
               ) : (
                 <div className="py-12 text-center text-slate-400">
                   <ShoppingBag className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                  <p>لا توجد طلبات مسجلة حتى الآن</p>
+                  <p>{orders.length > 0 ? 'مفيش طلب مطابق للبحث ده' : 'لا توجد طلبات مسجلة حتى الآن'}</p>
+                  {orders.length > 0 && (
+                    <button type="button" onClick={() => setOrderSearch('')} className="mt-3 text-xs font-bold text-toy-red hover:underline">
+                      مسح البحث
+                    </button>
+                  )}
                 </div>
               )}
             </div>
