@@ -19,6 +19,8 @@ import {
 import confetti from 'canvas-confetti';
 import { useStore } from '../../context/StoreContext';
 
+const WHATSAPP_NUMBER = '201555570269';
+
 export default function CheckoutModal() {
   const {
     isCheckoutOpen,
@@ -115,7 +117,7 @@ export default function CheckoutModal() {
 
   const handleWhatsAppContact = (orderId) => {
     const text = encodeURIComponent(`مرحباً متجر عمران للألعاب، قمت بالطلب للتو برقم: #${orderId}. أود تأكيد طلبي ومتابعته، شكراً لكم!`);
-    window.open(`https://wa.me/201012345678?text=${text}`, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
   };
 
   const closeCheckout = () => {
