@@ -36,9 +36,9 @@ export const StoreProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => {
     try {
       const saved = localStorage.getItem('omran_toys_wishlist');
-      return saved ? JSON.parse(saved) : [1, 5];
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return [1, 5];
+      return [];
     }
   });
 
@@ -49,28 +49,7 @@ export const StoreProvider = ({ children }) => {
   const [orders, setOrders] = useState(() => {
     try {
       const saved = localStorage.getItem('omran_toys_orders');
-      return saved ? JSON.parse(saved) : [
-        {
-          id: 'OMR-8842',
-          date: '2026-08-28',
-          customerName: 'أحمد محمود العطار',
-          phone: '01012345678',
-          city: 'طنطا (الغربية)',
-          address: 'شارع البحر، بجوار جامعة طنطا',
-          status: 'تم الشحن',
-          items: [
-            { id: 1, name: 'روبوت الذكاء الاصطناعي التفاعلي كوزمو', price: 1850, quantity: 1 }
-          ],
-          subtotal: 1850,
-          shipping: 0,
-          discount: 185,
-          vat: 233.1,
-          total: 1898.1,
-          giftWrap: true,
-          giftMessage: 'كل سنة وأنت طيب يا بطل!',
-          paymentMethod: 'إنستاباي / فودافون كاش'
-        }
-      ];
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }

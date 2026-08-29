@@ -80,12 +80,12 @@ export default function Footer() {
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
               شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال والهدايا. نوفر تشكيلة مختارة، تغليف هدايا مجاني، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
             </p>
-            <div className="flex items-center gap-3 pt-2">
-              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700">
-                سجل تجاري: 452189
+            <div className="flex items-center gap-2 pt-2 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5">
+                🇪🇬 خدمة داخل مصر
               </span>
-              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700">
-                بطاقة ضريبية: 849-210-534
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5">
+                طلب مباشر عبر WhatsApp
               </span>
             </div>
           </div>
@@ -161,10 +161,6 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-toy-green" />
                 <a href="https://wa.me/201555570269" target="_blank" rel="noreferrer" dir="ltr" className="hover:text-toy-green transition-colors">+20 15 5555 70269</a>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-toy-yellow" />
-                <span>egypt@omrantoys.com</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-toy-red" />
