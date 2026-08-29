@@ -2,6 +2,19 @@ name = "omrantoys-store"
 compatibility_date = "2025-06-01"
 
 # ============================================
+# الواجهة الأمامية (Vite build → ./dist)
+# ============================================
+[assets]
+directory = "./dist"
+# SPA: أي مسار غير موجود يُخدِم index.html (مطلوب لتطبيقات React ذات الواجهة الواحدة)
+not_found_handling = "single-page-application"
+
+# ملاحظة: عند إضافة كود خلفي (Worker API) لاحقاً أضف هنا:
+#   main = "src/worker/index.ts"
+# وداخل [assets] أضف:
+#   binding = "ASSETS"
+
+# ============================================
 # Cloudflare D1 Database (SQLite at the edge)
 # ============================================
 # للاختبار المحلي: database_id اختياري (يُستخدم وضع --local)
