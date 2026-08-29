@@ -1,6 +1,8 @@
-import React from 'react';
-import { Heart, ShoppingCart, Eye, Star, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, ShoppingCart, Eye, Star, Bell, PackageX, Tag, TrendingDown } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { useAuth } from '../../context/AuthContext';
+import StockNotification from './StockNotification';
 
 export default function ProductCard({ product }) {
   const {
@@ -8,36 +10,62 @@ export default function ProductCard({ product }) {
     toggleWishlist,
     isInWishlist,
     setSelectedProductModal,
-    formatPrice
+    formatPrice,
+    getEffectivePrice
   } = useStore();
 
+  const auth = useAuth();
   const isFavorite = isInWishlist(product.id);
+  const [showNotify, setShowNotify] = useState(false);
+
+  const effectivePrice = getEffectivePrice(product, auth) || auth.getPriceForUser(product);
+  const originalPrice = product.originalPrice || product.retail_price || product.price;
+  const isOutOfStock = (product.stock || 0) <= 0;
+  const isLowStock = (product.stock || 0) > 0 && (product.stock || 0) <= 5;
+  const isWholesalePrice = auth.isMerchant && effectivePrice < (product.price || product.retail_price);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100/90 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+    <div className="bg-white rounded-2xl border border-slate-100/90 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
       
       {/* Top Media Area */}
       <div className="relative bg-slate-50 overflow-hidden aspect-square">
         <img
           src={product.images[0]}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+          className={`w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
           loading="lazy"
         />
 
         {/* Badges Overlay */}
         <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 z-10">
-          {product.discountPercent > 0 && (
+          {isOutOfStock && (
+            <span className="bg-slate-900 text-white text-[11px] font-black px-2 py-1 rounded-lg shadow-sm flex items-center gap-1">
+              <PackageX className="w-3 h-3" />
+              نفد المخزون
+            </span>
+          )}
+          {isLowStock && !isOutOfStock && (
+            <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm animate-pulse">
+              كمية محدودة ({product.stock})
+            </span>
+          )}
+          {product.discountPercent > 0 && !isOutOfStock && (
             <span className="bg-toy-red text-white text-[11px] font-black px-2 py-0.5 rounded-lg shadow-sm">
               خصم {product.discountPercent}%
             </span>
           )}
-          {product.isBestSeller && (
+          {isWholesalePrice && (
+            <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1">
+              <Tag className="w-3 h-3" />
+              سعر جملة
+            </span>
+          )}
+          {product.isBestSeller && !isOutOfStock && (
             <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
               الأكثر طلباً 🔥
             </span>
           )}
-          {product.isNew && !product.isBestSeller && (
+          {product.isNew && !product.isBestSeller && !isOutOfStock && (
             <span className="bg-toy-green text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
               وصل حديثاً ✨
             </span>
@@ -49,17 +77,14 @@ export default function ProductCard({ product }) {
           🎯 {product.ageGroup} سنوات
         </div>
 
-        {/* Action Buttons (Wishlist & Quick View) */}
+        {/* Action Buttons */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
           <button
             onClick={() => toggleWishlist(product.id)}
             className={`p-2 rounded-xl backdrop-blur-md transition-all shadow-sm cursor-pointer ${
-              isFavorite
-                ? 'bg-rose-500 text-white scale-110'
-                : 'bg-white/80 text-slate-700 hover:text-rose-500 hover:bg-white'
+              isFavorite ? 'bg-rose-500 text-white scale-110' : 'bg-white/80 text-slate-700 hover:text-rose-500 hover:bg-white'
             }`}
             title={isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
-            aria-label="المفضلة"
           >
             <Heart className={`w-4 h-4 ${isFavorite ? 'fill-white' : ''}`} />
           </button>
@@ -68,11 +93,19 @@ export default function ProductCard({ product }) {
             onClick={() => setSelectedProductModal(product)}
             className="p-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 hover:text-toy-blue backdrop-blur-md transition-all shadow-sm cursor-pointer opacity-0 group-hover:opacity-100"
             title="معاينة سريعة"
-            aria-label="معاينة سريعة"
           >
             <Eye className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Out of stock overlay */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+            <div className="bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg">
+              غير متوفر حالياً
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Product Information */}
@@ -80,11 +113,15 @@ export default function ProductCard({ product }) {
         <div>
           {/* Brand & Rating */}
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-            <span className="font-semibold text-slate-400">{product.brand}</span>
+            <span className="font-semibold text-slate-400 flex items-center gap-1">
+              {product.brand}
+              {product.is_balloon && <span className="bg-sky-100 text-sky-700 text-[9px] px-1.5 py-0.5 rounded-full">🎈 بالون</span>}
+              {product.is_party_supply && !product.is_balloon && <span className="bg-yellow-100 text-yellow-700 text-[9px] px-1.5 py-0.5 rounded-full">🎉 حفلات</span>}
+            </span>
             <div className="flex items-center gap-1 text-amber-500">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-slate-700">{product.rating}</span>
-              <span className="text-[11px] text-slate-400">({product.reviewsCount})</span>
+              <span className="font-bold text-slate-700">{product.rating || 5}</span>
+              <span className="text-[11px] text-slate-400">({product.reviewsCount || 0})</span>
             </div>
           </div>
 
@@ -95,31 +132,70 @@ export default function ProductCard({ product }) {
           >
             {product.name}
           </h3>
+
+          {/* Wholesale tier info */}
+          {auth.isMerchant && (
+            <div className="text-[11px] bg-emerald-50 border border-emerald-200 text-emerald-800 px-2 py-1 rounded-lg mb-2 flex items-center justify-between">
+              <span className="flex items-center gap-1"><TrendingDown className="w-3 h-3" /> جملة: {formatPrice(effectivePrice)}</span>
+              <span className="text-[10px] opacity-70">قطاعي {formatPrice(product.price || product.retail_price)}</span>
+            </div>
+          )}
         </div>
 
-        {/* Price & Add to Cart Button */}
+        {/* Price & Add to Cart */}
         <div className="pt-3 border-t border-slate-100 mt-2">
           <div className="flex items-baseline gap-2 mb-2.5">
-            <span className="text-lg font-black text-slate-900">
-              {formatPrice(product.price)}
+            <span className={`text-lg font-black ${isWholesalePrice ? 'text-emerald-600' : 'text-slate-900'}`}>
+              {formatPrice(effectivePrice)}
             </span>
-            {product.originalPrice && product.originalPrice > product.price && (
+            {originalPrice && originalPrice > effectivePrice && (
               <span className="text-xs text-slate-400 line-through">
-                {formatPrice(product.originalPrice)}
+                {formatPrice(originalPrice)}
+              </span>
+            )}
+            {isWholesalePrice && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">
+                وفر {formatPrice((product.price || originalPrice) - effectivePrice)}
               </span>
             )}
           </div>
 
-          <button
-            onClick={() => addToCart(product)}
-            className="w-full bg-slate-100 hover:bg-toy-red text-slate-800 hover:text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer group/btn active:scale-95 shadow-sm"
-          >
-            <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-            <span>إضافة إلى السلة</span>
-          </button>
+          {isOutOfStock ? (
+            <>
+              {!showNotify ? (
+                <button
+                  onClick={() => setShowNotify(true)}
+                  className="w-full bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-200 font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Bell className="w-4 h-4" />
+                  <span>أعلمني عند التوفر</span>
+                </button>
+              ) : (
+                <StockNotification product={product} onClose={() => setShowNotify(false)} />
+              )}
+            </>
+          ) : (
+            <button
+              onClick={() => addToCart(product)}
+              className="w-full bg-slate-100 hover:bg-toy-red text-slate-800 hover:text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer group/btn active:scale-95 shadow-sm"
+            >
+              <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+              <span>{auth.isMerchant ? 'إضافة للطلب (جملة)' : 'إضافة إلى السلة'}</span>
+            </button>
+          )}
+
+          {/* Stock indicator */}
+          {!isOutOfStock && (
+            <div className="mt-2 text-[10px] text-slate-400 text-center">
+              {isLowStock ? (
+                <span className="text-amber-600 font-bold">⚠️ متبقي {product.stock} فقط</span>
+              ) : (
+                <span>✓ متوفر - جاهز للشحن</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
-
     </div>
   );
 }

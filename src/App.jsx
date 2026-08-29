@@ -1,5 +1,6 @@
 import React from 'react';
 import { StoreProvider } from './context/StoreContext';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/layout/Header';
 import HeroBanner from './components/home/HeroBanner';
 import StoreFeaturesBanner from './components/layout/StoreFeaturesBanner';
@@ -23,6 +24,11 @@ import LiveSalesNotification from './components/common/LiveSalesNotification';
 import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import Toast from './components/common/Toast';
 
+// B2B & Auth
+import AuthModal from './components/auth/AuthModal';
+import MerchantDashboard from './components/b2b/MerchantDashboard';
+import B2BBlogSection from './components/blog/B2BBlogSection';
+
 function StoreApp() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-toy-red selection:text-white font-cairo">
@@ -40,6 +46,7 @@ function StoreApp() {
         <CategoryShowcase />
         <FlashDeals />
         <ProductGrid />
+        <B2BBlogSection />
         <PoliciesSection />
         <TestimonialsSection />
         <FaqSection />
@@ -57,14 +64,18 @@ function StoreApp() {
       <WishlistModal />
       <OrderTrackingModal />
       <AdminDashboardModal />
+      <AuthModal />
+      <MerchantDashboard />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <StoreProvider>
-      <StoreApp />
-    </StoreProvider>
+    <AuthProvider>
+      <StoreProvider>
+        <StoreApp />
+      </StoreProvider>
+    </AuthProvider>
   );
 }

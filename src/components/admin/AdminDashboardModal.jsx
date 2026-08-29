@@ -14,11 +14,14 @@ import {
   RotateCcw,
   Search,
   Save,
-  RefreshCw
+  RefreshCw,
+  Upload,
+  Bell
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories, ageGroups } from '../../data/categories';
 import { initialProducts } from '../../data/products';
+import BulkImport from './BulkImport';
 
 export default function AdminDashboardModal() {
   const {
@@ -27,12 +30,17 @@ export default function AdminDashboardModal() {
     products,
     orders,
     addProduct,
+    bulkImportProducts,
     updateProduct,
     deleteProduct,
     updateOrderStatus,
     formatPrice,
     showToast
   } = useStore();
+
+  const stockNotifications = (() => {
+    try { return JSON.parse(localStorage.getItem('omran_stock_notifications') || '[]'); } catch { return []; }
+  })();
 
   const [activeTab, setActiveTab] = useState('products');
   const [saveState, setSaveState] = useState('idle');
@@ -337,64 +345,14 @@ export default function AdminDashboardModal() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 bg-white px-4 sm:px-6">
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors ${
-              activeTab === 'products'
-                ? 'border-toy-red text-toy-red'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            إدارة ألعاب المتجر ({products.length})
-          </button>
-
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors ${
-              activeTab === 'orders'
-                ? 'border-toy-red text-toy-red'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            الطلبات الواردة ({orders.length})
-          </button>
-
-          <button
-            onClick={() => setActiveTab('wholesale')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors flex items-center gap-1.5 ${
-              activeTab === 'wholesale'
-                ? 'border-toy-red text-toy-red'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span>الجملة وCRM</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('marketing')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors flex items-center gap-1.5 ${
-              activeTab === 'marketing'
-                ? 'border-toy-red text-toy-red'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>التسويق والإعدادات</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('add')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors flex items-center gap-1.5 ${
-              activeTab === 'add'
-                ? 'border-toy-red text-toy-red'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <Plus className="w-4 h-4" />
-            <span>إضافة لعبة جديدة</span>
-          </button>
+        <div className="flex border-b border-slate-200 bg-white px-4 sm:px-6 overflow-x-auto no-scrollbar">
+          <button onClick={() => setActiveTab('products')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer whitespace-nowrap ${activeTab === 'products' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}>ألعاب ({products.length})</button>
+          <button onClick={() => setActiveTab('bulk')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'bulk' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}><Upload className="w-4 h-4" /><span>استيراد جملة</span></button>
+          <button onClick={() => setActiveTab('orders')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer whitespace-nowrap ${activeTab === 'orders' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}>طلبات ({orders.length})</button>
+          <button onClick={() => setActiveTab('notifications')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'notifications' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}><Bell className="w-4 h-4" /><span>تنبيهات ({stockNotifications.length})</span></button>
+          <button onClick={() => setActiveTab('wholesale')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'wholesale' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}><Users className="w-4 h-4" /><span>الجملة</span></button>
+          <button onClick={() => setActiveTab('marketing')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'marketing' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}><TrendingUp className="w-4 h-4" /><span>تسويق</span></button>
+          <button onClick={() => setActiveTab('add')} className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'add' ? 'border-toy-red text-toy-red' : 'border-transparent text-slate-500 hover:text-slate-900'}`}><Plus className="w-4 h-4" /><span>إضافة</span></button>
         </div>
 
         {/* Tab Content */}
@@ -505,6 +463,30 @@ export default function AdminDashboardModal() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* Bulk Import Tab */}
+          {activeTab === 'bulk' && (
+            <BulkImport onImport={bulkImportProducts} existingProducts={products} />
+          )}
+
+          {/* Notifications Tab */}
+          {activeTab === 'notifications' && (
+            <div className="space-y-3">
+              <h3 className="font-black text-sm text-slate-900 flex items-center gap-2"><Bell className="w-4 h-4 text-amber-500" /> طلبات التنبيه عند التوفر ({stockNotifications.length})</h3>
+              {stockNotifications.length > 0 ? (
+                <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b"><tr><th className="p-3">المنتج</th><th className="p-3">البريد/الهاتف</th><th className="p-3">التاريخ</th></tr></thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {stockNotifications.map((n, i) => (
+                        <tr key={i} className="hover:bg-slate-50"><td className="p-3 font-bold">{n.product_name || n.product_id}</td><td className="p-3 font-mono text-xs">{n.email || n.phone}</td><td className="p-3 text-slate-500">{new Date(n.created_at).toLocaleDateString('ar-EG')}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : <div className="py-12 text-center text-slate-400"><Bell className="w-10 h-10 mx-auto mb-2 opacity-50" /><p>لا توجد طلبات تنبيه</p></div>}
             </div>
           )}
 
