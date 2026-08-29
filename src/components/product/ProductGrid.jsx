@@ -7,7 +7,8 @@ import {
   Check, 
   Sparkles,
   Search,
-  PackageOpen
+  PackageOpen,
+  X
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories, ageGroups } from '../../data/categories';
@@ -103,6 +104,39 @@ export default function ProductGrid() {
     onSaleOnly ||
     searchQuery !== '';
 
+  const activeFilterChips = [
+    searchQuery.trim() && {
+      id: 'search',
+      label: `بحث: ${searchQuery.trim()}`,
+      clear: () => setSearchQuery('')
+    },
+    selectedCategory !== 'all' && {
+      id: 'category',
+      label: categories.find((cat) => cat.id === selectedCategory)?.name || selectedCategory,
+      clear: () => setSelectedCategory('all')
+    },
+    selectedAgeGroup !== 'all' && {
+      id: 'age',
+      label: ageGroups.find((age) => age.id === selectedAgeGroup)?.label || selectedAgeGroup,
+      clear: () => setSelectedAgeGroup('all')
+    },
+    priceRange < 2500 && {
+      id: 'price',
+      label: `حتى ${formatPrice(priceRange)}`,
+      clear: () => setPriceRange(2500)
+    },
+    inStockOnly && {
+      id: 'stock',
+      label: 'متوفر فقط',
+      clear: () => setInStockOnly(false)
+    },
+    onSaleOnly && {
+      id: 'sale',
+      label: 'عروض فقط',
+      clear: () => setOnSaleOnly(false)
+    }
+  ].filter(Boolean);
+
   return (
     <section id="products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       
@@ -164,6 +198,32 @@ export default function ProductGrid() {
           </div>
         </div>
       </div>
+
+      {/* Active filter chips */}
+      {activeFilterChips.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap py-3" aria-label="الفلاتر النشطة">
+          <span className="text-xs font-bold text-slate-400">الفلاتر النشطة:</span>
+          {activeFilterChips.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={chip.clear}
+              className="inline-flex items-center gap-1.5 rounded-full border border-toy-red/20 bg-toy-red/5 px-3 py-1.5 text-xs font-bold text-toy-red transition-colors hover:bg-toy-red hover:text-white cursor-pointer"
+              aria-label={`إزالة فلتر ${chip.label}`}
+            >
+              <span>{chip.label}</span>
+              <X className="h-3.5 w-3.5" />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="text-xs font-bold text-slate-500 hover:text-slate-900 underline underline-offset-2 cursor-pointer"
+          >
+            مسح الكل
+          </button>
+        </div>
+      )}
 
       {/* Age Groups Quick Pills */}
       <div className="py-4 flex items-center gap-2 overflow-x-auto no-scrollbar">

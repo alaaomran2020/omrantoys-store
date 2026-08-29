@@ -19,6 +19,7 @@ export default function CartDrawer() {
     isCartOpen,
     setIsCartOpen,
     cart,
+    totalItemsCount,
     removeFromCart,
     updateQuantity,
     toggleGiftWrap,
@@ -32,6 +33,7 @@ export default function CartDrawer() {
     appliedCoupon,
     applyCouponCode,
     removeCoupon,
+    clearCart,
     setIsCheckoutOpen,
     formatPrice
   } = useStore();
@@ -78,17 +80,30 @@ export default function CartDrawer() {
               <div>
                 <h2 className="text-base font-black text-slate-900">سلة التسوق</h2>
                 <span className="text-xs text-slate-400">
-                  {cart.length} ألعاب في السلة • بالجنيه المصري (ج.م)
+                  {totalItemsCount} {totalItemsCount === 1 ? 'قطعة' : 'قطع'} في السلة • بالجنيه المصري (ج.م)
                 </span>
               </div>
             </div>
 
-            <button
-              onClick={() => setIsCartOpen(false)}
-              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              {cart.length > 0 && (
+                <button
+                  onClick={clearCart}
+                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                  title="تفريغ السلة"
+                  aria-label="تفريغ السلة"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                aria-label="إغلاق السلة"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Free Shipping Meter */}
@@ -176,7 +191,9 @@ export default function CartDrawer() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white rounded-lg cursor-pointer"
+                          disabled={item.product.stock > 0 && item.quantity >= item.product.stock}
+                          className="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white rounded-lg cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                          aria-label="زيادة الكمية"
                         >
                           <Plus className="w-3 h-3" />
                         </button>

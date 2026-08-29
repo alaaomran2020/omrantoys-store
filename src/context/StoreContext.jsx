@@ -147,21 +147,35 @@ export const StoreProvider = ({ children }) => {
 
   // Cart actions
   const addToCart = (product, quantity = 1, options = {}) => {
+    const requestedQuantity = Math.max(1, Number(quantity) || 1);
+    const stockLimit = Number(product.stock) > 0 ? Number(product.stock) : Infinity;
+    let addedQuantity = requestedQuantity;
+
     setCart(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
+      const currentQuantity = existingIndex > -1 ? prev[existingIndex].quantity : 0;
+      addedQuantity = Math.min(requestedQuantity, Math.max(0, stockLimit - currentQuantity));
+
+      if (addedQuantity <= 0) return prev;
+
       if (existingIndex > -1) {
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + quantity,
+          quantity: currentQuantity + addedQuantity,
           giftWrap: options.giftWrap ?? updated[existingIndex].giftWrap
         };
         return updated;
-      } else {
-        return [...prev, { product, quantity, giftWrap: options.giftWrap || false }];
       }
+
+      return [...prev, { product, quantity: addedQuantity, giftWrap: options.giftWrap || false }];
     });
-    showToast(`تمت إضافة "${product.name}" إلى السلة بنجاح! 🛍️`);
+
+    if (addedQuantity < requestedQuantity) {
+      showToast(`تمت إضافة الكمية المتاحة فقط من "${product.name}"`, 'info');
+    } else {
+      showToast(`تمت إضافة "${product.name}" إلى السلة بنجاح! 🛍️`);
+    }
   };
 
   const removeFromCart = (productId) => {
@@ -174,11 +188,12 @@ export const StoreProvider = ({ children }) => {
       removeFromCart(productId);
       return;
     }
-    setCart(prev =>
-      prev.map(item =>
-        item.product.id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+
+    setCart(prev => prev.map(item => {
+      if (item.product.id !== productId) return item;
+      const stockLimit = Number(item.product.stock) > 0 ? Number(item.product.stock) : Infinity;
+      return { ...item, quantity: Math.min(Number(newQuantity), stockLimit) };
+    }));
   };
 
   const toggleGiftWrap = (productId) => {
