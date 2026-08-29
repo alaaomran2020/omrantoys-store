@@ -44,7 +44,7 @@ export default function AdminDashboardModal() {
         heroTitle: 'ألعاب تفرّحهم وهدايا تفضل فاكرينها',
         heroSubtitle: 'اختيارات حلوة لكل مناسبة، وطلب سهل على WhatsApp.',
         announcement: 'الشحن متاح لكل محافظات مصر',
-        urgencyEnabled: true,
+        urgencyEnabled: false,
         urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
         couponCode: 'TOY10',
         couponDiscount: 10,
@@ -56,7 +56,7 @@ export default function AdminDashboardModal() {
         heroTitle: 'ألعاب تفرّحهم وهدايا تفضل فاكرينها',
         heroSubtitle: 'اختيارات حلوة لكل مناسبة، وطلب سهل على WhatsApp.',
         announcement: 'الشحن متاح لكل محافظات مصر',
-        urgencyEnabled: true,
+        urgencyEnabled: false,
         urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
         couponCode: 'TOY10',
         couponDiscount: 10,
@@ -66,6 +66,32 @@ export default function AdminDashboardModal() {
     }
   });
   const [marketingSaved, setMarketingSaved] = useState(false);
+  const [wholesaleSettings, setWholesaleSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('omran_toys_wholesale_settings')) || {
+        enabled: true,
+        minimumOrder: 5,
+        tierOneQuantity: 10,
+        tierOneDiscount: 5,
+        tierTwoQuantity: 25,
+        tierTwoDiscount: 10,
+        paymentTerms: 'نقدي أو تحويل، والآجل للعملاء المعتمدين',
+        salesNote: 'للطلبات الكبيرة أو أسعار الجملة، ابعتلنا على WhatsApp وهنجهزلك عرض مناسب.'
+      };
+    } catch {
+      return {
+        enabled: true,
+        minimumOrder: 5,
+        tierOneQuantity: 10,
+        tierOneDiscount: 5,
+        tierTwoQuantity: 25,
+        tierTwoDiscount: 10,
+        paymentTerms: 'نقدي أو تحويل، والآجل للعملاء المعتمدين',
+        salesNote: 'للطلبات الكبيرة أو أسعار الجملة، ابعتلنا على WhatsApp وهنجهزلك عرض مناسب.'
+      };
+    }
+  });
+  const [wholesaleSaved, setWholesaleSaved] = useState(false);
 
   const normalizePhone = (value) => {
     const digits = String(value || '').replace(/\D/g, '');
@@ -200,6 +226,14 @@ export default function AdminDashboardModal() {
     window.setTimeout(() => setMarketingSaved(false), 2200);
   };
 
+  const handleSaveWholesale = (event) => {
+    event.preventDefault();
+    localStorage.setItem('omran_toys_wholesale_settings', JSON.stringify(wholesaleSettings));
+    setWholesaleSaved(true);
+    showToast?.('إعدادات الجملة اتحفظت بنجاح');
+    window.setTimeout(() => setWholesaleSaved(false), 2200);
+  };
+
   const handleResetCatalog = () => {
     if (window.confirm('هل تود استعادة كتالوج الألعاب الافتراضي بالجنيه المصري؟')) {
       localStorage.removeItem('omran_toys_products');
@@ -324,6 +358,18 @@ export default function AdminDashboardModal() {
             }`}
           >
             الطلبات الواردة ({orders.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('wholesale')}
+            className={`py-3 px-4 text-xs font-bold border-b-2 cursor-pointer transition-colors flex items-center gap-1.5 ${
+              activeTab === 'wholesale'
+                ? 'border-toy-red text-toy-red'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>الجملة وCRM</span>
           </button>
 
           <button
@@ -549,7 +595,48 @@ export default function AdminDashboardModal() {
             </div>
           )}
 
-          {/* 3. Marketing & Settings Tab */}
+          {/* 3. Wholesale & CRM Tab */}
+          {activeTab === 'wholesale' && (
+            <form onSubmit={handleSaveWholesale} className="max-w-3xl mx-auto space-y-4">
+              <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                <h3 className="text-sm font-black text-slate-900">إدارة تجارة الجملة</h3>
+                <p className="mt-1 text-xs leading-6 text-slate-600">إعدادات تناسب تجار طنطا والغربية: كميات كبيرة، سعر شرائح، وتفاوض مرن عبر WhatsApp.</p>
+              </div>
+              <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2">
+                <label className="sm:col-span-2 flex cursor-pointer items-center gap-3 rounded-xl bg-slate-50 p-3 text-xs font-bold text-slate-800">
+                  <input type="checkbox" checked={wholesaleSettings.enabled} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, enabled: e.target.checked })} className="h-4 w-4 accent-toy-red" />
+                  تفعيل وضع تجارة الجملة
+                </label>
+                <label className="text-xs font-bold text-slate-700">أقل كمية للطلب بالجملة
+                  <input type="number" min="1" value={wholesaleSettings.minimumOrder} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, minimumOrder: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">شروط الدفع
+                  <input value={wholesaleSettings.paymentTerms} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, paymentTerms: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" />
+                </label>
+                <div className="rounded-xl bg-emerald-50 p-3">
+                  <p className="text-xs font-black text-emerald-900">شريحة السعر الأولى</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2"><input type="number" min="1" value={wholesaleSettings.tierOneQuantity} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, tierOneQuantity: Number(e.target.value) })} className="rounded-lg border border-emerald-100 p-2 text-xs" placeholder="الكمية" /><input type="number" min="0" max="100" value={wholesaleSettings.tierOneDiscount} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, tierOneDiscount: Number(e.target.value) })} className="rounded-lg border border-emerald-100 p-2 text-xs" placeholder="الخصم %" /></div>
+                </div>
+                <div className="rounded-xl bg-amber-50 p-3">
+                  <p className="text-xs font-black text-amber-900">شريحة السعر الثانية</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2"><input type="number" min="1" value={wholesaleSettings.tierTwoQuantity} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, tierTwoQuantity: Number(e.target.value) })} className="rounded-lg border border-amber-100 p-2 text-xs" placeholder="الكمية" /><input type="number" min="0" max="100" value={wholesaleSettings.tierTwoDiscount} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, tierTwoDiscount: Number(e.target.value) })} className="rounded-lg border border-amber-100 p-2 text-xs" placeholder="الخصم %" /></div>
+                </div>
+                <label className="sm:col-span-2 text-xs font-bold text-slate-700">ملاحظة فريق المبيعات
+                  <textarea rows="3" value={wholesaleSettings.salesNote} onChange={(e) => setWholesaleSettings({ ...wholesaleSettings, salesNote: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" />
+                </label>
+              </div>
+              <div className="flex gap-3 rounded-xl border border-dashed border-slate-300 p-3 text-xs leading-6 text-slate-600">
+                <span className="font-black text-toy-red">CRM</span>
+                <p>استخدم البحث بالهاتف في تبويب الطلبات لمتابعة العميل، ثم حدّث حالة الطلب بعد التأكيد أو الشحن.</p>
+              </div>
+              <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-xs font-black text-white transition-colors hover:bg-toy-red">
+                {wholesaleSaved ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                {wholesaleSaved ? 'إعدادات الجملة اتحفظت' : 'حفظ إعدادات الجملة'}
+              </button>
+            </form>
+          )}
+
+          {/* 4. Marketing & Settings Tab */}
           {activeTab === 'marketing' && (
             <form onSubmit={handleSaveMarketing} className="max-w-3xl mx-auto space-y-4">
               <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
