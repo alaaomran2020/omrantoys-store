@@ -47,12 +47,12 @@ export default function GiftFinderModal() {
 
   const budgetOptions = [
     { id: 'all', label: 'أي ميزانية مناسبة', range: 'الكل' },
-    { id: 'low', label: 'أقل من 150 ريال', range: '< 150 ر.س' },
-    { id: 'mid', label: 'من 150 إلى 300 ريال', range: '150 - 300 ر.س' },
-    { id: 'high', label: 'أكثر من 300 ريال (هدايا فاخرة)', range: '> 300 ر.س' },
+    { id: 'low', label: 'أقل من 500 جنيه', range: '< 500 ج.م' },
+    { id: 'mid', label: 'من 500 إلى 1,200 جنيه', range: '500 - 1,200 ج.م' },
+    { id: 'high', label: 'أكثر من 1,200 جنيه (ألعاب فاخرة وكبيرة)', range: '> 1,200 ج.م' },
   ];
 
-  // Recommendations calculation
+  // Recommendations calculation in Egyptian Pounds
   const recommendedToys = products.filter(p => {
     if (selectedAge && p.ageGroup !== selectedAge) {
       const ageNum = parseInt(selectedAge);
@@ -64,9 +64,9 @@ export default function GiftFinderModal() {
       return false;
     }
 
-    if (selectedBudget === 'low' && p.price >= 150) return false;
-    if (selectedBudget === 'mid' && (p.price < 150 || p.price > 300)) return false;
-    if (selectedBudget === 'high' && p.price <= 300) return false;
+    if (selectedBudget === 'low' && p.price >= 500) return false;
+    if (selectedBudget === 'mid' && (p.price < 500 || p.price > 1200)) return false;
+    if (selectedBudget === 'high' && p.price <= 1200) return false;
 
     return true;
   });
@@ -90,7 +90,7 @@ export default function GiftFinderModal() {
             </div>
             <div>
               <h2 className="text-base font-black">مستكشف الهدايا الذكي للأطفال 🎁</h2>
-              <span className="text-xs text-white/80">3 خطوات سريعة للهدية المثالية</span>
+              <span className="text-xs text-white/80">3 خطوات بسيطة للهدية المثالية بالجنيه المصري</span>
             </div>
           </div>
 
@@ -209,7 +209,7 @@ export default function GiftFinderModal() {
             <div className="space-y-4">
               <div className="text-center mb-4">
                 <h3 className="text-lg font-black text-slate-900">ما هي الميزانية المناسبة لك؟</h3>
-                <p className="text-xs text-slate-500">سنرشح لك أفضل الخيارات في نطاق السعر المفضل</p>
+                <p className="text-xs text-slate-500">سنرشح لك أفضل الألعاب بالجنيه المصري في نطاق ميزانيتك</p>
               </div>
 
               <div className="space-y-2.5">
@@ -256,7 +256,7 @@ export default function GiftFinderModal() {
                     أفضل الألعاب المرشحة ({recommendedToys.length})
                   </h3>
                   <p className="text-xs text-slate-500">
-                    بناءً على العمر: {selectedAge} سنوات
+                    بناءً على العمر: {selectedAge} سنوات • بالجنيه المصري
                   </p>
                 </div>
                 <button

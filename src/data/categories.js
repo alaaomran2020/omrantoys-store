@@ -92,9 +92,5 @@ export const ageGroups = [
 ];
 
 export const currencies = {
-  SAR: { symbol: 'ر.س', rate: 1.0, name: 'ريال سعودي' },
-  AED: { symbol: 'د.إ', rate: 0.98, name: 'درهم إماراتي' },
-  USD: { symbol: '$', rate: 0.27, name: 'دولار أمريكي' },
-  KWD: { symbol: 'د.ك', rate: 0.082, name: 'دينار كويتي' },
-  EGP: { symbol: 'ج.م', rate: 13.2, name: 'جنيه مصري' }
+  EGP: { symbol: 'ج.م', rate: 1.0, name: 'جنيه مصري' }
 };

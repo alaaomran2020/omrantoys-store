@@ -31,13 +31,13 @@ export default function Footer() {
         <div className="bg-gradient-to-r from-toy-red/90 via-toy-purple/90 to-toy-blue/90 p-6 sm:p-8 rounded-3xl mb-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-right max-w-xl">
             <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
-              انضم لنادي أصدقاء عمران 🎈
+              نادي أصدقاء عمران في مصر 🎈
             </span>
             <h3 className="text-xl sm:text-2xl font-black mb-1">
               احصل على خصم 10% فورياً عند اشتراكك بنشرتنا
             </h3>
             <p className="text-white/80 text-xs sm:text-sm">
-              كن أول من يعرف عن وصول أحدث الألعاب الحصرية، وكوبونات الخصم، ومسابقات الأطفال!
+              كن أول من يعرف عن وصول أحدث الألعاب الحصرية، وكوبونات الخصم بالجنيه المصري، ومسابقات الأطفال!
             </p>
           </div>
 
@@ -75,14 +75,14 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              وجهتكم الأولى لأفضل الألعاب التعليمية والترفيهية المختارة بعناية لتنمية ذكاء وإبداع أطفالنا، وبناء ذكريات طفولة سعيدة ومشرقة.
+              وجهتكم الأولى في مصر لأفضل ألعاب الأطفال التعليمية والترفيهية. نوفر منتجات أصلية، تغليف هدايا مجاني، وتوصيل سريع لكافة المحافظات بالجنيه المصري.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700">
-                سجل تجاري: 1010892341
+                سجل تجاري: 452189
               </span>
               <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700">
-                الرقم الضريبي: 31089341200003
+                بطاقة ضريبية: 849-210-534
               </span>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#shipping" className="hover:text-toy-yellow transition-colors">
-                  الشحن والتوصيل
+                  الشحن والمحافظات
                 </a>
               </li>
               <li>
@@ -157,15 +157,15 @@ export default function Footer() {
             <div className="space-y-3 text-xs sm:text-sm text-slate-400">
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-toy-green" />
-                <span dir="ltr">+966 50 123 4567</span>
+                <span dir="ltr">+20 10 1234 5678</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-toy-yellow" />
-                <span>support@omrantoys.com</span>
+                <span>egypt@omrantoys.com</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-toy-red" />
-                <span>المملكة العربية السعودية، الرياض</span>
+                <span>جمهورية مصر العربية (طنطا - القاهرة)</span>
               </div>
             </div>
           </div>
@@ -175,28 +175,27 @@ export default function Footer() {
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-1">
             <span>جميع الحقوق محفوظة © 2026</span>
-            <strong className="text-slate-300">متجر عمران للألعاب</strong>
-            <span>| صنع بكل</span>
+            <strong className="text-slate-300">متجر عمران للألعاب (مصر)</strong>
+            <span>| التعامل بالجنيه المصري (ج.م)</span>
             <Heart className="w-3.5 h-3.5 text-toy-red fill-toy-red inline" />
-            <span>لأطفالنا</span>
           </div>
 
           {/* Payment Badges */}
           <div className="flex items-center gap-2 flex-wrap justify-center">
-            <span className="bg-slate-800 text-slate-300 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
-              مدى Mada
+            <span className="bg-emerald-950 text-emerald-300 font-bold px-2 py-1 rounded text-[10px] border border-emerald-700">
+              ميزة Meeza 🇪🇬
             </span>
-            <span className="bg-slate-800 text-slate-300 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
-              Apple Pay
+            <span className="bg-purple-950 text-purple-300 font-bold px-2 py-1 rounded text-[10px] border border-purple-700">
+              إنستاباي InstaPay
+            </span>
+            <span className="bg-rose-950 text-rose-300 font-bold px-2 py-1 rounded text-[10px] border border-rose-700">
+              فودافون كاش
             </span>
             <span className="bg-slate-800 text-slate-300 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
               Visa / Mastercard
             </span>
-            <span className="bg-slate-800 text-amber-400 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
-              تابي Tabby
-            </span>
-            <span className="bg-slate-800 text-pink-400 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
-              تمارا Tamara
+            <span className="bg-amber-950 text-amber-300 font-bold px-2 py-1 rounded text-[10px] border border-amber-700">
+              فاليو ValU
             </span>
             <span className="bg-slate-800 text-emerald-400 font-bold px-2 py-1 rounded text-[10px] border border-slate-700">
               الدفع عند الاستلام

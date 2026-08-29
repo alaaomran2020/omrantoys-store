@@ -13,7 +13,8 @@ import {
   Mail, 
   ArrowLeft,
   ExternalLink,
-  Printer
+  Printer,
+  Smartphone
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useStore } from '../../context/StoreContext';
@@ -31,36 +32,46 @@ export default function CheckoutModal() {
     formatPrice,
     placeOrder,
     lastPlacedOrder,
-    setLastPlacedOrder,
-    setIsTrackingOpen
+    setLastPlacedOrder
   } = useStore();
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [city, setCity] = useState('الرياض');
+  const [city, setCity] = useState('طنطا (الغربية)');
   const [address, setAddress] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('mada');
+  const [paymentMethod, setPaymentMethod] = useState('instapay');
   const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isCheckoutOpen) return null;
 
-  const cities = [
-    'الرياض',
-    'جدة',
-    'الدمام',
-    'مكة المكرمة',
-    'المدينة المنورة',
-    'الخبر',
-    'القصيم',
-    'أبها',
-    'تبوك',
-    'حائل',
-    'الأحساء',
-    'الطائف',
-    'دبي (الإمارات)',
-    'الكويت'
+  const egyptianCities = [
+    'طنطا (الغربية)',
+    'القاهرة',
+    'الجيزة',
+    'الإسكندرية',
+    'المحلة الكبرى',
+    'المنصورة (الدقهلية)',
+    'الزقازيق (الشرقية)',
+    'بنها (القليوبية)',
+    'دمنهور (البحيرة)',
+    'كفر الشيخ',
+    'دمياط',
+    'بورسعيد',
+    'الإسماعيلية',
+    'السويس',
+    'الفيوم',
+    'بني سويف',
+    'المنيا',
+    'أسيوط',
+    'سوهاج',
+    'قنا',
+    'الأقصر',
+    'أسوان',
+    'البحر الأحمر (الغردقة)',
+    'جنوب سيناء (شرم الشيخ)',
+    'مرسى مطروح'
   ];
 
   const handleSubmitOrder = (e) => {
@@ -81,15 +92,13 @@ export default function CheckoutModal() {
         address,
         giftMessage,
         paymentMethod:
-          paymentMethod === 'mada' ? 'بطاقة مدى / ائتمان' :
-          paymentMethod === 'applepay' ? 'Apple Pay' :
-          paymentMethod === 'tamara' ? 'تمارا (4 دفعات)' :
-          paymentMethod === 'tabby' ? 'تابي (4 دفعات)' : 'الدفع عند الاستلام'
+          paymentMethod === 'instapay' ? 'إنستاباي / محافظ إلكترونية (فودافون كاش)' :
+          paymentMethod === 'card' ? 'كارت ميزة / فيزا / ماستركارد' :
+          paymentMethod === 'valu' ? 'فاليو / أمان (تقسيط)' : 'الدفع عند الاستلام (كاش)'
       });
 
       setIsProcessing(false);
 
-      // Trigger Confetti!
       try {
         confetti({
           particleCount: 120,
@@ -105,8 +114,8 @@ export default function CheckoutModal() {
   };
 
   const handleWhatsAppContact = (orderId) => {
-    const text = encodeURIComponent(`مرحباً متجر عمران، قمت بالطلب للتو برقم: ${orderId}. أود متابعة طلبي شكراً لكم!`);
-    window.open(`https://wa.me/966501234567?text=${text}`, '_blank');
+    const text = encodeURIComponent(`مرحباً متجر عمران للألعاب، قمت بالطلب للتو برقم: #${orderId}. أود تأكيد طلبي ومتابعته، شكراً لكم!`);
+    window.open(`https://wa.me/201012345678?text=${text}`, '_blank');
   };
 
   const closeCheckout = () => {
@@ -124,9 +133,12 @@ export default function CheckoutModal() {
             <div className="w-8 h-8 rounded-xl bg-toy-red/10 text-toy-red flex items-center justify-center font-black">
               🛍️
             </div>
-            <h2 className="text-base font-black text-slate-900">
-              {lastPlacedOrder ? 'تم تأكيد طلبك بنجاح!' : 'إتمام الطلب وتأكيد الشحن'}
-            </h2>
+            <div>
+              <h2 className="text-base font-black text-slate-900">
+                {lastPlacedOrder ? 'تم تأكيد طلبك بنجاح!' : 'إتمام الطلب والشحن (التعامل بالجنيه المصري)'}
+              </h2>
+              <span className="text-[11px] text-slate-400">توصيل سريع لكافة محافظات مصر</span>
+            </div>
           </div>
 
           <button
@@ -148,13 +160,13 @@ export default function CheckoutModal() {
 
               <div>
                 <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider">
-                  طلب مكتمل ومؤكد
+                  طلب مؤكد وجاري التجهيز والتغليف
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">
                   مبروك! تم استلام طلبك بنجاح 🎉
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1">
-                  أهلاً بك يا <strong className="text-slate-800">{lastPlacedOrder.customerName}</strong>، نحن الآن نجهز ألعابك بكل حب وعناية!
+                  أهلاً بك يا <strong className="text-slate-800">{lastPlacedOrder.customerName}</strong>، نجهز الآن ألعابك بكل حب وعناية!
                 </p>
               </div>
 
@@ -168,7 +180,7 @@ export default function CheckoutModal() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500">المدينة والتوصيل:</span>
+                  <span className="text-slate-500">المحافظة والمدينة:</span>
                   <span className="font-bold text-slate-800">{lastPlacedOrder.city}</span>
                 </div>
 
@@ -179,7 +191,7 @@ export default function CheckoutModal() {
 
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500">عدد الألعاب:</span>
-                  <span className="font-bold text-slate-800">{lastPlacedOrder.items.length} منتج</span>
+                  <span className="font-bold text-slate-800">{lastPlacedOrder.items.length} لعبة</span>
                 </div>
 
                 {lastPlacedOrder.giftMessage && (
@@ -190,7 +202,7 @@ export default function CheckoutModal() {
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t border-slate-200 text-sm">
-                  <span className="font-black text-slate-900">المبلغ الإجمالي:</span>
+                  <span className="font-black text-slate-900">المبلغ الإجمالي (شامل الضريبة والشحن):</span>
                   <span className="font-black text-base text-toy-red">
                     {formatPrice(lastPlacedOrder.total)}
                   </span>
@@ -203,7 +215,7 @@ export default function CheckoutModal() {
                   onClick={() => handleWhatsAppContact(lastPlacedOrder.id)}
                   className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md"
                 >
-                  <span>متابعة وتأكيد عبر واتساب</span>
+                  <span>تأكيد ومتابعة عبر واتساب</span>
                   <ExternalLink className="w-4 h-4" />
                 </button>
 
@@ -231,34 +243,34 @@ export default function CheckoutModal() {
               <div className="space-y-3">
                 <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 pb-1 border-b border-slate-100">
                   <User className="w-4 h-4 text-toy-red" />
-                  <span>1. معلومات المستلم والتوصيل</span>
+                  <span>1. بيانات المستلم وعنوان التوصيل</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      الاسم الكامل *
+                      الاسم بالكامل *
                     </label>
                     <input
                       type="text"
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="مثال: سلطان محمد"
+                      placeholder="مثال: أحمد محمود"
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      رقم الجوال للتوصيل *
+                      رقم الموبايل للتوصيل *
                     </label>
                     <input
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="05XXXXXXXX"
+                      placeholder="01XXXXXXXXX"
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20 text-left font-mono"
                       dir="ltr"
                     />
@@ -268,14 +280,14 @@ export default function CheckoutModal() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      المدينة *
+                      المحافظة / المدينة *
                     </label>
                     <select
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20 cursor-pointer font-semibold"
                     >
-                      {cities.map((c) => (
+                      {egyptianCities.map((c) => (
                         <option key={c} value={c}>
                           {c}
                         </option>
@@ -299,14 +311,14 @@ export default function CheckoutModal() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    العنوان التفصيلي (الحي، الشارع، رقم المنزل) *
+                    العنوان التفصيلي (المنطقة، الشارع، رقم العمارة والشقة) *
                   </label>
                   <input
                     type="text"
                     required
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="مثال: حي الياسمين، شارع أنس، عمارة 14 شقة 2"
+                    placeholder="مثال: طنطا، شارع النحاس، عمارة الأمل الدور الثالث"
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20"
                   />
                 </div>
@@ -314,29 +326,29 @@ export default function CheckoutModal() {
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
                     <Gift className="w-3.5 h-3.5 text-toy-red" />
-                    <span>رسالة إهداء مع كرت مجاني (اختياري)</span>
+                    <span>رسالة إهداء مع كرت مجاني باسم الطفل (اختياري)</span>
                   </label>
                   <input
                     type="text"
                     value={giftMessage}
                     onChange={(e) => setGiftMessage(e.target.value)}
-                    placeholder="مثال: كل عام وأنت بألف خير يا بطلنا الصغير فهد 🎈"
+                    placeholder="مثال: كل سنة وأنت طيب يا حبيبنا يوسف بمناسبة عيد ميلادك 🎈"
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20"
                   />
                 </div>
               </div>
 
-              {/* Step 2: Payment Methods */}
+              {/* Step 2: Payment Methods for Egypt */}
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 pb-1 border-b border-slate-100">
                   <CreditCard className="w-4 h-4 text-toy-blue" />
-                  <span>2. طريقة الدفع</span>
+                  <span>2. طريقة الدفع بالجنيه المصري</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <label
                     className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'mada'
+                      paymentMethod === 'instapay'
                         ? 'border-toy-red bg-rose-50/50 shadow-sm'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
@@ -344,24 +356,25 @@ export default function CheckoutModal() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="mada"
-                      checked={paymentMethod === 'mada'}
-                      onChange={() => setPaymentMethod('mada')}
+                      value="instapay"
+                      checked={paymentMethod === 'instapay'}
+                      onChange={() => setPaymentMethod('instapay')}
                       className="text-toy-red"
                     />
                     <div>
-                      <span className="font-bold text-xs block text-slate-900">
-                        بطاقة مدى / فيزا / ماستركارد
+                      <span className="font-bold text-xs block text-slate-900 flex items-center gap-1">
+                        <span>إنستاباي ومحافظ إلكترونية</span>
+                        <span className="text-[10px] bg-purple-100 text-purple-800 px-1 rounded font-normal">InstaPay</span>
                       </span>
                       <span className="text-[11px] text-slate-500">
-                        دفع فوري آمن ومحمي بنسبة 100%
+                        فودافون كاش، إنستاباي، أورنج، وي باي
                       </span>
                     </div>
                   </label>
 
                   <label
                     className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'applepay'
+                      paymentMethod === 'card'
                         ? 'border-toy-red bg-rose-50/50 shadow-sm'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
@@ -369,24 +382,25 @@ export default function CheckoutModal() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="applepay"
-                      checked={paymentMethod === 'applepay'}
-                      onChange={() => setPaymentMethod('applepay')}
+                      value="card"
+                      checked={paymentMethod === 'card'}
+                      onChange={() => setPaymentMethod('card')}
                       className="text-toy-red"
                     />
                     <div>
-                      <span className="font-bold text-xs block text-slate-900">
-                        Apple Pay
+                      <span className="font-bold text-xs block text-slate-900 flex items-center gap-1">
+                        <span>كارت ميزة / فيزا / ماستركارد</span>
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1 rounded font-normal">ميزة</span>
                       </span>
                       <span className="text-[11px] text-slate-500">
-                        الدفع بلمسة واحدة عبر أجهزة أبل
+                        دفع فوري آمن عبر أي كارت بنكي مصري
                       </span>
                     </div>
                   </label>
 
                   <label
                     className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'tamara'
+                      paymentMethod === 'valu'
                         ? 'border-toy-red bg-rose-50/50 shadow-sm'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
@@ -394,17 +408,17 @@ export default function CheckoutModal() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="tamara"
-                      checked={paymentMethod === 'tamara'}
-                      onChange={() => setPaymentMethod('tamara')}
+                      value="valu"
+                      checked={paymentMethod === 'valu'}
+                      onChange={() => setPaymentMethod('valu')}
                       className="text-toy-red"
                     />
                     <div>
                       <span className="font-bold text-xs block text-slate-900">
-                        تمارا (قسّمها على 4 دفعات)
+                        تقسيط عبر فاليو أو أمان (ValU / Aman)
                       </span>
                       <span className="text-[11px] text-slate-500">
-                        بدون فوائد أو رسوم إضافية
+                        تقسيط ميسر على 6 أو 12 شهراً
                       </span>
                     </div>
                   </label>
@@ -426,10 +440,10 @@ export default function CheckoutModal() {
                     />
                     <div>
                       <span className="font-bold text-xs block text-slate-900">
-                        الدفع عند الاستلام (COD)
+                        الدفع عند الاستلام نقداً (كاش)
                       </span>
                       <span className="text-[11px] text-slate-500">
-                        ادفع نقداً أو بالشبكة عند وصول المندوب
+                        ادفع عند وصول المندوب لباب منزلك
                       </span>
                     </div>
                   </label>
@@ -438,10 +452,10 @@ export default function CheckoutModal() {
 
               {/* Step 3: Order Summary Table */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                <h4 className="font-bold text-xs text-slate-700 mb-2">ملخص الحساب النهائي:</h4>
+                <h4 className="font-bold text-xs text-slate-700 mb-2">ملخص الحساب بالجنيه المصري:</h4>
 
                 <div className="flex justify-between text-xs text-slate-600">
-                  <span>قيمة المنتجات ({cart.length} ألعاب):</span>
+                  <span>قيمة الألعاب ({cart.length}):</span>
                   <span className="font-bold text-slate-900">{formatPrice(cartSubtotal)}</span>
                 </div>
 
@@ -453,12 +467,12 @@ export default function CheckoutModal() {
                 )}
 
                 <div className="flex justify-between text-xs text-slate-600">
-                  <span>الشحن:</span>
-                  <span>{shippingCost === 0 ? 'مجاني' : formatPrice(shippingCost)}</span>
+                  <span>الشحن والتوصيل:</span>
+                  <span>{shippingCost === 0 ? 'شحن مجاني 🎉' : formatPrice(shippingCost)}</span>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
-                  <span className="font-black text-sm text-slate-900">الإجمالي المستحق:</span>
+                  <span className="font-black text-sm text-slate-900">الإجمالي المستحق بالجنيه:</span>
                   <span className="text-xl font-black text-toy-red">
                     {formatPrice(cartTotal)}
                   </span>
@@ -472,7 +486,7 @@ export default function CheckoutModal() {
                 className="w-full bg-toy-red hover:bg-rose-600 disabled:opacity-50 text-white font-black py-4 px-6 rounded-2xl text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-toy-red/25 cursor-pointer hover:scale-[1.01] active:scale-95"
               >
                 {isProcessing ? (
-                  <span>جاري معالجة وتأكيد طلبك... ⏳</span>
+                  <span>جاري تأكيد وتسجيل طلبك... ⏳</span>
                 ) : (
                   <>
                     <span>تأكيد الطلب الآن ({formatPrice(cartTotal)})</span>

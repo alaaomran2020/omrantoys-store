@@ -1,14 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { initialProducts, sampleReviews } from '../data/products';
-import { currencies } from '../data/categories';
 import { validCoupons } from '../data/coupons';
 
 const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-  // Products with local storage persistence for admin additions/edits
+  // Products with local storage persistence - reset if stored under old currency system
   const [products, setProducts] = useState(() => {
     try {
+      const storedVersion = localStorage.getItem('omran_toys_version');
+      if (storedVersion !== 'egp-v1') {
+        localStorage.setItem('omran_toys_version', 'egp-v1');
+        localStorage.setItem('omran_toys_products', JSON.stringify(initialProducts));
+        localStorage.setItem('omran_toys_currency', 'EGP');
+        return initialProducts;
+      }
       const saved = localStorage.getItem('omran_toys_products');
       return saved ? JSON.parse(saved) : initialProducts;
     } catch {
@@ -36,14 +42,8 @@ export const StoreProvider = ({ children }) => {
     }
   });
 
-  // Currency
-  const [currency, setCurrency] = useState(() => {
-    try {
-      return localStorage.getItem('omran_toys_currency') || 'SAR';
-    } catch {
-      return 'SAR';
-    }
-  });
+  // Currency is strictly EGP
+  const currency = 'EGP';
 
   // Orders
   const [orders, setOrders] = useState(() => {
@@ -52,23 +52,23 @@ export const StoreProvider = ({ children }) => {
       return saved ? JSON.parse(saved) : [
         {
           id: 'OMR-8842',
-          date: '2026-08-27',
-          customerName: 'فهد السالم',
-          phone: '0551234567',
-          city: 'الرياض',
-          address: 'حي النرجس، شارع أنس بن مالك',
+          date: '2026-08-28',
+          customerName: 'أحمد محمود العطار',
+          phone: '01012345678',
+          city: 'طنطا (الغربية)',
+          address: 'شارع البحر، بجوار جامعة طنطا',
           status: 'تم الشحن',
           items: [
-            { id: 1, name: 'روبوت الذكاء الاصطناعي التفاعلي كوزمو', price: 349, quantity: 1 }
+            { id: 1, name: 'روبوت الذكاء الاصطناعي التفاعلي كوزمو', price: 1850, quantity: 1 }
           ],
-          subtotal: 349,
+          subtotal: 1850,
           shipping: 0,
-          discount: 34.9,
-          vat: 47.11,
-          total: 361.21,
+          discount: 185,
+          vat: 233.1,
+          total: 1898.1,
           giftWrap: true,
-          giftMessage: 'كل عام وأنت بألف خير يا بطل!',
-          paymentMethod: 'الدفع عند الاستلام'
+          giftMessage: 'كل سنة وأنت طيب يا بطل!',
+          paymentMethod: 'إنستاباي / فودافون كاش'
         }
       ];
     } catch {
@@ -90,7 +90,7 @@ export const StoreProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAgeGroup, setSelectedAgeGroup] = useState('all');
-  const [priceRange, setPriceRange] = useState(500);
+  const [priceRange, setPriceRange] = useState(2500);
   const [sortBy, setSortBy] = useState('featured');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
@@ -132,10 +132,6 @@ export const StoreProvider = ({ children }) => {
   }, [wishlist]);
 
   useEffect(() => {
-    localStorage.setItem('omran_toys_currency', currency);
-  }, [currency]);
-
-  useEffect(() => {
     localStorage.setItem('omran_toys_orders', JSON.stringify(orders));
   }, [orders]);
 
@@ -143,11 +139,10 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('omran_toys_reviews', JSON.stringify(reviews));
   }, [reviews]);
 
-  // Price formatter with selected currency
-  const formatPrice = (amountInSAR) => {
-    const curr = currencies[currency] || currencies.SAR;
-    const converted = (amountInSAR * curr.rate).toFixed(curr.symbol === 'د.ك' ? 2 : 0);
-    return `${converted} ${curr.symbol}`;
+  // Egyptian Pound Price Formatter
+  const formatPrice = (amount) => {
+    const num = Math.round(Number(amount));
+    return `${num.toLocaleString('en-US')} ج.م`;
   };
 
   // Cart actions
@@ -216,7 +211,7 @@ export const StoreProvider = ({ children }) => {
 
   const isInWishlist = (productId) => wishlist.includes(productId);
 
-  // Cart Calculations
+  // Cart Calculations in EGP
   const cartSubtotal = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
@@ -224,13 +219,15 @@ export const StoreProvider = ({ children }) => {
 
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Free shipping threshold: 250 SAR or with FREESHIP coupon
+  // Free shipping threshold: 1,000 EGP or with FREESHIP coupon
+  const freeShippingThreshold = 1000;
   const isFreeShipping =
-    cartSubtotal >= 250 ||
+    cartSubtotal >= freeShippingThreshold ||
     (appliedCoupon && appliedCoupon.code === 'FREESHIP') ||
     cartSubtotal === 0;
 
-  const shippingCost = cartSubtotal === 0 ? 0 : isFreeShipping ? 0 : 25;
+  // Standard shipping in Egypt: 50 EGP
+  const shippingCost = cartSubtotal === 0 ? 0 : isFreeShipping ? 0 : 50;
 
   let discountAmount = 0;
   if (appliedCoupon && cartSubtotal > 0) {
@@ -240,8 +237,8 @@ export const StoreProvider = ({ children }) => {
   }
 
   const taxableAmount = Math.max(0, cartSubtotal - discountAmount);
-  // VAT 15% calculation (Saudi standard)
-  const vatAmount = (taxableAmount * 0.15);
+  // VAT 14% Egyptian standard
+  const vatAmount = (taxableAmount * 0.14);
   const cartTotal = taxableAmount + shippingCost;
 
   // Coupon handling
@@ -253,7 +250,7 @@ export const StoreProvider = ({ children }) => {
       return false;
     }
     if (cartSubtotal < found.minSpend) {
-      showToast(`الحد الأدنى لتفعيل هذا الكوبون هو ${found.minSpend} ر.س`, 'error');
+      showToast(`الحد الأدنى لتفعيل هذا الكوبون هو ${found.minSpend} ج.م`, 'error');
       return false;
     }
     setAppliedCoupon(found);
@@ -307,7 +304,6 @@ export const StoreProvider = ({ children }) => {
     };
     setReviews(prev => [newRev, ...prev]);
 
-    // update product rating & reviewsCount
     setProducts(prev =>
       prev.map(p => {
         if (p.id === productId) {
@@ -381,6 +377,7 @@ export const StoreProvider = ({ children }) => {
         appliedCoupon,
         cartSubtotal,
         totalItemsCount,
+        freeShippingThreshold,
         isFreeShipping,
         shippingCost,
         discountAmount,
@@ -411,7 +408,6 @@ export const StoreProvider = ({ children }) => {
         setIsTrackingOpen,
         setSelectedProductModal,
         setLastPlacedOrder,
-        setCurrency,
         // Handlers
         formatPrice,
         addToCart,

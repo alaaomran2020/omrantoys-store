@@ -3,11 +3,11 @@ import { ShoppingBag, X, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 const demoSales = [
-  { name: 'سارة م.', city: 'الرياض', item: 'روبوت الذكاء الاصطناعي كوزمو', time: 'منذ دقيقة', img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=150&q=80' },
-  { name: 'أحمد العتيبي', city: 'جدة', item: 'طقم استكشاف الفضاء ومكوك ناسا', time: 'منذ 3 دقائق', img: 'https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?auto=format&fit=crop&w=150&q=80' },
-  { name: 'أم راكان', city: 'الدمام', item: 'سكوتر الأطفال المضيء فائق الثبات', time: 'منذ 5 دقائق', img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=150&q=80' },
-  { name: 'عبدالعزيز الشمري', city: 'القصيم', item: 'قلعة الفرسان السحرية المغناطيسية', time: 'منذ 7 دقائق', img: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=150&q=80' },
-  { name: 'فاطمة الكعبي', city: 'الخبر', item: 'فيلا الأحلام الخشبية الفاخرة للدمى', time: 'منذ دقيقتين', img: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=150&q=80' },
+  { name: 'أم يوسف', city: 'طنطا', item: 'روبوت الذكاء الاصطناعي كوزمو', time: 'منذ دقيقة', img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=150&q=80' },
+  { name: 'أحمد حسني', city: 'القاهرة', item: 'طقم استكشاف الفضاء ومكوك ناسا', time: 'منذ 3 دقائق', img: 'https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?auto=format&fit=crop&w=150&q=80' },
+  { name: 'سارة إبراهيم', city: 'الإسكندرية', item: 'سكوتر الأطفال المضيء فائق الثبات', time: 'منذ 5 دقائق', img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=150&q=80' },
+  { name: 'محمود عبدالسلام', city: 'المنصورة', item: 'قلعة الفرسان السحرية المغناطيسية', time: 'منذ 7 دقائق', img: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=150&q=80' },
+  { name: 'داليا رمزي', city: 'الجيزة', item: 'فيلا الأحلام الخشبية الفاخرة للدمى', time: 'منذ دقيقتين', img: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=150&q=80' },
 ];
 
 export default function LiveSalesNotification() {

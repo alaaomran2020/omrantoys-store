@@ -6,28 +6,28 @@ export default function StoreFeaturesBanner() {
     {
       icon: Gift,
       title: 'تغليف هدايا مجاني فاخر',
-      desc: 'نغلف هديتك مع كرت إهداء شخصي باسم طفلك مجاناً بالكامل',
+      desc: 'نغلف هديتك مع كرت إهداء شخصي باسم طفلك مجاناً بالكامل لكل طلب',
       color: 'bg-rose-50 text-toy-red border-rose-100',
       iconBg: 'bg-rose-500 text-white'
     },
     {
       icon: ShieldCheck,
-      title: 'ألعاب آمنة 100% ومطابقة',
-      desc: 'معتمدة بشهادة المواصفات الخليجية SASO وخالية من أي مواد ضارة',
+      title: 'ألعاب آمنة ومطابقة 100%',
+      desc: 'خامات عالية الجودة خالية من المواد الضارة ومناسبة لمختلف الأعمار',
       color: 'bg-emerald-50 text-emerald-700 border-emerald-100',
       iconBg: 'bg-emerald-500 text-white'
     },
     {
       icon: Truck,
-      title: 'شحن سريع وباب لباب',
-      desc: 'توصيل خلال 24 - 48 ساعة لجميع مدن المملكة ودول الخليج',
+      title: 'شحن سريع لكافة المحافظات',
+      desc: 'توصيل خلال 24 - 48 ساعة لكافة محافظات مصر وباب لباب',
       color: 'bg-blue-50 text-toy-blue border-blue-100',
       iconBg: 'bg-toy-blue text-white'
     },
     {
       icon: RotateCcw,
       title: 'استرجاع واستبدال مرن',
-      desc: 'ضمان ذهبي لاستبدال أو استرجاع المنتجات خلال 14 يوماً بكل سهولة',
+      desc: 'إمكانية المعاينة عند الاستلام واستبدال واسترجاع خلال 14 يوماً بكل سهولة',
       color: 'bg-amber-50 text-amber-700 border-amber-100',
       iconBg: 'bg-amber-500 text-white'
     },

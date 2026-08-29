@@ -34,7 +34,7 @@ export default function ProductDetailModal() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isGiftWrapped, setIsGiftWrapped] = useState(false);
-  const [activeTab, setActiveTab] = useState('details'); // 'details' | 'reviews'
+  const [activeTab, setActiveTab] = useState('details');
 
   // New review form
   const [newReviewAuthor, setNewReviewAuthor] = useState('');
@@ -98,7 +98,7 @@ export default function ProductDetailModal() {
         {/* Header bar with close button */}
         <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-400">كود المنتج:</span>
+            <span className="text-xs font-bold text-slate-400">كود اللعبة:</span>
             <span className="text-xs font-mono font-bold text-slate-700 bg-slate-200/70 px-2 py-0.5 rounded">
               {product.sku}
             </span>
@@ -206,10 +206,10 @@ export default function ProductDetailModal() {
                 </span>
               </div>
 
-              {/* Price */}
+              {/* Price in EGP */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-slate-400 block mb-0.5">السعر شامل الضريبة:</span>
+                  <span className="text-xs text-slate-400 block mb-0.5">السعر شامل الضريبة (بالجنيه):</span>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl sm:text-3xl font-black text-slate-900">
                       {formatPrice(product.price)}
@@ -223,11 +223,11 @@ export default function ProductDetailModal() {
                 </div>
 
                 <div className="text-left text-xs font-medium text-slate-500">
-                  <span>أو 4 دفعات بقيمة </span>
+                  <span>أو قسّطها بقسط شهري </span>
                   <strong className="text-slate-900 font-black">
-                    {formatPrice(Math.round(product.price / 4))}
+                    {formatPrice(Math.round(product.price / 6))}
                   </strong>
-                  <span> عبر تابي أو تمارا</span>
+                  <span> عبر فاليو أو أمان</span>
                 </div>
               </div>
 
@@ -416,7 +416,7 @@ export default function ProductDetailModal() {
                     required
                     value={newReviewAuthor}
                     onChange={(e) => setNewReviewAuthor(e.target.value)}
-                    placeholder="اسمك الكريم (مثال: أم نورة أو أبو خالد)"
+                    placeholder="اسمك الكريم (مثال: أم يوسف أو أحمد علي)"
                     className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-toy-red/20"
                   />
 

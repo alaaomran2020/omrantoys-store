@@ -9,26 +9,21 @@ import {
   Gift, 
   Menu, 
   X, 
-  ChevronDown, 
   SlidersHorizontal,
-  Phone,
   Flame,
   CheckCircle2
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { categories, currencies } from '../../data/categories';
+import { categories } from '../../data/categories';
 
 export default function Header() {
   const {
     products,
     cart,
     wishlist,
-    currency,
-    setCurrency,
     formatPrice,
     totalItemsCount,
     cartSubtotal,
-    isFreeShipping,
     searchQuery,
     setSearchQuery,
     selectedCategory,
@@ -71,10 +66,10 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
             <span className="bg-white/20 px-2 py-0.5 rounded-full text-[11px] font-bold animate-pulse">
-              عرض خاص 🔥
+              عروض مصر 🇪🇬
             </span>
             <span className="truncate">
-              شحن مجاني لكافة مدن المملكة للطلبات فوق 250 ريال | كود الخصم: <strong className="bg-yellow-400 text-slate-900 px-1.5 py-0.5 rounded font-mono font-black">OMRAN10</strong>
+              شحن مجاني لكافة محافظات مصر للطلبات فوق 1,000 جنيه | كود الخصم: <strong className="bg-yellow-400 text-slate-900 px-1.5 py-0.5 rounded font-mono font-black">OMRAN10</strong>
             </span>
           </div>
 
@@ -92,7 +87,7 @@ export default function Header() {
               className="flex items-center gap-1 hover:text-yellow-200 transition-colors cursor-pointer"
             >
               <Package className="w-3.5 h-3.5" />
-              <span>تتبع طلبك</span>
+              <span>تتبع شحنتك</span>
             </button>
           </div>
         </div>
@@ -123,7 +118,7 @@ export default function Header() {
                   عمران <span className="text-toy-red">للألعاب</span>
                 </span>
                 <span className="text-[10px] sm:text-xs text-slate-500 font-medium tracking-wide">
-                  OMRAN TOYS STORE
+                  OMRAN TOYS STORE • EGYPT
                 </span>
               </div>
             </a>
@@ -140,7 +135,7 @@ export default function Header() {
                   setShowSearchResults(true);
                 }}
                 onFocus={() => setShowSearchResults(true)}
-                placeholder="ابحث عن روبوت، مكعبات ليغو، سيارة تحكم، سكوتر..."
+                placeholder="ابحث عن روبوت، مكعبات ليغو، سيارة تحكم، سكوتر، ألعاب بيبي..."
                 className="w-full pl-10 pr-11 py-2.5 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-toy-red rounded-2xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-toy-red/20 text-slate-800 placeholder-slate-400"
               />
               <Search className="w-5 h-5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -203,20 +198,13 @@ export default function Header() {
           {/* Action Buttons */}
           <div className="flex items-center gap-2 sm:gap-3">
             
-            {/* Currency Switcher */}
-            <div className="relative group">
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="appearance-none bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold px-2.5 py-2 pl-6 cursor-pointer text-slate-700 focus:outline-none focus:ring-2 focus:ring-toy-blue/20"
-              >
-                {Object.entries(currencies).map(([code, cur]) => (
-                  <option key={code} value={code}>
-                    {cur.symbol} ({code})
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+            {/* Egyptian Pound Fixed Currency Indicator */}
+            <div 
+              className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1.5 rounded-xl text-xs font-black text-emerald-800 shadow-sm"
+              title="التعامل بالجنيه المصري فقط (EGP)"
+            >
+              <span className="text-sm">🇪🇬</span>
+              <span>ج.م</span>
             </div>
 
             {/* Gift Finder Button (desktop highlight) */}
@@ -340,8 +328,17 @@ export default function Header() {
                 </button>
               </div>
 
+              {/* Currency Badge */}
+              <div className="mt-4 p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs text-emerald-800 font-bold">
+                <span>العملة المعتمدة:</span>
+                <span className="flex items-center gap-1">
+                  <span>الجنيه المصري</span>
+                  <span className="font-mono bg-white px-2 py-0.5 rounded border border-emerald-300">ج.م 🇪🇬</span>
+                </span>
+              </div>
+
               {/* Quick links */}
-              <div className="mt-6 space-y-2">
+              <div className="mt-4 space-y-2">
                 <button
                   onClick={() => {
                     setIsGiftFinderOpen(true);
@@ -402,8 +399,8 @@ export default function Header() {
             </div>
 
             <div className="pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
-              <p>متجر عمران للألعاب © 2026</p>
-              <p className="mt-1">أجمل الهدايا والألعاب لأطفالنا الغالين</p>
+              <p>متجر عمران للألعاب © 2026 - مصر 🇪🇬</p>
+              <p className="mt-1">جميع الأسعار بالجنيه المصري</p>
             </div>
           </div>
         </div>

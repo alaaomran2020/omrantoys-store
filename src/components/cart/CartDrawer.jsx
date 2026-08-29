@@ -23,6 +23,7 @@ export default function CartDrawer() {
     updateQuantity,
     toggleGiftWrap,
     cartSubtotal,
+    freeShippingThreshold,
     isFreeShipping,
     shippingCost,
     discountAmount,
@@ -39,8 +40,7 @@ export default function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  // Free shipping threshold progress (250 SAR)
-  const freeShippingThreshold = 250;
+  // Free shipping threshold in Egyptian Pounds (1,000 EGP)
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
   const progressPercent = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
 
@@ -78,7 +78,7 @@ export default function CartDrawer() {
               <div>
                 <h2 className="text-base font-black text-slate-900">سلة التسوق</h2>
                 <span className="text-xs text-slate-400">
-                  {cart.length} منتجات في السلة
+                  {cart.length} ألعاب في السلة • بالجنيه المصري (ج.م)
                 </span>
               </div>
             </div>
@@ -97,7 +97,7 @@ export default function CartDrawer() {
               <div className="flex items-center gap-1.5 text-amber-900">
                 <Truck className="w-4 h-4 text-amber-600" />
                 {isFreeShipping ? (
-                  <span className="text-emerald-700">تهانينا! مؤهل للشحن المجاني 🚚🎉</span>
+                  <span className="text-emerald-700">مبروك! حصلت على شحن مجاني لكافة المحافظات 🚚🎉</span>
                 ) : (
                   <span>
                     أضف <strong>{formatPrice(remainingForFreeShipping)}</strong> للحصول على شحن مجاني
@@ -261,7 +261,7 @@ export default function CartDrawer() {
                 )}
 
                 <div className="flex justify-between">
-                  <span>الشحن والتوصيل:</span>
+                  <span>الشحن والتوصيل (لكافة المحافظات):</span>
                   {shippingCost === 0 ? (
                     <span className="font-bold text-emerald-600">شحن مجاني 🎉</span>
                   ) : (
@@ -270,7 +270,7 @@ export default function CartDrawer() {
                 </div>
 
                 <div className="flex justify-between text-[11px] text-slate-400">
-                  <span>ضريبة القيمة المضافة 15% (مشمولة):</span>
+                  <span>ضريبة القيمة المضافة 14% (مشمولة):</span>
                   <span>{formatPrice(vatAmount)}</span>
                 </div>
 

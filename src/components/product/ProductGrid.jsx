@@ -88,7 +88,7 @@ export default function ProductGrid() {
   const resetFilters = () => {
     setSelectedCategory('all');
     setSelectedAgeGroup('all');
-    setPriceRange(500);
+    setPriceRange(2500);
     setSearchQuery('');
     setInStockOnly(false);
     setOnSaleOnly(false);
@@ -98,7 +98,7 @@ export default function ProductGrid() {
   const hasActiveFilters =
     selectedCategory !== 'all' ||
     selectedAgeGroup !== 'all' ||
-    priceRange < 500 ||
+    priceRange < 2500 ||
     inStockOnly ||
     onSaleOnly ||
     searchQuery !== '';
@@ -111,14 +111,14 @@ export default function ProductGrid() {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-2xl font-black text-slate-900">
-              تصفح كتالوج الألعاب 🎁
+              تصفح كتالوج الألعاب بالجنيه المصري 🇪🇬
             </h2>
             <span className="bg-toy-red/10 text-toy-red font-black text-xs px-2.5 py-1 rounded-full">
               {sortedProducts.length} لعبة
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            ألعاب ممتعة وتعليمية مختارة بأعلى معايير الجودة والسلامة
+            ألعاب ممتعة وتعليمية مختارة بأعلى معايير الجودة والسلامة • الأسعار بالجنيه المصري (ج.م)
           </p>
         </div>
 
@@ -232,11 +232,11 @@ export default function ProductGrid() {
             </div>
           </div>
 
-          {/* Price Range Slider */}
+          {/* Price Range Slider in EGP */}
           <div className="pt-4 border-t border-slate-100">
             <div className="flex items-center justify-between mb-2">
               <h4 className="font-bold text-xs text-slate-500 uppercase tracking-wider">
-                أقصى سعر
+                أقصى سعر (ج.م)
               </h4>
               <span className="font-black text-xs text-toy-red">
                 {formatPrice(priceRange)}
@@ -244,16 +244,16 @@ export default function ProductGrid() {
             </div>
             <input
               type="range"
-              min="50"
-              max="500"
-              step="10"
+              min="200"
+              max="2500"
+              step="50"
               value={priceRange}
               onChange={(e) => setPriceRange(Number(e.target.value))}
               className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-toy-red"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
-              <span>{formatPrice(50)}</span>
-              <span>{formatPrice(500)}</span>
+              <span>{formatPrice(200)}</span>
+              <span>{formatPrice(2500)}</span>
             </div>
           </div>
 
@@ -358,9 +358,9 @@ export default function ProductGrid() {
                 </div>
                 <input
                   type="range"
-                  min="50"
-                  max="500"
-                  step="10"
+                  min="200"
+                  max="2500"
+                  step="50"
                   value={priceRange}
                   onChange={(e) => setPriceRange(Number(e.target.value))}
                   className="w-full accent-toy-red"

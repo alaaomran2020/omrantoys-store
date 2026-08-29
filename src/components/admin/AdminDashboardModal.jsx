@@ -30,16 +30,16 @@ export default function AdminDashboardModal() {
     formatPrice
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'orders' | 'add'
+  const [activeTab, setActiveTab] = useState('products');
 
-  // New Product Form State
+  // New Product Form State in EGP
   const [newToy, setNewToy] = useState({
     name: '',
     nameEn: '',
     category: 'educational',
-    price: 120,
-    originalPrice: 150,
-    discountPercent: 20,
+    price: 650,
+    originalPrice: 800,
+    discountPercent: 18,
     stock: 20,
     ageGroup: '6-8',
     brand: 'عمران للألعاب',
@@ -72,7 +72,7 @@ export default function AdminDashboardModal() {
       stock: Number(newToy.stock),
       ageGroup: newToy.ageGroup,
       brand: newToy.brand,
-      description: newToy.description || 'لعبة ممتعة ومميزة من متجر عمران للألعاب',
+      description: newToy.description || 'لعبة ممتازة ومسلية من متجر عمران للألعاب',
       images: [newToy.imageUrl]
     });
 
@@ -81,9 +81,9 @@ export default function AdminDashboardModal() {
       name: '',
       nameEn: '',
       category: 'educational',
-      price: 120,
-      originalPrice: 150,
-      discountPercent: 20,
+      price: 650,
+      originalPrice: 800,
+      discountPercent: 18,
       stock: 20,
       ageGroup: '6-8',
       brand: 'عمران للألعاب',
@@ -110,8 +110,9 @@ export default function AdminDashboardModal() {
   };
 
   const handleResetCatalog = () => {
-    if (window.confirm('هل تود استعادة كتالوج الألعاب الافتراضي؟')) {
+    if (window.confirm('هل تود استعادة كتالوج الألعاب الافتراضي بالجنيه المصري؟')) {
       localStorage.removeItem('omran_toys_products');
+      localStorage.removeItem('omran_toys_version');
       window.location.reload();
     }
   };
@@ -130,7 +131,7 @@ export default function AdminDashboardModal() {
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-black">لوحة إدارة متجر عمران للألعاب</h2>
                 <span className="bg-white/20 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                  Admin Panel
+                  التعامل بالجنيه المصري 🇪🇬
                 </span>
               </div>
               <span className="text-xs text-slate-400">
@@ -161,7 +162,7 @@ export default function AdminDashboardModal() {
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:px-6 bg-slate-50 border-b border-slate-200">
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <span className="text-[11px] text-slate-400 font-bold block mb-1">إجمالي المبيعات</span>
+            <span className="text-[11px] text-slate-400 font-bold block mb-1">إجمالي المبيعات (ج.م)</span>
             <span className="text-lg sm:text-xl font-black text-slate-900">
               {formatPrice(totalSales)}
             </span>
@@ -184,7 +185,7 @@ export default function AdminDashboardModal() {
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
             <span className="text-[11px] text-slate-400 font-bold block mb-1">تنبيهات المخزون</span>
             <span className="text-lg sm:text-xl font-black text-amber-500 flex items-center gap-1">
-              {lowStockCount} منتجات
+              {lowStockCount} ألعاب
             </span>
           </div>
         </div>
@@ -238,7 +239,7 @@ export default function AdminDashboardModal() {
                     <tr>
                       <th className="p-3">اللعبة</th>
                       <th className="p-3">القسم</th>
-                      <th className="p-3">السعر</th>
+                      <th className="p-3">السعر (ج.م)</th>
                       <th className="p-3">المخزون</th>
                       <th className="p-3">العمر</th>
                       <th className="p-3 text-center">إجراءات</th>
@@ -273,7 +274,7 @@ export default function AdminDashboardModal() {
                                 type="number"
                                 value={editPrice}
                                 onChange={(e) => setEditPrice(e.target.value)}
-                                className="w-20 p-1 border rounded font-bold text-slate-900"
+                                className="w-24 p-1 border rounded font-bold text-slate-900"
                               />
                             ) : (
                               <span className="font-bold text-toy-red">{formatPrice(p.price)}</span>
@@ -347,9 +348,9 @@ export default function AdminDashboardModal() {
                       <tr>
                         <th className="p-3">رقم الطلب</th>
                         <th className="p-3">العميل</th>
-                        <th className="p-3">المدينة</th>
+                        <th className="p-3">المحافظة</th>
                         <th className="p-3">عدد الألعاب</th>
-                        <th className="p-3">المجموع</th>
+                        <th className="p-3">المجموع (ج.م)</th>
                         <th className="p-3">حالة الطلب</th>
                       </tr>
                     </thead>
@@ -370,7 +371,7 @@ export default function AdminDashboardModal() {
                           </td>
                           <td className="p-3 text-slate-600">{o.city}</td>
                           <td className="p-3 text-slate-700 font-semibold">
-                            {o.items?.length || 1} منتج
+                            {o.items?.length || 1} ألعاب
                           </td>
                           <td className="p-3 font-black text-toy-red">
                             {formatPrice(o.total)}
@@ -407,7 +408,7 @@ export default function AdminDashboardModal() {
             <form onSubmit={handleCreateProduct} className="max-w-2xl mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
               <h3 className="text-sm font-black text-slate-900 pb-2 border-b border-slate-200 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-toy-red" />
-                <span>إضافة منتج لعبة جديدة لمتجر عمران</span>
+                <span>إضافة لعبة جديدة بالجنيه المصري</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -446,7 +447,7 @@ export default function AdminDashboardModal() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    سعر البيع (ر.س) *
+                    سعر البيع (ج.م) *
                   </label>
                   <input
                     type="number"
@@ -460,7 +461,7 @@ export default function AdminDashboardModal() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    السعر قبل الخصم (ر.س)
+                    السعر قبل الخصم (ج.م)
                   </label>
                   <input
                     type="number"
@@ -548,7 +549,7 @@ export default function AdminDashboardModal() {
                 type="submit"
                 className="w-full bg-slate-900 hover:bg-toy-red text-white font-bold py-3 rounded-xl text-xs transition-colors cursor-pointer shadow-md"
               >
-                نشر اللعبة في المتجر فورا 🚀
+                نشر اللعبة في المتجر بالجنيه المصري 🚀
               </button>
             </form>
           )}
