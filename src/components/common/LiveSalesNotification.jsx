@@ -34,7 +34,7 @@ export default function LiveSalesNotification() {
   if (!isVisible || !currentSale) return null;
 
   return (
-    <div className="fixed bottom-5 left-5 z-40 max-w-xs sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-3 flex items-center gap-3 animate-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-20 md:bottom-5 left-3 right-3 sm:left-5 sm:right-auto z-40 max-w-none sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100 p-3 flex items-center gap-3 animate-in slide-in-from-bottom-5 duration-300">
       <img
         src={currentSale.img}
         alt="المنتج"

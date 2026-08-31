@@ -194,8 +194,6 @@ CREATE TABLE public.orders (
   status TEXT DEFAULT 'قيد الانتظار' CHECK (status IN ('قيد الانتظار', 'قيد التجهيز', 'تم الشحن', 'تم التوصيل', 'ملغي', 'مرتجع')),
   
   -- Extras
-  gift_message TEXT,
-  gift_wrap BOOLEAN DEFAULT false,
   notes TEXT,
   
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -225,7 +223,6 @@ CREATE TABLE public.order_items (
   unit_price NUMERIC NOT NULL,
   wholesale_price_applied NUMERIC,
   total_price NUMERIC NOT NULL,
-  gift_wrap BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -280,49 +277,7 @@ ALTER TABLE public.shipping_zones ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Shipping zones viewable by everyone" ON public.shipping_zones FOR SELECT USING (true);
 
 -- ============================================
--- 8. B2B BLOG / CMS (Wholesale Authenticity)
--- ============================================
-CREATE TABLE public.b2b_articles (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  slug TEXT UNIQUE NOT NULL,
-  title_ar TEXT NOT NULL,
-  title_en TEXT,
-  excerpt_ar TEXT NOT NULL,
-  content_ar TEXT NOT NULL, -- Must be factual, data-driven, no superlatives
-  content_en TEXT,
-  
-  -- B2B Specific
-  category TEXT CHECK (category IN ('pricing', 'logistics', 'inventory', 'market_data', 'guides', 'regulations')),
-  target_audience TEXT DEFAULT 'wholesale' CHECK (target_audience IN ('retail', 'wholesale', 'both')),
-  
-  -- Data & Authenticity
-  data_sources TEXT[], -- Sources for factual claims
-  last_data_update TIMESTAMPTZ,
-  author_name TEXT,
-  is_verified BOOLEAN DEFAULT false,
-  
-  -- SEO
-  meta_title TEXT,
-  meta_description TEXT,
-  keywords TEXT[],
-  featured_image TEXT,
-  
-  -- Metrics
-  views_count INT DEFAULT 0,
-  reading_time_minutes INT DEFAULT 5,
-  
-  -- Publishing
-  is_published BOOLEAN DEFAULT false,
-  published_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE public.b2b_articles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Published articles viewable by everyone" ON public.b2b_articles FOR SELECT USING (is_published = true OR auth.role() = 'authenticated');
-
--- ============================================
--- 9. COUPONS
+-- 8. COUPONS
 -- ============================================
 CREATE TABLE public.coupons (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -342,7 +297,7 @@ ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Coupons viewable by everyone" ON public.coupons FOR SELECT USING (is_active = true);
 
 -- ============================================
--- 10. WISHLISTS
+-- 9. WISHLISTS
 -- ============================================
 CREATE TABLE public.wishlists (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -356,7 +311,7 @@ ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own wishlist" ON public.wishlists FOR ALL USING (auth.uid() = user_id);
 
 -- ============================================
--- 11. REVIEWS
+-- 10. REVIEWS
 -- ============================================
 CREATE TABLE public.reviews (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -389,7 +344,6 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_b2b_articles_updated_at BEFORE UPDATE ON public.b2b_articles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Function: Calculate shipping dynamically
 CREATE OR REPLACE FUNCTION calculate_shipping_cost(
@@ -445,6 +399,26 @@ BEGIN
   RETURN prod.retail_price;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ============================================
+-- 11. CUSTOMER LEADS (تسجيل بيانات العملاء)
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.leads (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  full_name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  facebook TEXT,
+  source TEXT DEFAULT 'website-signup',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_phone ON public.leads(phone);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads(created_at DESC);
+
+ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can register a lead" ON public.leads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can read leads" ON public.leads FOR SELECT USING (true);
 
 -- ============================================
 -- SEED: Categories

@@ -78,7 +78,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال والهدايا. نوفر تشكيلة مختارة، تغليف هدايا مجاني، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
+              شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال ومستلزماتهم. نوفر تشكيلة مختارة، أسعارًا واضحة بالجنيه، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
             </p>
             <div className="flex items-center gap-2 pt-2 text-xs text-slate-400">
               <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5">

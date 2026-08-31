@@ -3,9 +3,35 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply font-cairo text-slate-800 bg-[#FAF9F6];
+    overflow-x: hidden;
   }
+
+  /* إزالة الوميض الأزرق عند اللمس على الموبايل */
+  button, a, label, select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* منع التكبير التلقائي عند التركيز على الحقول في iOS */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px;
+    }
+  }
+}
+
+/* أمان منطقة الشريط السفلي (iPhone) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Custom scrollbar */

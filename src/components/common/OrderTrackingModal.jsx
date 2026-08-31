@@ -7,7 +7,6 @@ import {
   Clock, 
   Truck, 
   MapPin, 
-  Gift, 
   PhoneCall, 
   AlertCircle 
 } from 'lucide-react';
@@ -49,9 +48,9 @@ export default function OrderTrackingModal() {
 
   const steps = [
     { title: 'تم استلام الطلب', desc: 'تم تأكيد طلبك بنجاح', icon: Clock },
-    { title: 'التجهيز وتغليف الهدايا', desc: 'فحص الجودة والتغليف الأنيق', icon: Gift },
+    { title: 'التجهيز وفحص الجودة', desc: 'مراجعة الطلب وتغليفه بشكل آمن', icon: Package },
     { title: 'تم التسليم لشركة الشحن', desc: 'الشحنة بحوزة المندوب السريع', icon: Truck },
-    { title: 'تم التوصيل بنجاح', desc: 'وصلت الهدية وبدأت الفرحة!', icon: CheckCircle2 }
+    { title: 'تم التوصيل بنجاح', desc: 'وصل طلبك وبدأت الفرحة!', icon: CheckCircle2 }
   ];
 
   // Helper to determine active step index based on order status
@@ -66,8 +65,8 @@ export default function OrderTrackingModal() {
   const activeIndex = searchedOrder ? getActiveStepIndex(searchedOrder.status) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
+      <div className="relative bg-white w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[94vh] sm:max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="p-4 sm:px-6 border-b border-slate-100 bg-blue-50/70 flex items-center justify-between">

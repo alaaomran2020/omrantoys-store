@@ -1,17 +1,18 @@
-# 🧸 متجر عمران للألعاب | Omran Toys Store - B2B & B2C Platform
+# 🧸 متجر عمران للألعاب | Omran Toys Store
 
-> منصة تجارة إلكترونية متكاملة لألعاب الأطفال، مستلزمات الحفلات، وبالونات الجملة والقطاعي - مبنية بـ React 19 + Supabase + Tailwind CSS
+> متجر تجارة إلكترونية لألعاب الأطفال ومستلزمات الحفلات - مبني بـ React 19 + Supabase + Tailwind CSS
 
-**جميع المعاملات بالجنيه المصري (ج.م - EGP)** مع دعم تجار الجملة، حساب شحن ديناميكي، وبوابات دفع مصرية.
+**جميع المعاملات بالجنيه المصري (ج.م - EGP)** مع حساب شحن ديناميكي، وبوابات دفع مصرية.
 
 ---
 
-## 🌟 نظرة عامة - B2B & B2C
+## 🌟 نظرة عامة
 
-المتجر تحول من كتالوج عرض إلى **منصة تجارة إلكترونية متكاملة**:
+متجر بيع قطاعي مباشر للعملاء داخل مصر:
 
-- **B2C (قطاعي)**: عملاء أفراد - أسعار قطاعي، شحن مجاني فوق 1000 ج.م
-- **B2B (جملة)**: تجار وأصحاب محلات - أسعار جملة تلقائية حتى 25% خصم، شحن مجاني فوق 800 ج.م، لوحة تحكم تاجر
+- أسعار موحدة بالجنيه المصري لكل العملاء - شحن مجاني فوق 1,000 ج.م
+- **نموذج تسجيل سريع** للزائر (الاسم + رقم الموبايل + حساب الفيسبوك) مقابل كود خصم ترحيبي `OMRAN10`
+- لا يوجد تسجيل دخول ولا حسابات تجار - الطلب يتأكد عبر واتساب
 
 ---
 
@@ -55,23 +56,21 @@ omrantoys-store/
 │   │   ├── shippingCalculator.js # دالة حساب الشحن الديناميكي
 │   │   └── paymentGateways.js  # Paymob, Fawry integration
 │   ├── context/
-│   │   ├── StoreContext.jsx    # حالة المتجر + B2B pricing + Bulk
-│   │   └── AuthContext.jsx     # مصادقة تجار الجملة + Retail
+│   │   ├── StoreContext.jsx    # حالة المتجر + السلة + الشحن + Bulk
+│   │   └── AuthContext.jsx     # بيانات العميل المسجل (LocalStorage + leads)
 │   ├── components/
-│   │   ├── auth/
-│   │   │   └── AuthModal.jsx   # تسجيل دخول/حساب تاجر جملة
-│   │   ├── b2b/
-│   │   │   └── MerchantDashboard.jsx # لوحة تحكم التاجر
+│   │   ├── common/
+│   │   │   └── CustomerSignupModal.jsx # نموذج تسجيل العميل (اسم/موبايل/فيسبوك)
+│   │   ├── layout/
+│   │   │   └── MobileBottomNav.jsx # شريط تنقل سفلي للموبايل
 │   │   ├── product/
-│   │   │   ├── ProductCard.jsx # يدعم أسعار الجملة + نفد المخزون
+│   │   │   ├── ProductCard.jsx # بطاقة المنتج + نفد المخزون
 │   │   │   ├── ProductGrid.jsx # مع Advanced Filters
 │   │   │   ├── AdvancedFilters.jsx # Faceted Search
 │   │   │   └── StockNotification.jsx # أعلمني عند التوفر
 │   │   ├── admin/
 │   │   │   ├── AdminDashboardModal.jsx
 │   │   │   └── BulkImport.jsx  # استيراد مئات المنتجات JSON
-│   │   ├── blog/
-│   │   │   └── B2BBlogSection.jsx # مقالات تجار - بدون مبالغة
 │   │   ├── cart/
 │   │   │   └── CartDrawer.jsx  # مع حساب شحن ديناميكي
 │   │   └── checkout/
@@ -79,8 +78,7 @@ omrantoys-store/
 │   ├── data/
 │   │   ├── products.js
 │   │   ├── categories.js
-│   │   ├── coupons.js
-│   │   └── b2bBlog.js          # محتوى B2B واقعي بدون superlatives
+│   │   └── coupons.js
 │   └── App.jsx
 ├── docs/
 │   └── database-schema.md      # توثيق مفصل للـ Schema
@@ -135,13 +133,11 @@ omrantoys-store/
 - Seed: 27 محافظة مصرية
 ```
 
-#### 6. `b2b_articles` - مدونة التجار (CMS)
+#### 6. `leads` - بيانات العملاء المسجلين
 ```sql
-- slug, title_ar, excerpt_ar, content_ar (factual only)
-- category: pricing/logistics/inventory/guides/regulations
-- data_sources TEXT[], is_verified
-- reading_time_minutes, views_count
-- Rule: No Superlatives, data-driven only
+- full_name, phone (بصيغة دولية), facebook
+- source: website-signup
+- created_at
 ```
 
 #### 7. `coupons`, `wishlists`, `reviews`, `categories`
@@ -162,41 +158,17 @@ omrantoys-store/
 
 ---
 
-## 🔐 نظام حسابات التجار (B2B Portal)
+## 📝 نموذج تسجيل العميل (Leads)
 
-### تدفق المصادقة (Auth Flow)
+### التدفق
+1. عند أول زيارة للموقع يظهر نموذج تسجيل بعد ثانيتين (مرة واحدة فقط).
+2. الحقول المطلوبة: **الاسم بالكامل** + **رقم الموبايل** (تحقق من رقم مصري 01XXXXXXXXX) + **حساب الفيسبوك**.
+3. بعد التسجيل يُفعّل كود الخصم الترحيبي `OMRAN10` (10%) تلقائياً على السلة.
+4. تُحفظ البيانات في `localStorage` تحت `omran_customer` وتُستخدم لتعبئة بيانات إتمام الطلب تلقائياً.
+5. لو Supabase مُعدّ، تُحفظ أيضاً في جدول `leads` (انظر `docs/database-schema.md` - القسم 12).
 
-**Supabase Auth** مع نوعين:
+> لا يوجد تسجيل دخول بكلمات مرور ولا حسابات تجار جملة - كل الأسعار قطاعية موحدة.
 
-1. **عميل قطاعي (Retail)**:
-   - تسجيل بـ email + phone + governorate
-   - أسعار قطاعي، شحن مجاني فوق 1000 ج.م
-
-2. **تاجر جملة (Wholesale)**:
-   - نفس الحقول + business_name
-   - `is_verified_merchant = false` مبدئياً، يفعل خلال 24 ساعة
-   - 3 مستويات:
-     - **Tier1 (مبتدئ)**: 5 قطع حد أدنى، 10-15% خصم
-     - **Tier2 (معتمد)**: 10 قطع، 15-20% خصم، شحن مجاني فوق 700 ج.م
-     - **Tier3 (موزع رئيسي)**: 25 قطعة، 20-25% خصم، شحن مجاني فوق 500 ج.م
-
-### Mock Mode (بدون Supabase)
-
-لو لم تضبط `VITE_SUPABASE_URL`، النظام يعمل في وضع Mock:
-
-- تسجيل دخول بأي email:
-  - `retail@test.com` → حساب قطاعي
-  - `wholesale@test.com` → حساب تاجر جملة (20% خصم)
-
-### لوحة تحكم التاجر (Merchant Dashboard)
-
-تظهر عند `isMerchant = true`:
-
-- **أسعار الجملة تلقائياً** بدل القطاعي
-- **سجل الطلبات السابقة** (Order History) مع فلترة
-- **زر إعادة الطلب السريع (1-Click Reorder)** - يضيف كل منتجات طلب سابق للسلة مرة واحدة
-- **هيكل التسعير** وفرق التوفير
-- **بيانات النشاط التجاري** + طريقة الترقية
 
 ---
 
@@ -301,7 +273,7 @@ PAYMENT_METHODS = {
 - **الفئة**: مع count لكل فئة (educational: 6, balloons: ...)
 - **الفئة العمرية**: 0-2, 3-5, 6-8, 9-12, 12+
 - **نوع اللعبة**: تعليمية، تحكم عن بعد، دمى، بالونات، حفلات، خارجية...
-- **السعر**: min/max + slider، يعرض "أسعار الجملة" لو تاجر
+- **السعر**: min/max + slider بالجنيه المصري
 - **حالة التوفر**: متوفر فقط، كمية محدودة (≤5)، نفد، عروض فقط
 - **التقييم**: 4★ فأكثر، 3★...
 - **العلامة التجارية**: مع count
@@ -313,36 +285,6 @@ PAYMENT_METHODS = {
 - Mobile: Drawer من اليمين مع زر "عرض النتائج (X)"
 
 **الهوية البصرية**: نفس ألوان عمران (Navy #10152F, Coral #F04463, Golden #F6C945, Turquoise #16A6B6) - وضوح، سرعة، عملية.
-
----
-
-## 📝 هيكلة قسم المدونة (B2B Content/SEO)
-
-### CMS Schema
-
-جدول `b2b_articles` مع:
-
-- `category`: pricing, logistics, inventory, guides, regulations
-- `data_sources`: مصدر كل رقم (مثلاً: "مسح عمران 2024")
-- `is_verified`: موثق ببيانات
-- `reading_time_minutes`
-
-### قاعدة صارمة: No Superlatives
-
-**كل المقالات واقعية 100%، تركز على البيانات، بدون مبالغة**:
-
-- ❌ ممنوع: "أفضل منتج في العالم، جودة لا مثيل لها"
-- ✅ مسموح: "متوسط هامش الربح 22-28% بناءً على مسح 150 تاجر"
-
-**5 مقالات جاهزة** في `src/data/b2bBlog.js`:
-
-1. **هيكل تسعير الجملة 2024**: هوامش ربح حسب الفئة (22-28% تعليمية، 35-50% بالونات)
-2. **تكلفة ومدة الشحن**: جدول 27 محافظة من واقع 2340 شحنة
-3. **معدل دوران المخزون**: أي الفئات تبيع أسرع (بالونات 18 يوم، رضع 74 يوم)
-4. **سوق البالونات جملة**: أنواع، تسعير، تكلفة هيليوم
-5. **طرق الدفع لتجار الجملة**: مقارنة تحويل/آجل/إلكتروني مع نسب مخاطر
-
-Component `B2BBlogSection` يعرض Grid + صفحة مقال كاملة مع التزام مصداقية.
 
 ---
 
@@ -423,19 +365,12 @@ VALUES ('OMR-BAL-001', 'بالون هيليوم 50 قطعة', 350, 250, 100, 'ba
 
 ---
 
-## 🧪 اختبار حسابات التجار
+## 🧪 اختبار نموذج تسجيل العميل
 
-### بدون Supabase (Mock Mode)
-
-- افتح "دخول / حساب" → جرب:
-  - **Retail**: أي email لا يحتوي wholesale → حساب قطاعي
-  - **Wholesale**: email يحتوي `wholesale` أو `merchant` → حساب تاجر معتمد 20% خصم
-  - مثال: `wholesale@test.com` + أي password
-
-### مع Supabase
-
-- سجل حساب جديد → اختر "تاجر جملة" → أدخل اسم المحل
-- في Supabase Dashboard → `profiles` → غيّر `is_verified_merchant = true` و `discount_rate = 20`
+- افتح الموقع (أو امسح `localStorage`) → هيظهر نموذج التسجيل بعد ثانيتين.
+- جرّب رقم غير مصري (مثل `12345`) → هيظهر رسالة تحقق.
+- بعد التسجيل: كود `OMRAN10` يتفعل تلقائياً في السلة، وبياناتك تتعبأ تلقائياً في شاشة إتمام الطلب.
+- لإعادة التجربة: نفّذ في الكونسول `localStorage.removeItem('omran_customer'); localStorage.removeItem('omran_signup_seen')` ثم حدّث الصفحة.
 
 ---
 
@@ -467,6 +402,6 @@ VALUES ('OMR-BAL-001', 'بالون هيليوم 50 قطعة', 350, 250, 100, 'ba
 
 ---
 
-**تم التطوير بواسطة Senior Full-Stack Developer - B2B & B2C E-commerce Architecture**
+**تم التطوير بواسطة Senior Full-Stack Developer - E-commerce Architecture**
 
-> **مبدأ**: بيانات واقعية، بدون مبالغة، تجربة تاجر أولاً (Wholesale Authenticity)
+> **مبدأ**: بيانات واقعية، بدون مبالغة، تجربة عميل بسيطة وسريعة

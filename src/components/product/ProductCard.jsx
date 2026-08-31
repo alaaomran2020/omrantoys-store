@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingCart, Eye, Star, Bell, PackageX, Tag, TrendingDown } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, Star, Bell, PackageX } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import StockNotification from './StockNotification';
@@ -18,11 +18,10 @@ export default function ProductCard({ product }) {
   const isFavorite = isInWishlist(product.id);
   const [showNotify, setShowNotify] = useState(false);
 
-  const effectivePrice = getEffectivePrice(product, auth) || auth.getPriceForUser(product);
+  const effectivePrice = getEffectivePrice(product);
   const originalPrice = product.originalPrice || product.retail_price || product.price;
   const isOutOfStock = (product.stock || 0) <= 0;
   const isLowStock = (product.stock || 0) > 0 && (product.stock || 0) <= 5;
-  const isWholesalePrice = auth.isMerchant && effectivePrice < (product.price || product.retail_price);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100/90 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
@@ -52,12 +51,6 @@ export default function ProductCard({ product }) {
           {product.discountPercent > 0 && !isOutOfStock && (
             <span className="bg-toy-red text-white text-[11px] font-black px-2 py-0.5 rounded-lg shadow-sm">
               خصم {product.discountPercent}%
-            </span>
-          )}
-          {isWholesalePrice && (
-            <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1">
-              <Tag className="w-3 h-3" />
-              سعر جملة
             </span>
           )}
           {product.isBestSeller && !isOutOfStock && (
@@ -109,7 +102,7 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Product Information */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
         <div>
           {/* Brand & Rating */}
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
@@ -134,28 +127,17 @@ export default function ProductCard({ product }) {
           </h3>
 
           {/* Wholesale tier info */}
-          {auth.isMerchant && (
-            <div className="text-[11px] bg-emerald-50 border border-emerald-200 text-emerald-800 px-2 py-1 rounded-lg mb-2 flex items-center justify-between">
-              <span className="flex items-center gap-1"><TrendingDown className="w-3 h-3" /> جملة: {formatPrice(effectivePrice)}</span>
-              <span className="text-[10px] opacity-70">قطاعي {formatPrice(product.price || product.retail_price)}</span>
-            </div>
-          )}
         </div>
 
         {/* Price & Add to Cart */}
         <div className="pt-3 border-t border-slate-100 mt-2">
           <div className="flex items-baseline gap-2 mb-2.5">
-            <span className={`text-lg font-black ${isWholesalePrice ? 'text-emerald-600' : 'text-slate-900'}`}>
+            <span className="text-lg sm:text-xl font-black text-slate-900">
               {formatPrice(effectivePrice)}
             </span>
             {originalPrice && originalPrice > effectivePrice && (
               <span className="text-xs text-slate-400 line-through">
                 {formatPrice(originalPrice)}
-              </span>
-            )}
-            {isWholesalePrice && (
-              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">
-                وفر {formatPrice((product.price || originalPrice) - effectivePrice)}
               </span>
             )}
           </div>
@@ -165,7 +147,7 @@ export default function ProductCard({ product }) {
               {!showNotify ? (
                 <button
                   onClick={() => setShowNotify(true)}
-                  className="w-full bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-200 font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-200 font-bold py-3 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Bell className="w-4 h-4" />
                   <span>أعلمني عند التوفر</span>
@@ -177,10 +159,10 @@ export default function ProductCard({ product }) {
           ) : (
             <button
               onClick={() => addToCart(product)}
-              className="w-full bg-slate-100 hover:bg-toy-red text-slate-800 hover:text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer group/btn active:scale-95 shadow-sm"
+              className="w-full bg-slate-100 hover:bg-toy-red text-slate-800 hover:text-white font-bold py-3 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer group/btn active:scale-95 shadow-sm"
             >
               <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-              <span>{auth.isMerchant ? 'إضافة للطلب (جملة)' : 'إضافة إلى السلة'}</span>
+              <span>أضف للسلة</span>
             </button>
           )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Gift, ArrowLeft, ShieldCheck, Truck, Star, Zap } from 'lucide-react';
+import { Sparkles, Gift, ArrowLeft, ShieldCheck, Truck, Star, Zap, Coins } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function HeroBanner() {
@@ -31,7 +31,7 @@ export default function HeroBanner() {
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              اكتشف تشكيلة واسعة من أحدث الألعاب التفاعلية، أطقم ليغو وبناء، روبوتات ذكية، ومستلزمات الأطفال بأفضل الأسعار بالجنيه المصري مع شحن سريع وتغليف هدايا مجاني.
+              اكتشف تشكيلة واسعة من أحدث الألعاب التفاعلية، أطقم ليغو وبناء، روبوتات ذكية، ومستلزمات الأطفال بأفضل الأسعار بالجنيه المصري مع شحن سريع لكل المحافظات وضمان الجودة.
             </p>
 
             {/* Action CTAs */}
@@ -61,9 +61,9 @@ export default function HeroBanner() {
                 <span className="text-[11px] text-slate-400">خلال 24-48 ساعة</span>
               </div>
               <div className="flex flex-col items-center gap-1">
-                <Gift className="w-5 h-5 text-toy-yellow" />
-                <span className="text-xs font-bold text-slate-200">تغليف هدايا مجاني</span>
-                <span className="text-[11px] text-slate-400">مع كرت إهداء خاص</span>
+                <Coins className="w-5 h-5 text-toy-yellow" />
+                <span className="text-xs font-bold text-slate-200">أسعار واضحة بالجنيه</span>
+                <span className="text-[11px] text-slate-400">شاملة ضريبة القيمة المضافة</span>
               </div>
               <div className="flex flex-col items-center gap-1">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -124,8 +124,8 @@ export default function HeroBanner() {
               </div>
 
               <div className="absolute -bottom-4 -left-3 bg-white text-slate-900 font-bold text-xs px-3.5 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2">
-                <span className="text-lg">🎁</span>
-                <span>تغليف هدية مجاني جاهز</span>
+                <span className="text-lg">🚚</span>
+                <span>شحن مجاني فوق 1000 ج.م</span>
               </div>
             </div>
 

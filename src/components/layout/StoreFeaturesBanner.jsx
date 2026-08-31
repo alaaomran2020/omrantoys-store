@@ -1,12 +1,12 @@
 import React from 'react';
-import { Gift, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { CreditCard, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 
 export default function StoreFeaturesBanner() {
   const features = [
     {
-      icon: Gift,
-      title: 'تغليف هدايا مجاني فاخر',
-      desc: 'نغلف هديتك مع كرت إهداء شخصي باسم طفلك مجاناً بالكامل لكل طلب',
+      icon: CreditCard,
+      title: 'دفع آمن ووسائل متعددة',
+      desc: 'إنستاباي ومحافظ موبايل وبطاقات بنكية أو الدفع عند الاستلام نقداً للمندوب',
       color: 'bg-rose-50 text-toy-red border-rose-100',
       iconBg: 'bg-rose-500 text-white'
     },

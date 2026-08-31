@@ -79,7 +79,7 @@ export default function GiftFinderModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
       <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
         
         {/* Header */}
@@ -309,7 +309,7 @@ export default function GiftFinderModal() {
                       </div>
 
                       <button
-                        onClick={() => addToCart(toy, 1, { giftWrap: true })}
+                        onClick={() => addToCart(toy, 1)}
                         className="bg-toy-red hover:bg-rose-600 text-white p-2.5 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0 transition-transform active:scale-95 shadow-sm"
                         title="إضافة كهدية مع تغليف"
                       >

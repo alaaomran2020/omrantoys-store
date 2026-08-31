@@ -5,7 +5,6 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
 import ProductCard from './ProductCard';
 import AdvancedFilters from './AdvancedFilters';
 
@@ -21,12 +20,10 @@ export default function ProductGrid() {
     getEffectivePrice
   } = useStore();
 
-  const auth = useAuth();
-
   // Apply sorting to filtered products
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts];
-    const getPrice = (p) => getEffectivePrice(p, auth);
+    const getPrice = (p) => getEffectivePrice(p);
     
     switch (sortBy) {
       case 'price-low':
@@ -51,7 +48,7 @@ export default function ProductGrid() {
           return 0;
         });
     }
-  }, [filteredProducts, sortBy, auth]);
+  }, [filteredProducts, sortBy]);
 
   const resetFilters = () => {
     setAdvancedFilters({
@@ -78,23 +75,13 @@ export default function ProductGrid() {
             <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-amber-500" />
               كتالوج الألعاب
-              {auth.isMerchant && (
-                <span className="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-black">أسعار جملة</span>
-              )}
             </h2>
             <span className="bg-toy-red/10 text-toy-red font-black text-xs px-2.5 py-1 rounded-full">
               {sortedProducts.length} من {products.length} لعبة
             </span>
-            {auth.isMerchant && (
-              <span className="bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs px-2.5 py-1 rounded-full">
-                خصم {auth.discountRate}% للجملة
-              </span>
-            )}
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            {auth.isMerchant 
-              ? `مرحباً ${auth.profile?.business_name || 'تاجرنا'} - الأسعار الظاهرة هي أسعار الجملة الخاصة بك • شحن مجاني فوق 800 ج.م`
-              : 'ألعاب ممتعة وتعليمية مختارة بأعلى معايير الجودة والسلامة • الأسعار بالجنيه المصري (ج.م)'}
+            'ألعاب ممتعة وتعليمية مختارة بأعلى معايير الجودة والسلامة • الأسعار بالجنيه المصري (ج.م)'
           </p>
         </div>
 
@@ -129,7 +116,6 @@ export default function ProductGrid() {
             setFilters={setAdvancedFilters}
             onReset={resetFilters}
             resultsCount={sortedProducts.length}
-            isMerchant={auth.isMerchant}
           />
         </aside>
 
@@ -143,30 +129,17 @@ export default function ProductGrid() {
               setFilters={setAdvancedFilters}
               onReset={resetFilters}
               resultsCount={sortedProducts.length}
-              isMerchant={auth.isMerchant}
             />
           </div>
 
           {sortedProducts.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
                 {sortedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
 
-              {/* Bulk info for wholesale */}
-              {auth.isMerchant && sortedProducts.length > 0 && (
-                <div className="mt-8 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5">
-                  <h4 className="font-black text-sm text-emerald-900">💼 نصائح للطلب الجملة</h4>
-                  <ul className="mt-3 space-y-2 text-xs text-emerald-800">
-                    <li>• اطلب 10 قطع فأكثر للحصول على خصم إضافي تلقائي</li>
-                    <li>• الشحن مجاني للطلبات فوق 800 ج.م (بدلاً من 1000)</li>
-                    <li>• استخدم زر إعادة الطلب السريع في لوحة تحكم التاجر للمنتجات التي نفدت</li>
-                    <li>• تواصل عبر واتساب 01555570269 للطلبات الكبيرة فوق 10,000 ج.م</li>
-                  </ul>
-                </div>
-              )}
             </>
           ) : (
             <div className="bg-white rounded-3xl border border-dashed border-slate-200 p-12 text-center my-8">

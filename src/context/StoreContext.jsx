@@ -128,8 +128,7 @@ export const StoreProvider = ({ children }) => {
   const [isGiftFinderOpen, setIsGiftFinderOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isMerchantDashboardOpen, setIsMerchantDashboardOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [selectedProductModal, setSelectedProductModal] = useState(null);
   const [lastPlacedOrder, setLastPlacedOrder] = useState(null);
 
@@ -170,23 +169,14 @@ export const StoreProvider = ({ children }) => {
     return `${num.toLocaleString('en-US')} ج.م`;
   };
 
-  // Get effective price considering wholesale
-  const getEffectivePrice = (product, auth = null) => {
+  // سعر موحد لكل العملاء
+  const getEffectivePrice = (product) => {
     if (!product) return 0;
-    if (auth?.isMerchant && auth?.isVerifiedMerchant) {
-      const tier = auth?.wholesaleTier || 'tier1';
-      if (tier === 'tier3' && product.wholesale_price_tier3) return product.wholesale_price_tier3;
-      if (tier === 'tier2' && product.wholesale_price_tier2) return product.wholesale_price_tier2;
-      if (product.wholesale_price) return product.wholesale_price;
-      if (auth?.discountRate) {
-        return Math.round((product.price || product.retail_price) * (1 - auth.discountRate / 100));
-      }
-    }
     return product.price || product.retail_price || 0;
   };
 
   // Cart actions with stock check
-  const addToCart = (product, quantity = 1, options = {}) => {
+  const addToCart = (product, quantity = 1) => {
     const requestedQuantity = Math.max(1, Number(quantity) || 1);
     const stockLimit = Number(product.stock) > 0 ? Number(product.stock) : 0;
     
@@ -205,12 +195,11 @@ export const StoreProvider = ({ children }) => {
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: currentQuantity + addedQuantity,
-          giftWrap: options.giftWrap ?? updated[existingIndex].giftWrap
+          quantity: currentQuantity + addedQuantity
         };
         return updated;
       }
-      return [...prev, { product, quantity: addedQuantity, giftWrap: options.giftWrap || false }];
+      return [...prev, { product, quantity: addedQuantity }];
     });
 
     if (addedQuantity < requestedQuantity) {
@@ -232,10 +221,6 @@ export const StoreProvider = ({ children }) => {
       const stockLimit = Number(item.product.stock) > 0 ? Number(item.product.stock) : Number(item.product.stock_quantity) || Infinity;
       return { ...item, quantity: Math.min(Number(newQuantity), stockLimit) };
     }));
-  };
-
-  const toggleGiftWrap = (productId) => {
-    setCart(prev => prev.map(item => item.product.id === productId ? { ...item, giftWrap: !item.giftWrap } : item));
   };
 
   const clearCart = () => setCart([]);
@@ -280,7 +265,7 @@ export const StoreProvider = ({ children }) => {
   const cartSubtotal = cartSubtotalRetail;
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const freeShippingThreshold = userTypeForShipping === 'wholesale' ? 800 : 1000;
+  const freeShippingThreshold = 1000;
   const isFreeShipping = shippingCalculation.isFree || cartSubtotal >= freeShippingThreshold || (appliedCoupon && appliedCoupon.code === 'FREESHIP') || cartSubtotal === 0;
   const shippingCost = cartSubtotal === 0 ? 0 : isFreeShipping ? 0 : shippingCalculation.cost;
 
@@ -319,7 +304,6 @@ export const StoreProvider = ({ children }) => {
         price: item.product.price || item.product.retail_price,
         wholesale_price: item.product.wholesale_price,
         quantity: item.quantity,
-        giftWrap: item.giftWrap,
         image: item.product.images[0],
         sku: item.product.sku,
       })),
@@ -532,8 +516,7 @@ export const StoreProvider = ({ children }) => {
         isGiftFinderOpen,
         isAdminOpen,
         isTrackingOpen,
-        isAuthModalOpen,
-        isMerchantDashboardOpen,
+        isSignupOpen,
         selectedProductModal,
         lastPlacedOrder,
         toast,
@@ -551,8 +534,7 @@ export const StoreProvider = ({ children }) => {
         setIsGiftFinderOpen,
         setIsAdminOpen,
         setIsTrackingOpen,
-        setIsAuthModalOpen,
-        setIsMerchantDashboardOpen,
+        setIsSignupOpen,
         setSelectedProductModal,
         setLastPlacedOrder,
         // Handlers
@@ -561,7 +543,6 @@ export const StoreProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
-        toggleGiftWrap,
         clearCart,
         toggleWishlist,
         isInWishlist,

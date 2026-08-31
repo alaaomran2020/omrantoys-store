@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Gift, Tag, Truck, Package, MapPin } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Truck, Package, MapPin } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
 import { getAllGovernorates } from '../../lib/shippingCalculator';
 
 export default function CartDrawer() {
   const {
-    isCartOpen, setIsCartOpen, cart, totalItemsCount, removeFromCart, updateQuantity, toggleGiftWrap,
+    isCartOpen, setIsCartOpen, cart, totalItemsCount, removeFromCart, updateQuantity,
     cartSubtotal, freeShippingThreshold, isFreeShipping, shippingCost, discountAmount, vatAmount, cartTotal,
     appliedCoupon, applyCouponCode, removeCoupon, clearCart, setIsCheckoutOpen, formatPrice,
-    shippingCalculation, selectedGovernorate, setSelectedGovernorate, setUserTypeForShipping
+    shippingCalculation, selectedGovernorate, setSelectedGovernorate
   } = useStore();
 
-  const auth = useAuth();
   const [couponInput, setCouponInput] = useState('');
 
   if (!isCartOpen) return null;
@@ -28,7 +26,6 @@ export default function CartDrawer() {
   };
 
   const handleProceed = () => {
-    setUserTypeForShipping(auth.isMerchant ? 'wholesale' : 'retail');
     setIsCartOpen(false);
     setIsCheckoutOpen(true);
   };
@@ -36,7 +33,7 @@ export default function CartDrawer() {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div onClick={() => setIsCartOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300">
           
           <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
@@ -44,8 +41,7 @@ export default function CartDrawer() {
               <div className="p-2 bg-toy-red/10 text-toy-red rounded-xl"><ShoppingBag className="w-5 h-5" /></div>
               <div>
                 <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
-                  {auth.isMerchant ? 'طلب الجملة' : 'سلة التسوق'}
-                  {auth.isMerchant && <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full">جملة {auth.discountRate}%</span>}
+                  سلة التسوق
                 </h2>
                 <span className="text-xs text-slate-400">{totalItemsCount} قطعة • {formatPrice(cartSubtotal)}</span>
               </div>
@@ -98,14 +94,9 @@ export default function CartDrawer() {
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs font-black text-toy-red">{formatPrice(item.product.price)}</span>
-                      {auth.isMerchant && item.product.wholesale_price && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">جملة {formatPrice(item.product.wholesale_price)}</span>}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between gap-2 mt-2">
-                    <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-slate-600 select-none">
-                      <input type="checkbox" checked={item.giftWrap || false} onChange={() => toggleGiftWrap(item.product.id)} className="w-3.5 h-3.5 rounded text-toy-red focus:ring-toy-red" />
-                      <Gift className="w-3 h-3 text-toy-red" /><span>تغليف 🎁</span>
-                    </label>
+                  <div className="flex items-center justify-end gap-2 mt-2">
                     <div className="flex items-center border border-slate-200 rounded-xl bg-slate-50 p-0.5">
                       <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-6 h-6 flex items-center justify-center text-slate-500 hover:bg-white rounded-lg cursor-pointer"><Minus className="w-3 h-3" /></button>
                       <span className="w-7 text-center font-bold text-xs text-slate-800">{item.quantity}</span>
@@ -125,7 +116,7 @@ export default function CartDrawer() {
           </div>
 
           {cart.length > 0 && (
-            <div className="p-4 sm:p-5 border-t border-slate-100 bg-white space-y-3.5 shadow-2xl">
+            <div className="p-4 sm:p-5 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-slate-100 bg-white space-y-3.5 shadow-2xl">
               {appliedCoupon ? (
                 <div className="p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-between text-xs text-emerald-800"><div className="flex items-center gap-2 font-bold"><Tag className="w-4 h-4 text-emerald-600" /><span>كوبون: {appliedCoupon.code}</span></div><button onClick={removeCoupon} className="text-xs text-rose-600 hover:underline font-bold cursor-pointer">إلغاء</button></div>
               ) : (
@@ -140,7 +131,7 @@ export default function CartDrawer() {
                 <div className="pt-2 border-t border-slate-100 flex justify-between items-baseline"><span className="font-black text-sm text-slate-900">الإجمالي:</span><span className="text-xl font-black text-toy-red">{formatPrice(cartTotal)}</span></div>
               </div>
 
-              <button onClick={handleProceed} className="w-full bg-toy-red hover:bg-rose-600 text-white font-black py-3.5 px-4 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-toy-red/25 cursor-pointer hover:scale-[1.02]"><span>{auth.isMerchant ? 'متابعة طلب الجملة' : 'متابعة لإتمام الطلب'}</span><ArrowLeft className="w-4 h-4" /></button>
+              <button onClick={handleProceed} className="w-full bg-toy-red hover:bg-rose-600 text-white font-black py-3.5 px-4 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-toy-red/25 cursor-pointer hover:scale-[1.02]"><span>متابعة لإتمام الطلب</span><ArrowLeft className="w-4 h-4" /></button>
             </div>
           )}
         </div>

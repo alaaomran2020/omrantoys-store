@@ -86,7 +86,7 @@ export default function FlashDeals() {
         </div>
 
         {/* 3 Flash Deal Products */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+        <div className="mt-6 flex md:grid md:grid-cols-3 gap-4 md:gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-1 px-1">
           {dealProducts.map((product) => {
             const soldCount = Math.floor(product.stock * 1.8);
             const totalStock = product.stock + soldCount;
@@ -95,7 +95,7 @@ export default function FlashDeals() {
             return (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl p-4 text-slate-800 flex flex-col justify-between shadow-lg hover:shadow-2xl transition-all group"
+                className="bg-white rounded-2xl p-4 text-slate-800 flex flex-col justify-between shadow-lg hover:shadow-2xl transition-all group min-w-[78%] sm:min-w-[60%] md:min-w-0 snap-center shrink-0"
               >
                 <div>
                   {/* Thumbnail & Badges */}
