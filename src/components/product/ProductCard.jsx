@@ -24,10 +24,10 @@ export default function ProductCard({ product }) {
   const isLowStock = (product.stock || 0) > 0 && (product.stock || 0) <= 5;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100/90 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
+    <div className="bg-white rounded-blob border border-slate-100/90 shadow-soft hover:shadow-soft-lg hover:border-toy-red/20 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
       
       {/* Top Media Area */}
-      <div className="relative bg-slate-50 overflow-hidden aspect-square">
+      <div className="relative bg-toy-cream overflow-hidden aspect-square">
         <img
           src={product.images[0]}
           alt={product.name}
@@ -74,7 +74,7 @@ export default function ProductCard({ product }) {
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
           <button
             onClick={() => toggleWishlist(product.id)}
-            className={`p-2 rounded-xl backdrop-blur-md transition-all shadow-sm cursor-pointer ${
+            className={`p-2.5 rounded-2xl backdrop-blur-md transition-all shadow-sm cursor-pointer ${
               isFavorite ? 'bg-rose-500 text-white scale-110' : 'bg-white/80 text-slate-700 hover:text-rose-500 hover:bg-white'
             }`}
             title={isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}

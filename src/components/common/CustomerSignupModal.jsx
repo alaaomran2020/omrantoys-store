@@ -82,7 +82,7 @@ export default function CustomerSignupModal() {
             <X className="w-4 h-4" />
           </button>
           <div className="flex flex-col items-center text-center gap-2 pt-2">
-            <span className="text-3xl">🎁</span>
+            <img src="/brand/logo.png" alt="عمران للألعاب" width="56" height="56" className="w-14 h-14 rounded-2xl bg-white p-1 shadow-lg" />
             <h3 className="text-lg font-black">
               {done ? 'تم تسجيل بياناتك!' : 'أهلاً بك في عمران للألعاب'}
             </h3>

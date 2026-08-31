@@ -7,8 +7,8 @@ import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { categories } from '../../data/categories';
 
-// شعار المتجر (يتم استبداله بالملف المرفق من العميل)
-const BRAND_LOGO = '/omran-brand-mark.png';
+// شعار المتجر - ملف واحد ثابت: public/brand/logo.png (يُستبدل مباشرة عند تحديث الهوية)
+const BRAND_LOGO = '/brand/logo.png';
 
 export default function Header() {
   const {
@@ -84,8 +84,13 @@ export default function Header() {
           <div className="flex items-center gap-2 sm:gap-3">
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2 -mr-1 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer" aria-label="القائمة"><Menu className="w-6 h-6" /></button>
             <a href="#top" className="flex items-center gap-2.5 group" aria-label="عمران للألعاب">
-              <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-white border border-slate-100 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden">
-                <img src={BRAND_LOGO} alt="عمران للألعاب" className="w-full h-full object-contain" />
+              {/* حاوية مرنة تناسب أي نسبة أبعاد للوجو (مربع أو اسم ممتد) */}
+              <div className="h-12 sm:h-14 max-w-[8.5rem] sm:max-w-[11rem] brand-ring px-1.5 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <img
+                  src={BRAND_LOGO}
+                  alt="عمران للألعاب"
+                  className="h-full w-auto max-h-full object-contain drop-shadow-sm"
+                />
               </div>
             </a>
           </div>
@@ -193,7 +198,7 @@ export default function Header() {
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <img src={BRAND_LOGO} alt="عمران للألعاب" className="w-9 h-9 rounded-xl object-contain" />
+                  <img src={BRAND_LOGO} alt="عمران للألعاب" width="40" height="40" className="w-10 h-10 rounded-xl object-contain drop-shadow-sm" />
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="w-6 h-6" /></button>
               </div>
