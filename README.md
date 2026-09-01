@@ -336,6 +336,43 @@ npm run preview
 
 ---
 
+## ☁️ النشر على Cloudflare (Workers + Static Assets + D1)
+
+المشروع مهيأ بالكامل للعمل على Cloudflare:
+
+- **`wrangler.toml`** — إعداد Worker مع Static Assets (SPA fallback) وربط قاعدة D1
+- **`worker/index.js`** — الـ Worker: يقدم الواجهة المبنية ويوفر API على `/api/*` مدعوم بـ D1
+  - `GET /api/health` · `GET /api/categories` · `GET /api/products` · `GET /api/products/:id`
+  - `POST /api/leads` · `POST /api/coupons/validate` · `POST /api/orders` · `GET /api/orders/:id`
+- **`migrations/`** — هجرات D1 (المخطط الكامل + الكوبونات + مقالات B2B)
+
+### تشغيل محلي على بيئة Cloudflare
+
+```bash
+npm run db:d1:migrate    # تطبيق الهجرات على قاعدة D1 المحلية
+npm run cf:dev           # بناء الواجهة + تشغيل wrangler dev على :8787
+```
+
+ولتطوير الواجهة مع API حي: شغّل `npm run cf:dev` في طرفية و`npm run dev` في أخرى —
+خادم Vite يمرر طلبات `/api` تلقائياً إلى الـ Worker.
+
+### النشر
+
+```bash
+npx wrangler login                 # مرة واحدة
+npm run db:d1:migrate:remote       # تطبيق الهجرات على قاعدة D1 السحابية
+npm run deploy                     # بناء + نشر الـ Worker والأصول
+```
+
+### اختبارات D1
+
+```bash
+npm run db:d1:test    # 18 اختبار: schema + قيود + FTS + triggers
+```
+
+---
+
+
 ## 📚 كيفية إضافة منتجات جديدة
 
 ### طريقة 1: لوحة الإدارة (مفرد)

@@ -1,9 +1,14 @@
+# ============================================================
+# Omran Toys Store — Cloudflare Workers + Static Assets
+# نشر: npm run deploy   (يبني الواجهة ثم ينشر الـ Worker + dist)
+# ============================================================
 name = "omrantoys-store"
-main = "src/index.ts"
+main = "worker/index.js"
 compatibility_date = "2026-08-31"
 workers_dev = true
-pages_build_output_dir = "dist"
 
+# الواجهة (Vite build) تُقدَّم كـ Static Assets مع SPA fallback
+# وطلبات /api/* تمر أولاً على الـ Worker (D1 API)
 [assets]
 directory = "./dist"
 binding = "ASSETS"
@@ -15,3 +20,6 @@ binding = "DB"
 database_name = "omran-store-db"
 database_id = "6471bcf0-7bf7-4de6-8858-0463c8ff2b31"
 migrations_dir = "migrations"
+
+[observability]
+enabled = true
