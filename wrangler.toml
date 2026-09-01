@@ -2,6 +2,7 @@ name = "omrantoys-store"
 main = "src/index.ts"
 compatibility_date = "2026-08-31"
 workers_dev = true
+pages_build_output_dir = "dist"
 
 [assets]
 directory = "./dist"
