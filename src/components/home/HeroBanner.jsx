@@ -22,7 +22,7 @@ export default function HeroBanner() {
             
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-toy-red/30 to-purple-500/30 border border-toy-red/40 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold text-yellow-300 shadow-sm animate-bounce-slow">
               <Sparkles className="w-4 h-4 text-toy-yellow" />
-              <span>أكبر متجر ألعاب في مصر | التعامل بالجنيه المصري (ج.م) 🇪🇬</span>
+              <span>أكبر تشكيل لعب أطفال</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-tight">

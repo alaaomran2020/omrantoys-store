@@ -7,7 +7,7 @@ import {
 import { useStore } from '../../context/StoreContext';
 import { ToastStack, useToasts } from './ui';
 import { getSettings, saveSettings } from '../../lib/settings';
-import { computeProductStats, buildAlerts, getNextStep } from '../../lib/adminUtils';
+import { buildAlerts, getNextStep } from '../../lib/adminUtils';
 import { getEvents } from '../../lib/analytics';
 
 // Sections
@@ -67,8 +67,6 @@ export default function ControlCenter() {
     return counts;
   }, []);
 
-  if (!isAdminOpen) return null;
-
   const navigate = (id) => { setSection(id); setSidebarOpen(false); window.scrollTo({ top: 0 }); };
 
   const openProduct = (p) => { setIsAdminOpen(false); setSelectedProductModal(p); };
@@ -89,18 +87,20 @@ export default function ControlCenter() {
   };
 
   // Global search results across products/sections
-  const stats = computeProductStats(products);
-  const alerts = buildAlerts(products);
-  const nextStep = getNextStep(products);
+
+  const alerts = useMemo(() => buildAlerts(products), [products]);
+  const nextStep = useMemo(() => getNextStep(products), [products]);
 
   const searchResults = useMemo(() => {
     const q = globalSearch.trim().toLowerCase();
-    if (!q) return [];
+    if (!q) return { productMatches: [], navMatches: [], alertMatches: [] };
     const productMatches = products.filter((p) => (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q)).slice(0, 4);
     const navMatches = NAV.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 4);
     const alertMatches = alerts.filter((a) => a.title.toLowerCase().includes(q)).slice(0, 3);
     return { productMatches, navMatches, alertMatches };
-  }, [globalSearch, products]);
+  }, [globalSearch, products, alerts]);
+
+  if (!isAdminOpen) return null;
 
   const activeNav = NAV.find((n) => n.id === section);
 

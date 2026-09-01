@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { categories } from '../../data/categories';
+import { activeCategories as categories } from '../../data/categories';
 import { track, EVENTS } from '../../lib/analytics';
 
 // شعار المتجر - ملف واحد ثابت: public/brand/logo.png (يُستبدل مباشرة عند تحديث الهوية)

@@ -11,8 +11,8 @@ export const StoreProvider = ({ children }) => {
   const [products, setProducts] = useState(() => {
     try {
       const storedVersion = localStorage.getItem('omran_toys_version');
-      if (storedVersion !== 'egp-v2-b2b') {
-        localStorage.setItem('omran_toys_version', 'egp-v2-b2b');
+      if (storedVersion !== 'egp-v3-catalog-reset') {
+        localStorage.setItem('omran_toys_version', 'egp-v3-catalog-reset');
         // Enhance initial products with wholesale pricing
         const enhanced = initialProducts.map(p => ({
           ...p,

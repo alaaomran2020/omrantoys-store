@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Heart, ArrowUp, Send, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { categories } from '../../data/categories';
+import { activeCategories as categories } from '../../data/categories';
 
 export default function Footer() {
   const { setSelectedCategory, setIsTrackingOpen, showToast } = useStore();
@@ -180,7 +180,6 @@ export default function Footer() {
           <div className="flex items-center gap-1">
             <span>جميع الحقوق محفوظة © 2026</span>
             <strong className="text-slate-300">متجر عمران للألعاب (مصر)</strong>
-            <span>| التعامل بالجنيه المصري (ج.م)</span>
             <Heart className="w-3.5 h-3.5 text-toy-red fill-toy-red inline" />
           </div>
 

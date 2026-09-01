@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   Sparkles, 
   Brain, 
@@ -8,7 +8,10 @@ import {
   Dices, 
   Bike, 
   Baby, 
-  Palette 
+  Palette,
+  MoonStar,
+  Gift,
+  Clock
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories } from '../../data/categories';
@@ -23,11 +26,35 @@ const iconMap = {
   Dices,
   Bike,
   Baby,
-  Palette
+  Palette,
+  MoonStar,
+  Gift
 };
 
 export default function CategoryShowcase() {
-  const { selectedCategory, setSelectedCategory } = useStore();
+  const { selectedCategory, setSelectedCategory, products } = useStore();
+
+  // عدد المنتجات الفعلي لكل قسم (بدل الأرقام الثابتة)
+  const countByCategory = useMemo(() => {
+    const counts = {};
+    for (const p of products || []) {
+      if (p?.is_visible === false) continue;
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    }
+    return counts;
+  }, [products]);
+
+  // الأقسام المتاحة: التي بها منتجات فعلياً
+  const visibleCategories = useMemo(
+    () => categories.slice(1).filter((c) => !c.comingSoon && (countByCategory[c.id] || 0) > 0),
+    [countByCategory]
+  );
+
+  // الأقسام القادمة قريباً (تُعرض دائماً كبطاقات تشويقية غير قابلة للضغط)
+  const comingSoonCategories = useMemo(
+    () => categories.filter((c) => c.comingSoon),
+    []
+  );
 
   const handleSelect = (id) => {
     setSelectedCategory(id);
@@ -54,8 +81,8 @@ export default function CategoryShowcase() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
-        {categories.slice(1).map((cat) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
+        {visibleCategories.map((cat) => {
           const IconComponent = iconMap[cat.icon] || Sparkles;
           const isSelected = selectedCategory === cat.id;
 
@@ -78,9 +105,41 @@ export default function CategoryShowcase() {
                 {cat.name}
               </span>
               <span className={`text-[10px] mt-1 font-medium ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
-                {cat.count} لعبة
+                {countByCategory[cat.id] || 0} لعبة
               </span>
             </button>
+          );
+        })}
+
+        {/* أقسام قريباً */}
+        {comingSoonCategories.map((cat) => {
+          const IconComponent = iconMap[cat.icon] || Sparkles;
+
+          return (
+            <div
+              key={cat.id}
+              title={cat.description}
+              aria-disabled="true"
+              className="relative p-4 rounded-2xl flex flex-col items-center text-center border border-dashed border-amber-300 bg-amber-50/60 cursor-not-allowed overflow-hidden select-none"
+            >
+              {/* شارة قريباً */}
+              <span className="absolute top-2 left-2 flex items-center gap-1 bg-toy-navy text-toy-yellow text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                <Clock className="w-2.5 h-2.5" />
+                {cat.badge || 'قريباً'}
+              </span>
+
+              <div
+                className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cat.color} text-white flex items-center justify-center mb-3 shadow-pop opacity-70`}
+              >
+                <IconComponent className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-bold leading-tight line-clamp-2 text-slate-700">
+                {cat.name}
+              </span>
+              <span className="text-[10px] mt-1 font-bold text-amber-600">
+                قريباً بإذن الله
+              </span>
+            </div>
           );
         })}
       </div>

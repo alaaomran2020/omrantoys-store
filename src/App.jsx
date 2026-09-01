@@ -6,6 +6,7 @@ import HeroBanner from './components/home/HeroBanner';
 import StoreFeaturesBanner from './components/layout/StoreFeaturesBanner';
 import CategoryShowcase from './components/home/CategoryShowcase';
 import FlashDeals from './components/home/FlashDeals';
+import ComingSoonSection from './components/home/ComingSoonSection';
 import ProductGrid from './components/product/ProductGrid';
 import PoliciesSection from './components/home/PoliciesSection';
 import FaqSection from './components/home/FaqSection';
@@ -41,6 +42,7 @@ function StoreApp() {
         <CategoryShowcase />
         <FlashDeals />
         <ProductGrid />
+        <ComingSoonSection />
         <PoliciesSection />
         <FaqSection />
       </main>
