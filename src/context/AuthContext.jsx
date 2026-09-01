@@ -65,6 +65,22 @@ export const AuthProvider = ({ children }) => {
       } catch (e) {
         console.warn('Lead save error', e);
       }
+    } else {
+      // بدون Supabase: حفظ في Cloudflare D1 عبر الـ Worker API (best-effort)
+      try {
+        await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: record.fullName,
+            phone: record.phone,
+            facebook: record.facebook,
+            source: 'website-signup',
+          }),
+        });
+      } catch (e) {
+        console.warn('Lead save error (D1)', e);
+      }
     }
 
     return { success: true, customer: record };

@@ -1,4 +1,9 @@
 -- ============================================================
+-- Migration 0001: المخطط الأولي — مأخوذ من cloudflare/d1-schema.sql
+-- تُطبق عبر: wrangler d1 migrations apply DB [--local|--remote]
+-- ============================================================
+
+-- ============================================================
 -- Omran Toys Store — Cloudflare D1 (SQLite) Schema
 -- ترجمة منه: supabase/schema.sql (Postgres) إلى لهجة SQLite/D1
 -- فروقات مقصودة عن نسخة Supabase:
@@ -11,27 +16,6 @@
 -- ============================================================
 
 -- تنظيف لإعادة التشغيل (الأبناء قبل الآباء)
-DROP TRIGGER IF EXISTS trg_products_fts_ai;
-DROP TRIGGER IF EXISTS trg_products_fts_au;
-DROP TRIGGER IF EXISTS trg_products_fts_ad;
-DROP TRIGGER IF EXISTS trg_products_updated_at;
-DROP TRIGGER IF EXISTS trg_profiles_updated_at;
-DROP TRIGGER IF EXISTS trg_orders_updated_at;
-DROP VIEW  IF EXISTS v_low_stock;
-DROP VIEW  IF EXISTS v_order_summary;
-DROP VIEW  IF EXISTS v_catalog;
-DROP TABLE IF EXISTS products_fts;
-DROP TABLE IF EXISTS b2b_articles;
-DROP TABLE IF EXISTS reviews;
-DROP TABLE IF EXISTS wishlists;
-DROP TABLE IF EXISTS stock_notifications;
-DROP TABLE IF EXISTS order_items;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS coupons;
-DROP TABLE IF EXISTS shipping_zones;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS profiles;
 
 -- ============================================
 -- 1. USERS / MERCHANTS (Profiles)
@@ -388,28 +372,6 @@ CREATE TABLE IF NOT EXISTS leads (
 
 CREATE INDEX IF NOT EXISTS idx_leads_phone      ON leads(phone);
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
-
--- ============================================
--- 12. B2B ARTICLES (مقالات ومحتوى تجار الجملة)
--- ============================================
-CREATE TABLE IF NOT EXISTS b2b_articles (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  slug TEXT UNIQUE NOT NULL,
-  title_ar TEXT NOT NULL,
-  title_en TEXT,
-  excerpt_ar TEXT,
-  content_ar TEXT NOT NULL,
-  category TEXT DEFAULT 'general' CHECK (category IN ('general', 'market_data', 'pricing', 'logistics', 'guides')),
-  target_audience TEXT DEFAULT 'both' CHECK (target_audience IN ('retail', 'wholesale', 'both')),
-  data_sources TEXT, -- JSON نصي: قائمة مصادر البيانات
-  is_published INTEGER DEFAULT 0 CHECK (is_published IN (0, 1)),
-  published_at TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_b2b_articles_slug      ON b2b_articles(slug);
-CREATE INDEX IF NOT EXISTS idx_b2b_articles_published ON b2b_articles(is_published, published_at DESC);
 
 -- ============================================
 -- SEED: Categories

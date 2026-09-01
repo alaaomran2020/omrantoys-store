@@ -9,6 +9,11 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "cf:dev": "npm run build && wrangler dev",
+    "cf:typegen": "wrangler types",
+    "deploy": "npm run build && wrangler deploy",
+    "db:d1:migrate": "wrangler d1 migrations apply DB --local",
+    "db:d1:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "db:d1:schema": "wrangler d1 execute DB --local --file=cloudflare/d1-schema.sql",
     "db:d1:tests": "wrangler d1 execute DB --local --file=cloudflare/d1-tests.sql",
     "db:d1:test": "bash cloudflare/test-d1.sh"
