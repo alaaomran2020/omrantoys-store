@@ -5,12 +5,10 @@ import {
   Plus, 
   Trash2, 
   TrendingUp, 
-  Package, 
   ShoppingBag, 
   Users, 
   Edit, 
   Check, 
-  AlertTriangle,
   RotateCcw,
   Search,
   Save,
@@ -20,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories, ageGroups } from '../../data/categories';
-import { initialProducts } from '../../data/products';
 import BulkImport from './BulkImport';
 
 export default function AdminDashboardModal() {

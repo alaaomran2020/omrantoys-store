@@ -56,7 +56,7 @@ export const PAYMENT_METHODS = {
  * Simulate Paymob payment initiation
  * In production, replace with actual API call
  */
-export async function initiatePaymobPayment({ amount, orderId, customer, billingData }) {
+export async function initiatePaymobPayment({ amount: _amount, orderId, customer: _customer, billingData: _billingData }) {
   // Mock implementation - replace with real Paymob API
   const paymobConfig = {
     apiKey: import.meta.env.VITE_PAYMOB_API_KEY,
@@ -98,7 +98,7 @@ export async function initiatePaymobPayment({ amount, orderId, customer, billing
 /**
  * Simulate Fawry payment
  */
-export async function initiateFawryPayment({ amount, orderId, customer }) {
+export async function initiateFawryPayment({ amount: _amount, orderId: _orderId, customer: _customer }) {
   const fawryConfig = {
     merchantCode: import.meta.env.VITE_FAWRY_MERCHANT_CODE,
   };
@@ -125,7 +125,7 @@ export async function initiateFawryPayment({ amount, orderId, customer }) {
 /**
  * Calculate payment fees
  */
-export function calculatePaymentFees(methodId, subtotal) {
+export function calculatePaymentFees(methodId, _subtotal) {
   const method = Object.values(PAYMENT_METHODS).find(m => m.id === methodId);
   if (!method) return 0;
   return method.fees || 0;

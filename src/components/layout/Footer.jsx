@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Heart, ArrowUp, Send, CheckCircle2 } from 'lucide-react';
+import { Phone, MapPin, Heart, ArrowUp, Send } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories } from '../../data/categories';
 
 export default function Footer() {
   const { setSelectedCategory, setIsGiftFinderOpen, setIsTrackingOpen, showToast } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [, setSubscribed] = useState(false);
 
   const handleSubscribe = (e) => {
     e.preventDefault();

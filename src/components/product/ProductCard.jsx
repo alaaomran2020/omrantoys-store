@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, ShoppingCart, Eye, Star, Bell, PackageX } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
 import StockNotification from './StockNotification';
 
 export default function ProductCard({ product }) {
@@ -14,7 +13,7 @@ export default function ProductCard({ product }) {
     getEffectivePrice
   } = useStore();
 
-  const auth = useAuth();
+
   const isFavorite = isInWishlist(product.id);
   const [showNotify, setShowNotify] = useState(false);
 

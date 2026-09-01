@@ -5,17 +5,13 @@ import {
   ShoppingCart, 
   Heart, 
   ShieldCheck, 
-  Truck, 
   Check, 
-  Info, 
   Battery, 
   Ruler, 
   Share2, 
   MessageSquarePlus,
-  Flame
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
 import StockNotification from './StockNotification';
 import { Bell } from 'lucide-react';
 
@@ -34,7 +30,7 @@ export default function ProductDetailModal() {
     setIsCheckoutOpen
   } = useStore();
 
-  const auth = useAuth();
+
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
