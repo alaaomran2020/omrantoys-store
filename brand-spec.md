@@ -16,8 +16,8 @@
 
 | المسار | الاستخدام |
 |---|---|
-| `public/brand/logo.svg` | المصدر المتجهي (الأفضل للطباعة والتكبير) |
-| `public/brand/logo.png` | **ملف العرض الرسمي** — يُستخدم في الهيدر والفوتر وكل واجهات الموقع |
+| `public/brand/logo-original.png` | **الملف الأصلي** كما ورد من الشركة (مصدر غير معدّل، 1024×1024) |
+| `public/brand/logo.png` | **ملف العرض الرسمي** — 512×512 بخلفية شفافة، يُستخدم في الهيدر والفوتر وكل واجهات الموقع |
 | `public/brand/logo-256.png` | نسخة مصغّرة للاستخدامات الخفيفة |
 | `public/brand/favicon.png` / `favicon-32.png` | أيقونة المتصفح |
 | `public/brand/apple-touch-icon.png` | أيقونة إضافة الموقع للشاشة الرئيسية (180×180) |
@@ -33,18 +33,19 @@
 
 ### تحديث ملف الشعار
 
-لاستبدال الشعار: ضع الملف الجديد باسم `public/brand/logo.png` (يفضل PNG بخلفية شفافة، مربع أو ممتد، بدقة 512 بكسل على الأقل).
-لا يحتاج الأمر أي تعديل في الكود — جميع الواجهات تقرأ من نفس المسار. لتحديث الأيقونات المشتقة:
+لاستبدال الشعار:
+
+1. ضع الملف الأصلي الجديد في `public/brand/logo-original.png`.
+2. نفّذ سكربت المعالجة (يزيل الخلفية الفاتحة، يقص الحواف، ويولّد كل المقاسات):
 
 ```bash
-node -e "
-const sharp=require('sharp');const fs=require('fs');const img=fs.readFileSync('public/brand/logo.png');
-sharp(img).resize(256,256,{fit:'contain',background:'#00000000'}).png().toFile('public/brand/logo-256.png');
-sharp(img).resize(180,180,{fit:'contain',background:'#00000000'}).png().toFile('public/brand/apple-touch-icon.png');
-sharp(img).resize(64,64,{fit:'contain',background:'#00000000'}).png().toFile('public/brand/favicon.png');
-sharp(img).resize(32,32,{fit:'contain',background:'#00000000'}).png().toFile('public/brand/favicon-32.png');
-"
+npm i -D sharp
+node scripts/prepare-logo.cjs public/brand/logo-original.png
 ```
+
+3. لا يحتاج الأمر أي تعديل في الكود — جميع الواجهات تقرأ من `public/brand/logo.png`.
+
+> السكربت يزيل الخلفية بـ flood fill من حدود الصورة، فلا تتأثر الأجزاء الفاتحة داخل الشعار نفسه.
 
 ---
 
