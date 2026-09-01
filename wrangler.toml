@@ -1,28 +1,16 @@
 name = "omrantoys-store"
-compatibility_date = "2025-06-01"
+main = "src/index.ts"
+compatibility_date = "2026-08-31"
+workers_dev = true
 
-# ============================================
-# الواجهة الأمامية (Vite build → ./dist)
-# ============================================
 [assets]
 directory = "./dist"
-# SPA: أي مسار غير موجود يُخدِم index.html (مطلوب لتطبيقات React ذات الواجهة الواحدة)
+binding = "ASSETS"
 not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
 
-# ملاحظة: عند إضافة كود خلفي (Worker API) لاحقاً أضف هنا:
-#   main = "src/worker/index.ts"
-# وداخل [assets] أضف:
-#   binding = "ASSETS"
-
-# ============================================
-# Cloudflare D1 Database (SQLite at the edge)
-# ============================================
-# للاختبار المحلي: database_id اختياري (يُستخدم وضع --local)
-# للنشر الفعلي:
-#   npx wrangler d1 create omran-toys-db
-#   ← انسخ الـ database_id الحقيقي هنا
-#   npx wrangler d1 execute DB --remote --file=cloudflare/d1-schema.sql
 [[d1_databases]]
 binding = "DB"
-database_name = "omran-toys-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_name = "omran-store-db"
+database_id = "6471bcf0-7bf7-4de6-8858-0463c8ff2b31"
+migrations_dir = "migrations"
