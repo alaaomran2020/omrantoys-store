@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
+import { track, EVENTS } from '../../lib/analytics';
 import StockNotification from './StockNotification';
 import { Bell } from 'lucide-react';
 
@@ -34,6 +35,13 @@ export default function ProductDetailModal() {
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+
+  // تسجيل حدث فتح المنتج
+  React.useEffect(() => {
+    if (selectedProductModal) {
+      track(EVENTS.productView, { productId: selectedProductModal.id, name: selectedProductModal.name });
+    }
+  }, [selectedProductModal]);
 
   if (!selectedProductModal) return null;
 

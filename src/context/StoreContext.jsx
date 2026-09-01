@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { initialProducts } from '../data/products';
 import { calculateShippingCost, calculateCartWeight, calculateCartVolume } from '../lib/shippingCalculator';
+import { track, EVENTS } from '../lib/analytics';
+import { getSettings } from '../lib/settings';
 
 const StoreContext = createContext();
 
@@ -192,6 +194,7 @@ export const StoreProvider = ({ children }) => {
     } else {
       showToast(`تمت إضافة "${product.name}" إلى السلة 🛍️`);
     }
+    track(EVENTS.addToCart, { productId: product.id, name: product.name, quantity: addedQuantity });
   };
 
   const removeFromCart = (productId) => {
@@ -291,6 +294,7 @@ export const StoreProvider = ({ children }) => {
     setOrders(prev => [newOrder, ...prev]);
     setLastPlacedOrder(newOrder);
     clearCart();
+    track(EVENTS.orderPlaced, { orderId: newOrder.id, total: cartTotal });
 
     // Update product stock
     setProducts(prev => prev.map(p => {
@@ -345,6 +349,13 @@ export const StoreProvider = ({ children }) => {
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: newStatus } : o)));
     showToast(`تم تحديث حالة الطلب #${orderId} إلى: ${newStatus}`);
+  };
+
+  // استعادة نسخة احتياطية (منتجات + طلبات)
+  const restoreData = ({ products: newProducts, orders: newOrders }) => {
+    if (Array.isArray(newProducts)) setProducts(newProducts);
+    if (Array.isArray(newOrders)) setOrders(newOrders);
+    showToast('تمت استعادة النسخة الاحتياطية');
   };
 
   // Stock notification
@@ -494,6 +505,7 @@ export const StoreProvider = ({ children }) => {
         updateProduct,
         deleteProduct,
         updateOrderStatus,
+        restoreData,
         subscribeStockNotification,
         showToast
       }}
