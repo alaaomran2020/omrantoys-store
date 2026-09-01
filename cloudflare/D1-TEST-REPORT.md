@@ -1,6 +1,6 @@
 # 📋 تقرير اختبار قاعدة بيانات Cloudflare D1
 
-**المستودع:** `alaaomran2020/omrantoys-store` — **التاريخ:** 2026-08-29
+**المستودع:** `alaaomran2020/omrantoys-store` — **التاريخ:** 2026-08-29 (تحديث 2026-09-01)
 **الأداة:** wrangler 4.127.1 — وضع `--local` (محاكاة D1 الرسمية عبر workerd بنفس محرك SQLite المستخدم في الإنتاج)
 
 ---
@@ -23,7 +23,7 @@
 
 | الجدول | الصفوف | | الجدول | الصفوف |
 |---|---|---|---|---|
-| profiles | 1 | | coupons | 2 |
+| profiles | 1 | | coupons | 6 (4 فعليّة للمتجر + 2 اختبار) |
 | categories | 11 (بذر كامل) | | wishlists | 1 |
 | products | 4 | | reviews | 2 |
 | orders | 1 | | stock_notifications | 1 |
@@ -69,6 +69,19 @@
 | RLS Policies | ❌ تُنفَّذ في كود التطبيق/Worker |
 | plpgsql functions | استعلامات CASE / Views |
 | Trigger `update_updated_at` | AFTER UPDATE trigger (بدون recursion) |
+
+---
+
+## 🔧 إصلاح لاحق (2026-09-01): بذر الكوبونات الفعلية في الـ Schema
+
+**المشكلة:** كان `cloudflare/d1-schema.sql` (الملف المستقل المُستخدم في الاختبار والنشر) يبذر الفئات فقط، بينما كوبونات المتجر الفعلية (`OMRAN10`, `TOYS20`, `EID2026`, `FREESHIP`) كانت موجودة حصرياً في `migrations/0002_seed_coupons.sql` و`src/data/coupons.js`. لذلك قاعدة جديدة تُنشأ عبر `d1-schema.sql` لم تكن تحتوي `OMRAN10`، وكانت نقطة `/api/coupons/validate` ترفض كوبون الترحيب.
+
+**الحل:** أُضيف قسم `SEED: الكوبونات` إلى `d1-schema.sql` مطابقاً للمصدرين أعلاه، مع `max_uses = NULL` (غير محدود) — مهم لأن شرط الـ Worker `(max_uses IS NULL OR used_count < max_uses)` يجعل `0` يرفض الكوبون دائماً.
+
+**التحقق:** ✅ أُعيد تشغيل 18/18 اختباراً دون كسر، وتأكد فعلياً عبر `wrangler dev`:
+- `POST /api/coupons/validate {code:OMRAN10, subtotal:500}` → `valid:true, discount:50`
+- `TOYS20` بأقل من الحد الأدنى → رفض بالرسالة الصحيحة
+- دورة طلب كاملة `POST /api/orders` + `GET /api/orders/:id` تعمل مع D1
 
 ---
 

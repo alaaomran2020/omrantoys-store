@@ -289,6 +289,16 @@ CREATE TABLE coupons (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+-- SEED: الكوبونات الفعلية للمتجر
+-- مطابقة لـ migrations/0002_seed_coupons.sql و src/data/coupons.js
+-- حتى تعمل نقطة /api/coupons/validate (مثل OMRAN10) فور إنشاء قاعدة من هذا الملف.
+INSERT INTO coupons (code, discount_percent, min_spend, max_uses, user_type, is_active) VALUES
+('OMRAN10', 10, 0,    NULL, 'both', 1),
+('TOYS20',  20, 1500, NULL, 'both', 1),
+('EID2026', 15, 800,  NULL, 'both', 1),
+('FREESHIP', 0, 500,  NULL, 'both', 1)
+ON CONFLICT(code) DO NOTHING;
+
 -- ============================================
 -- 9. WISHLISTS
 -- ============================================
