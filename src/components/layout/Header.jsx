@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Search, ShoppingCart, Heart, Package, Settings, Gift, Menu, X, 
+  Search, ShoppingCart, Heart, Package, Settings, Menu, X, 
   User, LayoutGrid, PhoneCall
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
@@ -14,7 +14,7 @@ export default function Header() {
   const {
     products, wishlist, formatPrice, totalItemsCount, cartSubtotal,
     searchQuery, setSearchQuery, selectedCategory, setSelectedCategory,
-    setIsCartOpen, setIsWishlistOpen, setIsGiftFinderOpen, setIsAdminOpen,
+    setIsCartOpen, setIsWishlistOpen, setIsAdminOpen,
     setIsTrackingOpen, setSelectedProductModal, setIsSignupOpen
   } = useStore();
 
@@ -65,10 +65,10 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
             <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold animate-pulse shrink-0">عروض مصر 🇪🇬</span>
-            <span className="truncate">شحن مجاني لكافة المحافظات فوق 1,000 ج.م | كود: OMRAN10</span>
+            <span className="truncate">شحن مجاني لكافة المحافظات فوق 1,000 ج.م</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs shrink-0">
-            <button onClick={() => setIsGiftFinderOpen(true)} className="flex items-center gap-1 hover:text-yellow-200 transition-colors cursor-pointer"><Gift className="w-3.5 h-3.5" /><span>مستكشف الهدايا</span></button>
+
             <span className="opacity-40">|</span>
             <button onClick={() => setIsTrackingOpen(true)} className="flex items-center gap-1 hover:text-yellow-200 transition-colors cursor-pointer"><Package className="w-3.5 h-3.5" /><span>تتبع شحنتك</span></button>
             <span className="opacity-40">|</span>
@@ -210,10 +210,10 @@ export default function Header() {
                     <div className="text-xs text-slate-500" dir="ltr">{customer.phone}</div>
                   </div>
                 ) : (
-                  <button onClick={() => { setIsSignupOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm"><User className="w-5 h-5" /> سجّل بياناتك وخد خصم 10%</button>
+                  <button onClick={() => { setIsSignupOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm"><User className="w-5 h-5" /> سجّل بياناتك بسرعة</button>
                 )}
 
-                <button onClick={() => { setIsGiftFinderOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 text-amber-900 font-bold text-sm"><Gift className="w-5 h-5 text-amber-600" /> مستكشف الهدايا الذكي</button>
+
                 <button onClick={() => { setIsTrackingOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-blue-50 text-blue-900 font-bold text-sm"><Package className="w-5 h-5 text-blue-600" /> تتبع الشحنة</button>
                 <button onClick={() => { setIsWishlistOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-rose-50 text-rose-900 font-bold text-sm"><Heart className="w-5 h-5 text-rose-500" /> المفضلة ({wishlist.length})</button>
                 <button onClick={() => { setIsAdminOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-100 text-slate-800 font-bold text-sm"><Settings className="w-5 h-5 text-slate-600" /> لوحة الإدارة</button>

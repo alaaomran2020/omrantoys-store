@@ -4,7 +4,7 @@ import { useStore } from '../../context/StoreContext';
 import { categories } from '../../data/categories';
 
 export default function Footer() {
-  const { setSelectedCategory, setIsGiftFinderOpen, setIsTrackingOpen, showToast } = useStore();
+  const { setSelectedCategory, setIsTrackingOpen, showToast } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -15,7 +15,7 @@ export default function Footer() {
       return;
     }
     setSubscribed(true);
-    showToast('شكراً لاشتراكك! تم إرسال كود خصم 10% إلى بريدك الإلكتروني 🎁');
+    showToast('شكراً لاشتراكك! هنوافيك بكل جديد أول بأول 🎁');
     setNewsletterEmail('');
   };
 
@@ -34,10 +34,10 @@ export default function Footer() {
               نادي أصدقاء عمران في مصر 🎈
             </span>
             <h3 className="text-xl sm:text-2xl font-black mb-1">
-              احصل على خصم 10% فورياً عند اشتراكك بنشرتنا
+              كن أول من يعرف بأحدث الألعاب والعروض
             </h3>
             <p className="text-white/80 text-xs sm:text-sm">
-              كن أول من يعرف عن وصول أحدث الألعاب الحصرية، وكوبونات الخصم بالجنيه المصري، ومسابقات الأطفال!
+              اشترك في نشرتنا لتصل إليك أحدث الألعاب الحصرية والعروض ومسابقات الأطفال أولاً بأول!
             </p>
           </div>
 
@@ -124,14 +124,6 @@ export default function Footer() {
                   className="hover:text-toy-yellow transition-colors cursor-pointer"
                 >
                   تتبع الشحنة والطلب
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setIsGiftFinderOpen(true)}
-                  className="hover:text-toy-yellow transition-colors cursor-pointer"
-                >
-                  مساعد اختيار الهدايا
                 </button>
               </li>
               <li>

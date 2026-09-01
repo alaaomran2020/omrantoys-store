@@ -1,9 +1,9 @@
 import React from 'react';
-import { Sparkles, Gift, ArrowLeft, ShieldCheck, Truck, Star, Zap, Coins } from 'lucide-react';
+import { Sparkles, ArrowLeft, ShieldCheck, Truck, Star, Zap, Coins } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function HeroBanner() {
-  const { setIsGiftFinderOpen, formatPrice } = useStore();
+  const { formatPrice } = useStore();
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white py-12 lg:py-20">
@@ -46,13 +46,6 @@ export default function HeroBanner() {
                 <ArrowLeft className="w-5 h-5" />
               </a>
 
-              <button
-                onClick={() => setIsGiftFinderOpen(true)}
-                className="w-full sm:w-auto btn-playful bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3.5 text-base backdrop-blur-md"
-              >
-                <Gift className="w-5 h-5 text-toy-yellow" />
-                <span>مستكشف الهدايا الذكي</span>
-              </button>
             </div>
 
             {/* Trust Badges */}

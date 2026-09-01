@@ -103,91 +103,73 @@ SELECT CASE WHEN (SELECT COUNT(*) FROM shipping_zones WHERE governorate_ar='مح
   THEN '✅ PASS T12: محافظة غير مسجلة → fallback 50 / 2-3 أيام (0 صف في الزون)'
   ELSE '❌ FAIL T12' END AS result;
 
--- [كوبونات]
-INSERT INTO coupons (code, discount_percent, min_spend, max_uses, user_type) VALUES
-('SAVE10', 10, 500, 100, 'both'),
-('WS15', 15, 2000, 50, 'wholesale');
-
--- [T13] الكوبون + منطق الحد الأدنى للصرف
-SELECT CASE WHEN (SELECT discount_percent FROM coupons WHERE code='SAVE10') = 10
-              AND (500 >= (SELECT min_spend FROM coupons WHERE code='SAVE10'))
-  THEN '✅ PASS T13: SAVE10 صالح (10%، حد أدنى 500 مستوفى)'
-  ELSE '❌ FAIL T13' END AS result;
-
--- [الطلب] الغربية: 2× سيارة(250) + 1× مكعبات(120) = 620 | كوبون 10% = -62
+-- [الطلب] الغربية: 2× سيارة(250) + 1× مكعبات(120) = 620
 -- وزن: 2×500 + 200 = 1200جم → شحن 40 + CEIL(0.2)*8 = 48 | ض 14% على 558 = 78.12 | الإجمالي = 684.12
 INSERT INTO orders (id, user_id, customer_name, phone, governorate, city, address,
                     subtotal, discount_amount, shipping_cost, vat_amount, total,
-                    coupon_code, weight_total_grams, payment_method, payment_gateway, status) VALUES
+                    weight_total_grams, payment_method, payment_gateway, status) VALUES
 ('OMR-TEST-0001', 'u-test-merchant-1', 'محمود السيد', '201555570269', 'الغربية', 'طنطا', 'شارع البحر - عمارة 5',
- 620, 62, 48, 78.12, 684.12, 'SAVE10', 1200, 'cod', 'cod', 'قيد الانتظار');
+ 620, 62, 48, 78.12, 684.12, 1200, 'cod', 'cod', 'قيد الانتظار');
 
 INSERT INTO order_items (order_id, product_id, product_sku, product_name, quantity, unit_price, total_price) VALUES
 ('OMR-TEST-0001', 'p-rc-001', 'OMR-RC-001', 'سيارة تحكم عن بعد سريعة', 2, 250, 500),
 ('OMR-TEST-0001', 'p-edu-014', 'OMR-EDU-014', 'مكعبات تعليمية STEM 120 قطعة', 1, 120, 120);
 
--- [T14] صحة أرقام الطلب
+-- [T13] صحة أرقام الطلب
 SELECT CASE WHEN (SELECT SUM(total_price) FROM order_items WHERE order_id='OMR-TEST-0001') = 620
               AND (SELECT total FROM orders WHERE id='OMR-TEST-0001') = 684.12
               AND (SELECT vat_amount FROM orders WHERE id='OMR-TEST-0001') = 78.12
               AND (SELECT shipping_cost FROM orders WHERE id='OMR-TEST-0001') = 48
-  THEN '✅ PASS T14: إجماليات الطلب صحيحة (620 + شحن 48 + ض 78.12 − خصم 62 = 684.12)'
-  ELSE '❌ FAIL T14' END AS result;
+  THEN '✅ PASS T13: إجماليات الطلب صحيحة (620 + شحن 48 + ض 78.12 − خصم 62 = 684.12)'
+  ELSE '❌ FAIL T13' END AS result;
 
--- [T15] عرض v_order_summary
+-- [T14] عرض v_order_summary
 SELECT CASE WHEN (SELECT items FROM v_order_summary WHERE id='OMR-TEST-0001') = 2
               AND (SELECT items_total FROM v_order_summary WHERE id='OMR-TEST-0001') = 620
-  THEN '✅ PASS T15: v_order_summary (2 سطور، 620)'
-  ELSE '❌ FAIL T15' END AS result;
+  THEN '✅ PASS T14: v_order_summary (2 سطور، 620)'
+  ELSE '❌ FAIL T14' END AS result;
 
--- [T16] عرض المخزون المنخفض يرصد OMR-EDU-014 (3 ≤ 5)
+-- [T15] عرض المخزون المنخفض يرصد OMR-EDU-014 (3 ≤ 5)
 SELECT CASE WHEN (SELECT COUNT(*) FROM v_low_stock WHERE sku='OMR-EDU-014') = 1
               AND (SELECT COUNT(*) FROM v_low_stock WHERE sku='OMR-RC-001') = 0
-  THEN '✅ PASS T16: v_low_stock ترصد مكعبات STEM (3≤5) وتستبعد السيارة (15)'
-  ELSE '❌ FAIL T16' END AS result;
+  THEN '✅ PASS T15: v_low_stock ترصد مكعبات STEM (3≤5) وتستبعد السيارة (15)'
+  ELSE '❌ FAIL T15' END AS result;
 
--- [T17] trigger تحديث updated_at
+-- [T16] trigger تحديث updated_at
 UPDATE products SET views_count = views_count + 1, updated_at = '2000-01-01 00:00:00' WHERE id = 'p-rc-001';
 SELECT CASE WHEN (SELECT updated_at > '2000-01-01 00:00:01' FROM products WHERE id='p-rc-001')
-  THEN '✅ PASS T17: trigger يعيد updated_at للتوقيت الحالي'
-  ELSE '❌ FAIL T17: updated_at=' || (SELECT updated_at FROM products WHERE id='p-rc-001') END AS result;
+  THEN '✅ PASS T16: trigger يعيد updated_at للتوقيت الحالي'
+  ELSE '❌ FAIL T16: updated_at=' || (SELECT updated_at FROM products WHERE id='p-rc-001') END AS result;
 
--- [T18] زيادة عداد استخدام الكوبون
-UPDATE coupons SET used_count = used_count + 1 WHERE code='SAVE10';
-SELECT CASE WHEN (SELECT used_count FROM coupons WHERE code='SAVE10') = 1
-              AND (SELECT used_count < max_uses FROM coupons WHERE code='SAVE10')
-  THEN '✅ PASS T18: used_count=1 < max_uses=100'
-  ELSE '❌ FAIL T18' END AS result;
-
--- [T19] المراجعات + متوسط التقييم
+-- [T18] المراجعات + متوسط التقييم
 INSERT INTO reviews (product_id, author_name, rating, comment, is_verified_purchase) VALUES
 ('p-rc-001', 'منال ع.', 5, 'سريعة وبطاريتها تدوم', 1),
 ('p-rc-001', 'خالد م.', 4, 'جيدة مقابل السعر', 1);
 SELECT CASE WHEN (SELECT AVG(rating) FROM reviews WHERE product_id='p-rc-001') = 4.5
-  THEN '✅ PASS T19: متوسط التقييم = 4.5'
-  ELSE '❌ FAIL T19' END AS result;
+  THEN '✅ PASS T17: متوسط التقييم = 4.5'
+  ELSE '❌ FAIL T17' END AS result;
 
--- [T20] إشعار توفار صالح (بالهاتف)
+-- [T18] إشعار توفار صالح (بالهاتف)
 INSERT INTO stock_notifications (product_id, phone) VALUES ('p-doll-007', '201555570269');
 SELECT CASE WHEN (SELECT COUNT(*) FROM stock_notifications WHERE product_id='p-doll-007') = 1
-  THEN '✅ PASS T20: إشعار نفاد مخزون محفوظ (هاتف)'
-  ELSE '❌ FAIL T20' END AS result;
+  THEN '✅ PASS T18: إشعار نفاد مخزون محفوظ (هاتف)'
+  ELSE '❌ FAIL T18' END AS result;
 
--- [T21] المقالات B2B + JSON مصادر
+-- [T19] المقالات B2B + JSON مصادر
 INSERT INTO b2b_articles (slug, title_ar, excerpt_ar, content_ar, category, target_audience, data_sources, is_published, published_at) VALUES
 ('toy-wholesale-margins-2026', 'هوامش تجارة الألعاب بالجملة 2026', 'تحليل أرقام هوامش الجملة في السوق المصري.', 'تشير بيانات 2026 إلى متوسط هامش 18-25% بعد الشحن...', 'market_data', 'wholesale', '["تقارير سوق 2026","عينة 40 تاجر"]', 1, '2026-08-01 10:00:00');
 SELECT CASE WHEN (SELECT COUNT(*) FROM b2b_articles WHERE is_published=1) = 1
               AND json_array_length((SELECT data_sources FROM b2b_articles WHERE slug='toy-wholesale-margins-2026')) = 2
-  THEN '✅ PASS T21: مقال B2B منشور + data_sources كـ JSON (عنصران)'
-  ELSE '❌ FAIL T21' END AS result;
+  THEN '✅ PASS T19: مقال B2B منشور + data_sources كـ JSON (عنصران)'
+  ELSE '❌ FAIL T19' END AS result;
 
--- [T22] المفضلة (UNIQUE user+product)
+-- [T20] المفضلة (UNIQUE user+product)
 INSERT INTO wishlists (user_id, product_id) VALUES ('u-test-merchant-1', 'p-rc-001');
 SELECT CASE WHEN (SELECT COUNT(*) FROM wishlists) = 1
-  THEN '✅ PASS T22: إضافة للمفضلة'
-  ELSE '❌ FAIL T22' END AS result;
+  THEN '✅ PASS T20: إضافة للمفضلة'
+  ELSE '❌ FAIL T20' END AS result;
 
--- [T23] حذف المنتج التجريبي: CASCADE للمراجعات/الإشعارات + SET NULL لعناصر الطلب
+-- [T21] حذف المنتج التجريبي: CASCADE للمراجعات/الإشعارات + SET NULL لعناصر الطلب
 INSERT INTO reviews (product_id, author_name, rating) VALUES ('p-del-001', 'تجربة', 3);
 INSERT INTO stock_notifications (product_id, email) VALUES ('p-del-001', 'x@test.omran');
 INSERT INTO order_items (order_id, product_id, product_sku, product_name, quantity, unit_price, total_price) VALUES
@@ -197,17 +179,17 @@ SELECT CASE WHEN (SELECT COUNT(*) FROM reviews WHERE product_id='p-del-001') = 0
               AND (SELECT COUNT(*) FROM stock_notifications WHERE product_id='p-del-001') = 0
               AND (SELECT product_id FROM order_items WHERE product_sku='OMR-DEL-001') IS NULL
               AND (SELECT COUNT(*) FROM order_items WHERE order_id='OMR-TEST-0001') = 3
-  THEN '✅ PASS T23: ON DELETE CASCADE (مراجعات/إشعارات) + SET NULL (عناصر الطلب) تعمل'
-  ELSE '❌ FAIL T23' END AS result;
+  THEN '✅ PASS T21: ON DELETE CASCADE (مراجعات/إشعارات) + SET NULL (عناصر الطلب) تعمل'
+  ELSE '❌ FAIL T21' END AS result;
 
--- [T24] مسار الطلب بالحالات العربية + trigger الطلبات
+-- [T22] مسار الطلب بالحالات العربية + trigger الطلبات
 UPDATE orders SET status = 'تم الشحن' WHERE id = 'OMR-TEST-0001';
 SELECT CASE WHEN (SELECT status FROM orders WHERE id='OMR-TEST-0001') = 'تم الشحن'
               AND (SELECT updated_at >= '2026-01-01' FROM orders WHERE id='OMR-TEST-0001')
-  THEN '✅ PASS T24: تحديث حالة عربية (تم الشحن) + trigger updated_at'
-  ELSE '❌ FAIL T24' END AS result;
+  THEN '✅ PASS T22: تحديث حالة عربية (تم الشحن) + trigger updated_at'
+  ELSE '❌ FAIL T22' END AS result;
 
--- [T25] تكامل المفاتيح الأجنبية (بديل فحص RLS الأساسي في D1)
+-- [T23] تكامل المفاتيح الأجنبية (بديل فحص RLS الأساسي في D1)
 SELECT CASE WHEN (SELECT COUNT(*) FROM pragma_foreign_key_check) = 0
-  THEN '✅ PASS T25: pragma_foreign_key_check = 0 مخالفات'
-  ELSE '❌ FAIL T25: ' || (SELECT COUNT(*) FROM pragma_foreign_key_check) || ' مخالفة' END AS result;
+  THEN '✅ PASS T23: pragma_foreign_key_check = 0 مخالفات'
+  ELSE '❌ FAIL T23: ' || (SELECT COUNT(*) FROM pragma_foreign_key_check) || ' مخالفة' END AS result;

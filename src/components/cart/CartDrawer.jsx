@@ -1,29 +1,21 @@
-import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Truck, Package, MapPin } from 'lucide-react';
+import React from 'react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Truck, Package, MapPin } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { getAllGovernorates } from '../../lib/shippingCalculator';
 
 export default function CartDrawer() {
   const {
     isCartOpen, setIsCartOpen, cart, totalItemsCount, removeFromCart, updateQuantity,
-    cartSubtotal, freeShippingThreshold, isFreeShipping, shippingCost, discountAmount, vatAmount, cartTotal,
-    appliedCoupon, applyCouponCode, removeCoupon, clearCart, setIsCheckoutOpen, formatPrice,
+    cartSubtotal, freeShippingThreshold, isFreeShipping, shippingCost, vatAmount, cartTotal,
+    clearCart, setIsCheckoutOpen, formatPrice,
     shippingCalculation, selectedGovernorate, setSelectedGovernorate
   } = useStore();
-
-  const [couponInput, setCouponInput] = useState('');
 
   if (!isCartOpen) return null;
 
   const remainingForFree = Math.max(0, freeShippingThreshold - cartSubtotal);
   const progressPercent = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
   const governorates = getAllGovernorates();
-
-  const handleApplyCoupon = (e) => {
-    e.preventDefault();
-    if (!couponInput.trim()) return;
-    if (applyCouponCode(couponInput)) setCouponInput('');
-  };
 
   const handleProceed = () => {
     setIsCartOpen(false);
@@ -117,15 +109,8 @@ export default function CartDrawer() {
 
           {cart.length > 0 && (
             <div className="p-4 sm:p-5 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-slate-100 bg-white space-y-3.5 shadow-2xl">
-              {appliedCoupon ? (
-                <div className="p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-between text-xs text-emerald-800"><div className="flex items-center gap-2 font-bold"><Tag className="w-4 h-4 text-emerald-600" /><span>كوبون: {appliedCoupon.code}</span></div><button onClick={removeCoupon} className="text-xs text-rose-600 hover:underline font-bold cursor-pointer">إلغاء</button></div>
-              ) : (
-                <form onSubmit={handleApplyCoupon} className="flex gap-2"><div className="relative flex-1"><input type="text" value={couponInput} onChange={(e) => setCouponInput(e.target.value)} placeholder="كود الخصم" className="w-full uppercase text-xs font-bold pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-toy-red/20" /><Tag className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2" /></div><button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs cursor-pointer shrink-0">تطبيق</button></form>
-              )}
-
               <div className="space-y-1.5 text-xs text-slate-600">
                 <div className="flex justify-between"><span>المجموع الفرعي:</span><span className="font-bold text-slate-900">{formatPrice(cartSubtotal)}</span></div>
-                {discountAmount > 0 && <div className="flex justify-between text-emerald-600 font-bold"><span>خصم:</span><span>- {formatPrice(discountAmount)}</span></div>}
                 <div className="flex justify-between"><span>الشحن ({shippingCalculation.zone}):</span>{shippingCost === 0 ? <span className="font-bold text-emerald-600">مجاني 🎉</span> : <span className="font-bold text-slate-900">{formatPrice(shippingCost)}</span>}</div>
                 <div className="flex justify-between text-[11px] text-slate-400"><span>VAT 14% مشمولة:</span><span>{formatPrice(vatAmount)}</span></div>
                 <div className="pt-2 border-t border-slate-100 flex justify-between items-baseline"><span className="font-black text-sm text-slate-900">الإجمالي:</span><span className="text-xl font-black text-toy-red">{formatPrice(cartTotal)}</span></div>

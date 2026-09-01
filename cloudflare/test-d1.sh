@@ -39,7 +39,7 @@ expect_ok "إنشاء الجداول والفهارس والـ triggers" run_sql
 
 echo ""
 echo "════════ 2) الاختبارات الإيجابية (d1-tests.sql) ════════"
-expect_ok "تنفيذ 25 اختبار PASS/FAIL" run_sql_file cloudflare/d1-tests.sql
+expect_ok "تنفيذ 23 اختبار PASS/FAIL" run_sql_file cloudflare/d1-tests.sql
 $W d1 execute $DB --local --file=cloudflare/d1-tests.sql 2>/dev/null | grep -E "PASS|FAIL" || true
 
 echo ""
@@ -62,22 +62,18 @@ expect_reject "N06 quantity = 0" ex "INSERT INTO order_items (order_id,product_n
 expect_reject "N07 status عربي غير صالح" ex "UPDATE orders SET status='استلمت' WHERE id='OMR-TEST-0001';"
 # N08 حالة دفع غير صالحة
 expect_reject "N08 payment_status غير صالح" ex "UPDATE orders SET payment_status='maybe' WHERE id='OMR-TEST-0001';"
-# N09 كوبون خصم 150%
-expect_reject "N09 كوبون 150%" ex "INSERT INTO coupons (code,discount_percent) VALUES ('N09',150);"
-# N10 كوبون مكرر
-expect_reject "N10 كود كوبون مكرر" ex "INSERT INTO coupons (code,discount_percent) VALUES ('SAVE10',5);"
-# N11 إشعار نفاد بدون أي وسيلة تواصل
-expect_reject "N11 إشعار بدون email/phone/user" ex "INSERT INTO stock_notifications (product_id) VALUES ('p-rc-001');"
-# N12 عنصر طلب لطلب غير موجود (FK)
-expect_reject "N12 FK: order_id غير موجود" ex "INSERT INTO order_items (order_id,product_name,quantity,unit_price,total_price) VALUES ('NOPE-1','س',1,10,10);"
-# N13 مفضلة مكررة (UNIQUE user+product)
-expect_reject "N13 مفضلة مكررة" ex "INSERT INTO wishlists (user_id,product_id) VALUES ('u-test-merchant-1','p-rc-001');"
-# N14 محافظة شحن مكررة
-expect_reject "N14 محافظة مكررة" ex "INSERT INTO shipping_zones (governorate,governorate_ar) VALUES ('Gharbia','الغربية');"
-# N15 نوع مستخدم غير صالح
-expect_reject "N15 user_type غير صالح" ex "INSERT INTO profiles (email,full_name,user_type) VALUES ('n15@t.om','x','vip');"
-# N16 فئة جملة غير صالحة
-expect_reject "N16 wholesale_tier غير صالح" ex "INSERT INTO profiles (email,full_name,wholesale_tier) VALUES ('n16@t.om','x','tier9');"
+# N09 إشعار نفاد بدون أي وسيلة تواصل
+expect_reject "N09 إشعار بدون email/phone/user" ex "INSERT INTO stock_notifications (product_id) VALUES ('p-rc-001');"
+# N10 عنصر طلب لطلب غير موجود (FK)
+expect_reject "N10 FK: order_id غير موجود" ex "INSERT INTO order_items (order_id,product_name,quantity,unit_price,total_price) VALUES ('NOPE-1','س',1,10,10);"
+# N11 مفضلة مكررة (UNIQUE user+product)
+expect_reject "N11 مفضلة مكررة" ex "INSERT INTO wishlists (user_id,product_id) VALUES ('u-test-merchant-1','p-rc-001');"
+# N12 محافظة شحن مكررة
+expect_reject "N12 محافظة مكررة" ex "INSERT INTO shipping_zones (governorate,governorate_ar) VALUES ('Gharbia','الغربية');"
+# N13 نوع مستخدم غير صالح
+expect_reject "N13 user_type غير صالح" ex "INSERT INTO profiles (email,full_name,user_type) VALUES ('n15@t.om','x','vip');"
+# N14 فئة جملة غير صالحة
+expect_reject "N14 wholesale_tier غير صالح" ex "INSERT INTO profiles (email,full_name,wholesale_tier) VALUES ('n16@t.om','x','tier9');"
 
 echo ""
 echo "════════ 4) فحص سلامة قاعدة البيانات ════════"

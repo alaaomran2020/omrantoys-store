@@ -16,7 +16,6 @@ import Footer from './components/layout/Footer';
 import ProductDetailModal from './components/product/ProductDetailModal';
 import CartDrawer from './components/cart/CartDrawer';
 import CheckoutModal from './components/checkout/CheckoutModal';
-import GiftFinderModal from './components/giftFinder/GiftFinderModal';
 import CustomerSignupModal from './components/common/CustomerSignupModal';
 import WishlistModal from './components/common/WishlistModal';
 import OrderTrackingModal from './components/common/OrderTrackingModal';
@@ -57,7 +56,6 @@ function StoreApp() {
       <ProductDetailModal />
       <CartDrawer />
       <CheckoutModal />
-      <GiftFinderModal />
       <CustomerSignupModal />
       <WishlistModal />
       <OrderTrackingModal />

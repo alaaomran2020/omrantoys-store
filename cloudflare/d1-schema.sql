@@ -28,7 +28,6 @@ DROP TABLE IF EXISTS stock_notifications;
 DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS coupons;
 DROP TABLE IF EXISTS shipping_zones;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS profiles;
@@ -188,7 +187,6 @@ CREATE TABLE orders (
   total REAL NOT NULL,
   currency TEXT DEFAULT 'EGP',
 
-  coupon_code TEXT,
   user_type TEXT DEFAULT 'retail',
   wholesale_discount_applied REAL DEFAULT 0,
 
@@ -273,34 +271,7 @@ INSERT INTO shipping_zones (governorate, governorate_ar, base_cost, free_shippin
 ('Matrouh', 'مطروح', 80, 1200, 15, 2, 4);
 
 -- ============================================
--- 8. COUPONS
--- ============================================
-CREATE TABLE coupons (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  code TEXT UNIQUE NOT NULL,
-  discount_percent INTEGER CHECK (discount_percent BETWEEN 0 AND 100),
-  discount_amount REAL,
-  min_spend REAL DEFAULT 0,
-  max_uses INTEGER,
-  used_count INTEGER DEFAULT 0,
-  user_type TEXT DEFAULT 'both' CHECK (user_type IN ('retail', 'wholesale', 'both')),
-  is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),
-  expires_at TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- SEED: الكوبونات الفعلية للمتجر
--- مطابقة لـ migrations/0002_seed_coupons.sql و src/data/coupons.js
--- حتى تعمل نقطة /api/coupons/validate (مثل OMRAN10) فور إنشاء قاعدة من هذا الملف.
-INSERT INTO coupons (code, discount_percent, min_spend, max_uses, user_type, is_active) VALUES
-('OMRAN10', 10, 0,    NULL, 'both', 1),
-('TOYS20',  20, 1500, NULL, 'both', 1),
-('EID2026', 15, 800,  NULL, 'both', 1),
-('FREESHIP', 0, 500,  NULL, 'both', 1)
-ON CONFLICT(code) DO NOTHING;
-
--- ============================================
--- 9. WISHLISTS
+-- 8. WISHLISTS
 -- ============================================
 CREATE TABLE wishlists (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),

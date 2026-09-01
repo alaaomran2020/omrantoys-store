@@ -2,7 +2,7 @@
 
 ## نظرة عامة
 
-قاعدة بيانات PostgreSQL عبر Supabase مع 11 جدول، مصممة لدعم B2B & B2C، آلاف المنتجات، وشحن ديناميكي.
+قاعدة بيانات PostgreSQL عبر Supabase مع 10 جداول، مصممة لدعم B2B & B2C، آلاف المنتجات، وشحن ديناميكي.
 
 ---
 
@@ -173,8 +173,7 @@ vat_amount NUMERIC DEFAULT 0
 total NUMERIC NOT NULL
 currency TEXT DEFAULT 'EGP'
 
--- Coupon & Wholesale
-coupon_code TEXT
+-- Wholesale
 user_type TEXT DEFAULT 'retail'
 wholesale_discount_applied NUMERIC DEFAULT 0
 
@@ -258,25 +257,7 @@ RETURNS TABLE(cost, is_free, estimated_days)
 
 ---
 
-## 8. `coupons` - أكواد الخصم
-
-```sql
-id UUID PK
-code TEXT UNIQUE NOT NULL -- OMRAN10
-discount_percent INT CHECK 0-100
-discount_amount NUMERIC
-min_spend NUMERIC DEFAULT 0
-max_uses INT
-used_count INT DEFAULT 0
-user_type TEXT CHECK ('retail','wholesale','both') DEFAULT 'both'
-is_active BOOLEAN DEFAULT true
-expires_at TIMESTAMPTZ
-created_at
-```
-
----
-
-## 9. `wishlists` - المفضلة
+## 8. `wishlists` - المفضلة
 
 ```sql
 id UUID PK
@@ -290,7 +271,7 @@ UNIQUE(user_id, product_id)
 
 ---
 
-## 10. `reviews` - التقييمات
+## 9. `reviews` - التقييمات
 
 ```sql
 id UUID PK
@@ -305,7 +286,7 @@ created_at
 
 ---
 
-## 11. `leads` - بيانات العملاء المسجلين (نموذج التسجيل)
+## 10. `leads` - بيانات العملاء المسجلين (نموذج التسجيل)
 
 ```sql
 id UUID PK
@@ -317,7 +298,7 @@ notes TEXT
 created_at
 ```
 
-**الاستخدام**: نموذج «سجّل بياناتك» الذي يظهر للزائر عند أول دخول للموقع (الاسم + الموبايل + حساب الفيسبوك) مقابل كود خصم ترحيبي `OMRAN10`.
+**الاستخدام**: نموذج «سجّل بياناتك» الذي يظهر للزائر عند أول دخول للموقع (الاسم + الموبايل + حساب الفيسبوك) لتعبئة بيانات طلباته بسرعة.
 
 ---
 
@@ -383,7 +364,6 @@ orders 1--* order_items
 
 shipping_zones (standalone reference)
 
-coupons (standalone)
 leads (standalone capture)
 ```
 

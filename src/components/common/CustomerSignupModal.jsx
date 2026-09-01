@@ -11,7 +11,7 @@ const FacebookIcon = ({ className = 'w-4 h-4' }) => (
 );
 
 export default function CustomerSignupModal() {
-  const { isSignupOpen, setIsSignupOpen, showToast, applyCouponCode, appliedCoupon } = useStore();
+  const { isSignupOpen, setIsSignupOpen, showToast } = useStore();
   const { customer, registerCustomer, updateCustomer } = useAuth();
 
   const [fullName, setFullName] = useState(customer?.fullName || '');
@@ -61,8 +61,7 @@ export default function CustomerSignupModal() {
         await registerCustomer({ fullName, phone, facebook });
       }
       setDone(true);
-      if (!appliedCoupon) applyCouponCode('OMRAN10');
-      showToast('تم تسجيل بياناتك 🎉 كود خصم 10% تم تفعيله على سلتك', 'success');
+      showToast('تم تسجيل بياناتك بنجاح 🎉', 'success');
       setTimeout(() => setIsSignupOpen(false), 2200);
     } finally {
       setSubmitting(false);
@@ -89,7 +88,7 @@ export default function CustomerSignupModal() {
             <p className="text-xs text-white/85 leading-relaxed max-w-[15rem]">
               {done
                 ? 'هنستخدم بياناتك لتأكيد طلبك وتوصيل أسرع'
-                : 'سجّل اسمك ورقمك وبياناتك خلال ثوانٍ، وخد كود خصم 10% على أول طلب'}
+                : 'سجّل اسمك ورقمك وبياناتك خلال ثوانٍ لتأكيد طلباتك بسرعة'}
             </p>
           </div>
         </div>
@@ -99,8 +98,7 @@ export default function CustomerSignupModal() {
             <div className="w-16 h-16 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
               <CheckCircle2 className="w-9 h-9" />
             </div>
-            <p className="text-sm font-black text-slate-900">كود الخصم: OMRAN10</p>
-            <p className="text-xs text-slate-500 mt-1">هيظهر تلقائياً في خانة كوبون الخصم داخل السلة</p>
+            <p className="text-xs text-slate-500 mt-1">هنستخدمها لتأكيد طلباتك والتوصيل بشكل أسرع</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-5 space-y-4">
@@ -155,7 +153,7 @@ export default function CustomerSignupModal() {
               className="w-full h-12 bg-toy-red hover:bg-rose-600 disabled:opacity-60 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-toy-red/25 cursor-pointer active:scale-[0.98] transition-all"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
-              <span>سجّلني وخد خصم 10%</span>
+              <span>سجّل بياناتي</span>
             </button>
 
             <p className="text-[11px] text-slate-400 text-center leading-relaxed">

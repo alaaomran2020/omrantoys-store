@@ -54,8 +54,6 @@ export default function AdminDashboardModal() {
         announcement: 'الشحن متاح لكل محافظات مصر',
         urgencyEnabled: false,
         urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
-        couponCode: 'TOY10',
-        couponDiscount: 10,
         metaPixelId: '',
         ga4Id: ''
       };
@@ -66,8 +64,6 @@ export default function AdminDashboardModal() {
         announcement: 'الشحن متاح لكل محافظات مصر',
         urgencyEnabled: false,
         urgencyText: 'الكمية محدودة — إلحق لعبتك قبل ما تخلص',
-        couponCode: 'TOY10',
-        couponDiscount: 10,
         metaPixelId: '',
         ga4Id: ''
       };
@@ -635,12 +631,6 @@ export default function AdminDashboardModal() {
                 </label>
                 <label className="text-xs font-bold text-slate-700">شريط الإعلان
                   <input value={marketingSettings.announcement} onChange={(e) => setMarketingSettings({ ...marketingSettings, announcement: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" />
-                </label>
-                <label className="text-xs font-bold text-slate-700">كود الكوبون
-                  <input value={marketingSettings.couponCode} onChange={(e) => setMarketingSettings({ ...marketingSettings, couponCode: e.target.value.toUpperCase() })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm font-black uppercase outline-none focus:border-toy-red" dir="ltr" />
-                </label>
-                <label className="text-xs font-bold text-slate-700">نسبة الخصم %
-                  <input type="number" min="0" max="100" value={marketingSettings.couponDiscount} onChange={(e) => setMarketingSettings({ ...marketingSettings, couponDiscount: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
                 </label>
                 <label className="text-xs font-bold text-slate-700">Meta Pixel ID (اختياري)
                   <input value={marketingSettings.metaPixelId} onChange={(e) => setMarketingSettings({ ...marketingSettings, metaPixelId: e.target.value })} placeholder="ضع الـ ID عند توفره" className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-toy-red" dir="ltr" />
