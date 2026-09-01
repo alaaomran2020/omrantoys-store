@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-  Plus, Edit, Trash2, Copy, Eye, Search,
+  Plus, Edit, Trash2, Copy, Eye, Search, Package,
   EyeOff, Check, ChevronLeft, ChevronRight, Download, Star, Archive, X,
 } from 'lucide-react';
 import { SectionHeader, Card, Button, Badge, EmptyState, Field, inputCls, ConfirmDialog, Select } from '../ui';
