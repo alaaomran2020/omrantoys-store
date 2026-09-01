@@ -3,9 +3,41 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply font-cairo text-slate-800 bg-[#FAF9F6];
+  html {
+    -webkit-text-size-adjust: 100%;
   }
+
+  body {
+    @apply font-cairo text-slate-800 bg-toy-cream;
+    overflow-x: hidden;
+  }
+
+  /* العناوين بخط مرح ومستدير يناسب متجر ألعاب أطفال */
+  h1, h2, h3, h4, .font-display {
+    font-family: '"Baloo Bhaijaan 2"', 'Cairo', 'Tajawal', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* إزالة الوميض الأزرق عند اللمس على الموبايل */
+  button, a, label, select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* منع التكبير التلقائي عند التركيز على الحقول في iOS */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px;
+    }
+  }
+}
+
+/* أمان منطقة الشريط السفلي (iPhone) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Custom scrollbar */
@@ -30,4 +62,48 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* =============================
+   هوية عمران - عناصر جاهزة
+   ============================= */
+@layer components {
+  /* بطاقة بحدود ناعمة وظل خفيف */
+  .brand-card {
+    @apply bg-white rounded-blob border border-slate-100 shadow-soft;
+  }
+
+  /* زر مرح بارز مع إحساس باللعب */
+  .btn-playful {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl font-black transition-all duration-200 cursor-pointer;
+    @apply active:scale-[0.97] hover:-translate-y-0.5;
+    box-shadow: 0 6px 0 0 rgba(16, 21, 47, 0.14);
+  }
+
+  .btn-playful:active {
+    box-shadow: 0 2px 0 0 rgba(16, 21, 47, 0.14);
+  }
+
+  /* شارة دائرية ناعمة */
+  .badge-playful {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black;
+  }
+
+  /* خلفية بنقاط ملونة خفيفة (بديل الكونفيتي) */
+  .bg-confetti {
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(255, 77, 109, 0.16) 0 12px, transparent 13px),
+      radial-gradient(circle at 82% 12%, rgba(22, 166, 182, 0.16) 0 10px, transparent 11px),
+      radial-gradient(circle at 24% 78%, rgba(255, 192, 23, 0.18) 0 14px, transparent 15px),
+      radial-gradient(circle at 76% 82%, rgba(131, 56, 236, 0.14) 0 12px, transparent 13px),
+      radial-gradient(circle at 52% 46%, rgba(6, 214, 160, 0.12) 0 16px, transparent 17px);
+    background-size: 260px 260px;
+    background-position: 0 0, 90px 60px, 40px 160px, 180px 130px, 120px 40px;
+  }
+
+  /* إطار متدرج حول اللوجو */
+  .brand-ring {
+    @apply rounded-2xl bg-white ring-1 ring-slate-100;
+    box-shadow: 0 8px 22px -10px rgba(16, 21, 47, 0.28);
+  }
 }

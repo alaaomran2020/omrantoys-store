@@ -1,4 +1,4 @@
-import { CheckCircle2, MessageCircle, PackageCheck, RefreshCcw, ShieldCheck, Truck } from 'lucide-react';
+import { CheckCircle2, MessageCircle, RefreshCcw, ShieldCheck, Truck } from 'lucide-react';
 
 const policies = [
   {
@@ -20,9 +20,9 @@ const policies = [
     color: 'text-emerald-700 bg-emerald-50'
   },
   {
-    icon: PackageCheck,
-    title: 'تجهيز الهدية',
-    text: 'اطلب تغليفًا مجانيًا وأضف رسالة إهداء خاصة ليصل المنتج جاهزًا للمناسبة.',
+    icon: MessageCircle,
+    title: 'تأكيد قبل التجهيز',
+    text: 'نراجع معك التوفر والعنوان وطريقة الدفع على واتساب قبل تجهيز الشحنة.',
     color: 'text-amber-700 bg-amber-50'
   }
 ];

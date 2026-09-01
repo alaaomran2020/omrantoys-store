@@ -8,19 +8,31 @@ export default {
     extend: {
       colors: {
         toy: {
-          red: '#FF4D6D',
-          orange: '#FF7B00',
-          yellow: '#FFB703',
-          green: '#06D6A0',
-          blue: '#118AB2',
-          navy: '#073B4C',
-          purple: '#8338EC',
+          red: '#FF4D6D',      // Coral - اللون الأساسي والأزرار
+          orange: '#FF7B00',   // برتقالي مرح
+          yellow: '#FFC017',   // ذهبي - العروض والشارات
+          gold: '#F6C945',
+          green: '#06D6A0',    // نعناعي - النجاح والتوفر
+          mint: '#16E0B0',
+          blue: '#16A6B6',     // تركوازي - الشحن والروابط
+          navy: '#10152F',     // كحلي - العناوين والفوتر
+          ink: '#2B2D42',
+          purple: '#8338EC',   // بنفسجي - لمسات مرحة
           pink: '#FF006E',
-          cream: '#FFFDF9',
+          cream: '#FFFDF8',    // أبيض دافئ للخلفيات
         }
       },
       fontFamily: {
         cairo: ['Cairo', 'Tajawal', 'sans-serif'],
+        display: ['"Baloo Bhaijaan 2"', 'Cairo', 'Tajawal', 'sans-serif'],
+      },
+      boxShadow: {
+        soft: '0 10px 30px -12px rgba(16, 21, 47, 0.12)',
+        'soft-lg': '0 22px 48px -20px rgba(16, 21, 47, 0.22)',
+        pop: '0 6px 0 0 rgba(16, 21, 47, 0.12)',
+      },
+      borderRadius: {
+        blob: '2rem',
       },
       animation: {
         'bounce-slow': 'bounce 2.5s infinite',

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Gift, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { CreditCard, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 
 export default function StoreFeaturesBanner() {
   const features = [
     {
-      icon: Gift,
-      title: 'تغليف هدايا مجاني فاخر',
-      desc: 'نغلف هديتك مع كرت إهداء شخصي باسم طفلك مجاناً بالكامل لكل طلب',
+      icon: CreditCard,
+      title: 'دفع آمن ووسائل متعددة',
+      desc: 'إنستاباي ومحافظ موبايل وبطاقات بنكية أو الدفع عند الاستلام نقداً للمندوب',
       color: 'bg-rose-50 text-toy-red border-rose-100',
       iconBg: 'bg-rose-500 text-white'
     },
@@ -41,9 +41,9 @@ export default function StoreFeaturesBanner() {
           return (
             <div
               key={index}
-              className={`p-4 rounded-2xl border ${f.color} flex items-start gap-3.5 transition-transform hover:-translate-y-1`}
+              className={`p-4 rounded-blob border ${f.color} flex items-start gap-3.5 transition-all hover:-translate-y-1 shadow-soft hover:shadow-soft-lg`}
             >
-              <div className={`p-2.5 rounded-xl ${f.iconBg} shadow-sm shrink-0 mt-0.5`}>
+              <div className={`p-2.5 rounded-2xl ${f.iconBg} shadow-pop shrink-0 mt-0.5`}>
                 <Icon className="w-5 h-5" />
               </div>
               <div>

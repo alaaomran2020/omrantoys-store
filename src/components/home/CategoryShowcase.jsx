@@ -63,12 +63,12 @@ export default function CategoryShowcase() {
               onClick={() => handleSelect(cat.id)}
               className={`p-4 rounded-2xl flex flex-col items-center text-center transition-all duration-300 group cursor-pointer border ${
                 isSelected
-                  ? 'bg-slate-900 text-white shadow-xl scale-105 border-slate-800'
-                  : 'bg-white hover:bg-slate-50 border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-md'
+                  ? 'bg-gradient-to-br from-toy-red to-pink-600 text-white shadow-soft-lg scale-105 border-transparent'
+                  : 'bg-white hover:bg-slate-50 border-slate-100 hover:border-toy-red/30 shadow-soft hover:shadow-soft-lg'
               }`}
             >
               <div
-                className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cat.color} text-white flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform`}
+                className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cat.color} text-white flex items-center justify-center mb-3 shadow-pop group-hover:scale-110 group-hover:-rotate-3 transition-transform`}
               >
                 <IconComponent className="w-6 h-6" />
               </div>

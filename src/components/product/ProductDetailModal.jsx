@@ -6,7 +6,6 @@ import {
   Heart, 
   ShieldCheck, 
   Truck, 
-  Gift, 
   Check, 
   Info, 
   Battery, 
@@ -39,7 +38,6 @@ export default function ProductDetailModal() {
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isGiftWrapped, setIsGiftWrapped] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
 
   // New review form
@@ -51,9 +49,8 @@ export default function ProductDetailModal() {
 
   const product = selectedProductModal;
   const isFavorite = isInWishlist(product.id);
-  const effectivePrice = getEffectivePrice(product, auth) || auth.getPriceForUser(product);
+  const effectivePrice = getEffectivePrice(product);
   const isOutOfStock = (product.stock || 0) <= 0;
-  const isWholesale = auth.isMerchant && effectivePrice < (product.price || product.retail_price);
   const [showNotify, setShowNotify] = useState(false);
 
   // Product reviews
@@ -65,11 +62,11 @@ export default function ProductDetailModal() {
     .slice(0, 3);
 
   const handleAddToCart = () => {
-    addToCart(product, quantity, { giftWrap: isGiftWrapped });
+    addToCart(product, quantity);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity, { giftWrap: isGiftWrapped });
+    addToCart(product, quantity);
     setSelectedProductModal(null);
     setIsCheckoutOpen(true);
   };
@@ -100,10 +97,10 @@ export default function ProductDetailModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
       
       {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+      <div className="relative bg-white w-full max-w-4xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[94vh] sm:max-h-[92vh] flex flex-col">
         
         {/* Header bar with close button */}
         <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -217,15 +214,14 @@ export default function ProductDetailModal() {
               </div>
 
               {/* Price in EGP */}
-              <div className={`p-4 rounded-2xl border flex items-center justify-between ${isWholesale ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-100'}`}>
+              <div className="p-4 rounded-2xl border flex items-center justify-between bg-slate-50 border-slate-100">
                 <div>
                   <span className="text-xs text-slate-400 block mb-0.5 flex items-center gap-2">
                     السعر شامل الضريبة (بالجنيه):
-                    {isWholesale && <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-black">سعر جملة {auth.discountRate}% خصم</span>}
                     {isOutOfStock && <span className="bg-slate-900 text-white text-[10px] px-2 py-0.5 rounded-full">نفد المخزون</span>}
                   </span>
                   <div className="flex items-baseline gap-2">
-                    <span className={`text-2xl sm:text-3xl font-black ${isWholesale ? 'text-emerald-700' : 'text-slate-900'}`}>
+                    <span className="text-2xl sm:text-3xl font-black text-slate-900">
                       {formatPrice(effectivePrice)}
                     </span>
                     {product.originalPrice && product.originalPrice > effectivePrice && (
@@ -233,17 +229,7 @@ export default function ProductDetailModal() {
                         {formatPrice(product.originalPrice)}
                       </span>
                     )}
-                    {isWholesale && (
-                      <span className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2 py-1 rounded-full font-bold">
-                        قطاعي {formatPrice(product.price || product.retail_price)}
-                      </span>
-                    )}
                   </div>
-                  {isWholesale && (
-                    <div className="text-[11px] text-emerald-700 mt-1 font-bold">
-                      وفر {formatPrice((product.price || product.retail_price || 0) - effectivePrice)} للقطعة • عند طلب 10 قطع توفر {formatPrice(((product.price || 0) - effectivePrice) * 10)}
-                    </div>
-                  )}
                 </div>
 
                 <div className="text-left text-xs font-medium text-slate-500">
@@ -291,27 +277,6 @@ export default function ProductDetailModal() {
                 )}
               </div>
 
-              {/* Gift Wrapping Toggle */}
-              <div className="p-3 bg-rose-50/70 border border-rose-100 rounded-2xl flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <Gift className="w-5 h-5 text-toy-red shrink-0" />
-                  <div>
-                    <h5 className="font-bold text-xs text-slate-800">
-                      هل تود تغليف اللعبة كهدية فاخرة؟
-                    </h5>
-                    <span className="text-[11px] text-slate-500">
-                      تغليف أنيق مع كرت إهداء مجاني
-                    </span>
-                  </div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={isGiftWrapped}
-                  onChange={(e) => setIsGiftWrapped(e.target.checked)}
-                  className="w-5 h-5 rounded text-toy-red focus:ring-toy-red cursor-pointer"
-                />
-              </div>
-
               {/* Quantity and Actions */}
               {isOutOfStock ? (
                 <div className="pt-2">
@@ -331,9 +296,9 @@ export default function ProductDetailModal() {
                     <span className="w-10 text-center font-bold text-sm text-slate-900">{quantity}</span>
                     <button onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="w-9 h-9 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer">+</button>
                   </div>
-                  <button onClick={handleAddToCart} className={`flex-1 w-full font-black py-3 px-5 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-95 ${isWholesale ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-900 hover:bg-toy-red text-white'}`}>
+                  <button onClick={handleAddToCart} className="flex-1 w-full font-black py-3.5 sm:py-3 px-5 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-95 bg-slate-900 hover:bg-toy-red text-white">
                     <ShoppingCart className="w-4 h-4" />
-                    <span>{isWholesale ? `إضافة للطلب الجملة (${formatPrice(effectivePrice * quantity)})` : `إضافة للسلة (${formatPrice(effectivePrice * quantity)})`}</span>
+                    <span>إضافة للسلة ({formatPrice(effectivePrice * quantity)})</span>
                   </button>
                   <button onClick={handleBuyNow} className="w-full sm:w-auto bg-gradient-to-r from-toy-red to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold py-3 px-4 rounded-2xl text-sm shadow-md cursor-pointer">شراء فوري</button>
                   <button onClick={() => toggleWishlist(product.id)} className={`p-3 rounded-2xl border transition-all cursor-pointer ${isFavorite ? 'bg-rose-50 border-rose-200 text-toy-red' : 'border-slate-200 text-slate-500 hover:text-toy-red hover:bg-slate-50'}`} title="المفضلة">

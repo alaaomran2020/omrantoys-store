@@ -66,19 +66,19 @@ export default function Footer() {
           
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-12 h-12 rounded-xl bg-white border border-slate-700 flex items-center justify-center shadow overflow-hidden">
-                <img src="/omran-brand-mark.png" alt="شعار شركة عمران التجارية" className="w-full h-full object-contain" />
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-2xl bg-white/95 p-1 flex items-center justify-center shadow-soft overflow-hidden">
+                <img src="/brand/logo.png" alt="شعار شركة عمران التجارية" width="56" height="56" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-black text-white tracking-tight">
-                  عمران <span className="text-toy-red">للألعاب</span>
+                  عمران <span className="text-toy-yellow">للألعاب</span>
                 </span>
-                <span className="text-[11px] font-bold text-toy-yellow">شركة عمران التجارية • لعب أطفال - هدايا</span>
+                <span className="text-[11px] font-bold text-toy-yellow/90">شركة عمران التجارية • لعب أطفال ومستلزمات حفلات</span>
               </div>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال والهدايا. نوفر تشكيلة مختارة، تغليف هدايا مجاني، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
+              شركة عمران التجارية هي وجهتكم الأولى في مصر لألعاب الأطفال ومستلزماتهم. نوفر تشكيلة مختارة، أسعارًا واضحة بالجنيه، وتوصيلًا سريعًا مع خدمة طلب مباشرة عبر WhatsApp.
             </p>
             <div className="flex items-center gap-2 pt-2 text-xs text-slate-400">
               <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5">

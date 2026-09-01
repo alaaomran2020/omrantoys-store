@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, CreditCard, Truck, Gift, ShoppingBag, MapPin, User, ArrowLeft, ExternalLink, Printer } from 'lucide-react';
+import { X, CheckCircle, CreditCard, Truck, ShoppingBag, MapPin, User, ArrowLeft, ExternalLink, Printer } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
@@ -16,24 +16,22 @@ export default function CheckoutModal() {
 
   const auth = useAuth();
 
-  const [fullName, setFullName] = useState(auth.profile?.full_name || '');
-  const [phone, setPhone] = useState(auth.profile?.phone || '');
-  const [email, setEmail] = useState(auth.profile?.email || '');
+  const [fullName, setFullName] = useState(auth.customer?.fullName || '');
+  const [phone, setPhone] = useState(auth.customer?.phone ? `0${auth.customer.phone.slice(2)}` : '');
+  const [email, setEmail] = useState('');
   const [city, setCity] = useState(selectedGovernorate || 'طنطا (الغربية)');
   const [address, setAddress] = useState('');
-  const [giftMessage, setGiftMessage] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('paymob');
   const [isProcessing, setIsProcessing] = useState(false);
   const [fawryCode, setFawryCode] = useState(null);
 
+  // تعبئة بيانات العميل المسجلة تلقائياً عند فتح الشاشة
   useEffect(() => {
-    if (auth.profile) {
-      setFullName(auth.profile.full_name || '');
-      setPhone(auth.profile.phone || '');
-      setEmail(auth.profile.email || '');
-      setCity(auth.profile.governorate || selectedGovernorate);
+    if (auth.customer) {
+      setFullName(auth.customer.fullName || '');
+      setPhone(auth.customer.phone ? `0${auth.customer.phone.slice(2)}` : '');
     }
-  }, [auth.profile, selectedGovernorate]);
+  }, [auth.customer]);
 
   if (!isCheckoutOpen) return null;
 
@@ -73,13 +71,10 @@ export default function CheckoutModal() {
           city,
           governorate: city,
           address,
-          giftMessage,
           paymentMethod: PAYMENT_METHODS[paymentMethod.toUpperCase()]?.name || paymentMethod,
           payment_gateway: paymentMethod,
           payment_fee: paymentFee,
-          user_type: auth.isMerchant ? 'wholesale' : 'retail',
-          wholesale_discount: auth.isMerchant ? Math.round(cartSubtotal * (auth.discountRate / 100)) : 0,
-          user_id: auth.user?.id,
+          user_type: 'retail',
         });
         setIsProcessing(false);
         try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch {}
@@ -91,21 +86,21 @@ export default function CheckoutModal() {
   };
 
   const handleWhatsApp = (orderId) => {
-    const text = encodeURIComponent(`مرحباً عمران، طلب #${orderId} - ${auth.isMerchant ? 'تاجر جملة' : 'قطاعي'} - أود التأكيد`);
+    const text = encodeURIComponent(`مرحباً عمران، طلب #${orderId} - قطاعي - أود التأكيد`);
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
   };
 
   const closeCheckout = () => { setIsCheckoutOpen(false); setLastPlacedOrder(null); setFawryCode(null); };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
+      <div className="relative bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] sm:max-h-[94vh] flex flex-col">
         
         <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-toy-red/10 text-toy-red flex items-center justify-center font-black">🛍️</div>
             <div>
-              <h2 className="text-base font-black text-slate-900">{lastPlacedOrder ? 'تم تأكيد طلبك!' : `${auth.isMerchant ? 'إتمام طلب الجملة' : 'إتمام الطلب'} - ${formatPrice(totalWithFee)}`}</h2>
+              <h2 className="text-base font-black text-slate-900">{lastPlacedOrder ? 'تم تأكيد طلبك!' : `إتمام الطلب - ${formatPrice(totalWithFee)}`}</h2>
               <span className="text-[11px] text-slate-400">{shippingCalculation.zone} • {shippingCalculation.estimatedDays} • وزن {shippingCalculation.breakdown?.totalWeightGrams || 0}جم</span>
             </div>
           </div>
@@ -129,7 +124,6 @@ export default function CheckoutModal() {
                 <div className="flex items-center justify-between text-xs"><span className="text-slate-500">عدد الألعاب:</span><span className="font-bold">{lastPlacedOrder.items.length} لعبة</span></div>
                 <div className="flex items-center justify-between text-xs"><span className="text-slate-500">الشحن:</span><span className="font-bold">{formatPrice(lastPlacedOrder.shipping)} - {lastPlacedOrder.estimated_delivery}</span></div>
                 {fawryCode && <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs"><strong>كود فوري:</strong> <span className="font-mono font-black text-lg">{fawryCode}</span><div className="text-[11px] text-amber-700 mt-1">ادفع خلال 24 ساعة من أي ماكينة فوري</div></div>}
-                {lastPlacedOrder.giftMessage && <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-900"><span className="font-bold block mb-0.5">رسالة الإهداء:</span><p className="italic">"{lastPlacedOrder.giftMessage}"</p></div>}
                 <div className="flex items-center justify-between pt-3 border-t border-slate-200 text-sm"><span className="font-black">الإجمالي:</span><span className="font-black text-base text-toy-red">{formatPrice(lastPlacedOrder.total + (lastPlacedOrder.payment_fee || 0))}</span></div>
               </div>
 
@@ -143,7 +137,7 @@ export default function CheckoutModal() {
             <form onSubmit={handleSubmitOrder} className="space-y-6">
               
               <div className="space-y-3">
-                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 pb-1 border-b border-slate-100"><User className="w-4 h-4 text-toy-red" /><span>1. بيانات المستلم</span>{auth.isMerchant && <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full">تاجر جملة</span>}</h3>
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 pb-1 border-b border-slate-100"><User className="w-4 h-4 text-toy-red" /><span>1. بيانات المستلم</span></h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div><label className="block text-xs font-bold text-slate-700 mb-1">الاسم *</label><input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="أحمد محمود" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20" /></div>
                   <div><label className="block text-xs font-bold text-slate-700 mb-1">الموبايل *</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01XXXXXXXXX" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20 text-left font-mono" dir="ltr" /></div>
@@ -159,7 +153,6 @@ export default function CheckoutModal() {
                   <div><label className="block text-xs font-bold text-slate-700 mb-1">البريد (اختياري)</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.com" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20" /></div>
                 </div>
                 <div><label className="block text-xs font-bold text-slate-700 mb-1">العنوان التفصيلي *</label><input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} placeholder="المنطقة، الشارع، رقم العمارة" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20" /></div>
-                <div><label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5"><Gift className="w-3.5 h-3.5 text-toy-red" /><span>رسالة إهداء (اختياري)</span></label><input type="text" value={giftMessage} onChange={(e) => setGiftMessage(e.target.value)} placeholder="كل سنة وأنت طيب يا يوسف 🎈" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20" /></div>
               </div>
 
               <div className="space-y-3 pt-2">
@@ -181,7 +174,6 @@ export default function CheckoutModal() {
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <h4 className="font-bold text-xs text-slate-700 mb-2">ملخص الحساب:</h4>
                 <div className="flex justify-between text-xs text-slate-600"><span>قيمة الألعاب ({cart.length}):</span><span className="font-bold text-slate-900">{formatPrice(cartSubtotal)}</span></div>
-                {auth.isMerchant && <div className="flex justify-between text-xs text-emerald-600 font-bold"><span>خصم الجملة ({auth.discountRate}%):</span><span>- {formatPrice(Math.round(cartSubtotal * (auth.discountRate / 100)))}</span></div>}
                 {discountAmount > 0 && <div className="flex justify-between text-xs text-emerald-600 font-bold"><span>خصم الكوبون:</span><span>- {formatPrice(discountAmount)}</span></div>}
                 <div className="flex justify-between text-xs text-slate-600"><span>الشحن ({shippingCalculation.zone}):</span><span>{shippingCost === 0 ? 'مجاني 🎉' : formatPrice(shippingCost)}</span></div>
                 {paymentFee > 0 && <div className="flex justify-between text-xs text-slate-600"><span>رسوم {PAYMENT_METHODS[paymentMethod.toUpperCase()]?.name}:</span><span>{formatPrice(paymentFee)}</span></div>}

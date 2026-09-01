@@ -17,7 +17,6 @@ DROP TRIGGER IF EXISTS trg_products_fts_ad;
 DROP TRIGGER IF EXISTS trg_products_updated_at;
 DROP TRIGGER IF EXISTS trg_profiles_updated_at;
 DROP TRIGGER IF EXISTS trg_orders_updated_at;
-DROP TRIGGER IF EXISTS trg_b2b_articles_updated_at;
 DROP VIEW  IF EXISTS v_low_stock;
 DROP VIEW  IF EXISTS v_order_summary;
 DROP VIEW  IF EXISTS v_catalog;
@@ -28,7 +27,6 @@ DROP TABLE IF EXISTS stock_notifications;
 DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS b2b_articles;
 DROP TABLE IF EXISTS coupons;
 DROP TABLE IF EXISTS shipping_zones;
 DROP TABLE IF EXISTS categories;
@@ -204,8 +202,6 @@ CREATE TABLE orders (
 
   status TEXT DEFAULT 'قيد الانتظار' CHECK (status IN ('قيد الانتظار', 'قيد التجهيز', 'تم الشحن', 'تم التوصيل', 'ملغي', 'مرتجع')),
 
-  gift_message TEXT,
-  gift_wrap INTEGER DEFAULT 0 CHECK (gift_wrap IN (0, 1)),
   notes TEXT,
 
   created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -230,7 +226,6 @@ CREATE TABLE order_items (
   unit_price REAL NOT NULL,
   wholesale_price_applied REAL,
   total_price REAL NOT NULL,
-  gift_wrap INTEGER DEFAULT 0 CHECK (gift_wrap IN (0, 1)),
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -277,36 +272,7 @@ INSERT INTO shipping_zones (governorate, governorate_ar, base_cost, free_shippin
 ('Matrouh', 'مطروح', 80, 1200, 15, 2, 4);
 
 -- ============================================
--- 8. B2B BLOG / CMS
--- ============================================
-CREATE TABLE b2b_articles (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  slug TEXT UNIQUE NOT NULL,
-  title_ar TEXT NOT NULL,
-  title_en TEXT,
-  excerpt_ar TEXT NOT NULL,
-  content_ar TEXT NOT NULL,
-  content_en TEXT,
-  category TEXT CHECK (category IN ('pricing', 'logistics', 'inventory', 'market_data', 'guides', 'regulations')),
-  target_audience TEXT DEFAULT 'wholesale' CHECK (target_audience IN ('retail', 'wholesale', 'both')),
-  data_sources TEXT,            -- JSON array نصي (بديل TEXT[])
-  last_data_update TEXT,
-  author_name TEXT,
-  is_verified INTEGER DEFAULT 0 CHECK (is_verified IN (0, 1)),
-  meta_title TEXT,
-  meta_description TEXT,
-  keywords TEXT,                -- JSON array نصي
-  featured_image TEXT,
-  views_count INTEGER DEFAULT 0,
-  reading_time_minutes INTEGER DEFAULT 5,
-  is_published INTEGER DEFAULT 0 CHECK (is_published IN (0, 1)),
-  published_at TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================
--- 9. COUPONS
+-- 8. COUPONS
 -- ============================================
 CREATE TABLE coupons (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -323,7 +289,7 @@ CREATE TABLE coupons (
 );
 
 -- ============================================
--- 10. WISHLISTS
+-- 9. WISHLISTS
 -- ============================================
 CREATE TABLE wishlists (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -334,7 +300,7 @@ CREATE TABLE wishlists (
 );
 
 -- ============================================
--- 11. REVIEWS
+-- 10. REVIEWS
 -- ============================================
 CREATE TABLE reviews (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -364,11 +330,6 @@ END;
 CREATE TRIGGER trg_orders_updated_at AFTER UPDATE ON orders FOR EACH ROW
 BEGIN
   UPDATE orders SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
-END;
-
-CREATE TRIGGER trg_b2b_articles_updated_at AFTER UPDATE ON b2b_articles FOR EACH ROW
-BEGIN
-  UPDATE b2b_articles SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
 END;
 
 -- مزامنة فهرس البحث FTS5
@@ -410,6 +371,22 @@ CREATE VIEW v_catalog AS
 SELECT p.*, c.name_ar AS category_name_ar
 FROM products p
 LEFT JOIN categories c ON c.id = p.category_id;
+
+-- ============================================
+-- 11. CUSTOMER LEADS (تسجيل بيانات العملاء)
+-- ============================================
+CREATE TABLE IF NOT EXISTS leads (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  full_name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  facebook TEXT,
+  source TEXT DEFAULT 'website-signup',
+  notes TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_phone      ON leads(phone);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
 
 -- ============================================
 -- SEED: Categories

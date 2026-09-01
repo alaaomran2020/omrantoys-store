@@ -192,8 +192,6 @@ payment_transaction_id TEXT
 -- Status
 status TEXT CHECK ('قيد الانتظار','قيد التجهيز','تم الشحن','تم التوصيل','ملغي','مرتجع') DEFAULT 'قيد الانتظار'
 
-gift_message TEXT
-gift_wrap BOOLEAN DEFAULT false
 notes TEXT
 
 created_at, updated_at
@@ -218,7 +216,6 @@ quantity INT CHECK >0
 unit_price NUMERIC NOT NULL
 wholesale_price_applied NUMERIC -- لو تاجر
 total_price NUMERIC NOT NULL
-gift_wrap BOOLEAN
 created_at
 ```
 
@@ -261,51 +258,7 @@ RETURNS TABLE(cost, is_free, estimated_days)
 
 ---
 
-## 8. `b2b_articles` - مدونة التجار (CMS)
-
-**قاعدة صارمة: No Superlatives, Data-Driven**:
-
-```sql
-id UUID PK
-slug TEXT UNIQUE NOT NULL
-title_ar TEXT NOT NULL
-title_en TEXT
-excerpt_ar TEXT NOT NULL
-content_ar TEXT NOT NULL -- يجب أن يكون واقعي، بدون مبالغة
-content_en TEXT
-
-category TEXT CHECK ('pricing','logistics','inventory','market_data','guides','regulations')
-target_audience TEXT CHECK ('retail','wholesale','both') DEFAULT 'wholesale'
-
--- Authenticity
-data_sources TEXT[] -- مصادر الأرقام
-last_data_update TIMESTAMPTZ
-author_name TEXT
-is_verified BOOLEAN DEFAULT false
-
--- SEO
-meta_title TEXT
-meta_description TEXT
-keywords TEXT[]
-featured_image TEXT
-
--- Metrics
-views_count INT DEFAULT 0
-reading_time_minutes INT DEFAULT 5
-
--- Publishing
-is_published BOOLEAN DEFAULT false
-published_at TIMESTAMPTZ
-created_at, updated_at
-```
-
-**RLS**: SELECT where is_published=true or authenticated
-
-**Seed**: 5 مقالات واقعية ببيانات فعلية.
-
----
-
-## 9. `coupons` - أكواد الخصم
+## 8. `coupons` - أكواد الخصم
 
 ```sql
 id UUID PK
@@ -323,7 +276,7 @@ created_at
 
 ---
 
-## 10. `wishlists` - المفضلة
+## 9. `wishlists` - المفضلة
 
 ```sql
 id UUID PK
@@ -337,7 +290,7 @@ UNIQUE(user_id, product_id)
 
 ---
 
-## 11. `reviews` - التقييمات
+## 10. `reviews` - التقييمات
 
 ```sql
 id UUID PK
@@ -352,6 +305,22 @@ created_at
 
 ---
 
+## 11. `leads` - بيانات العملاء المسجلين (نموذج التسجيل)
+
+```sql
+id UUID PK
+full_name TEXT NOT NULL
+phone TEXT NOT NULL -- بصيغة دولية 20XXXXXXXXXX
+facebook TEXT
+source TEXT DEFAULT 'website-signup'
+notes TEXT
+created_at
+```
+
+**الاستخدام**: نموذج «سجّل بياناتك» الذي يظهر للزائر عند أول دخول للموقع (الاسم + الموبايل + حساب الفيسبوك) مقابل كود خصم ترحيبي `OMRAN10`.
+
+---
+
 ## Functions & Triggers
 
 ### Auto-update updated_at
@@ -360,7 +329,7 @@ created_at
 CREATE FUNCTION update_updated_at_column() RETURNS TRIGGER
 ```
 
-Triggers on: profiles, products, orders, b2b_articles
+Triggers on: profiles, products, orders
 
 ### calculate_shipping_cost
 
@@ -414,8 +383,8 @@ orders 1--* order_items
 
 shipping_zones (standalone reference)
 
-b2b_articles (standalone CMS)
 coupons (standalone)
+leads (standalone capture)
 ```
 
 ---
@@ -450,13 +419,12 @@ SELECT * FROM calculate_shipping_cost('طنطا (الغربية)', 2500, 850);
 -- → cost=40, is_free=false, estimated_days='1-2 أيام'
 ```
 
-### مقالات B2B موثقة
+### بيانات العملاء المسجلين
 
 ```sql
-SELECT slug, title_ar, category, data_sources
-FROM b2b_articles
-WHERE is_published = true AND is_verified = true
-ORDER BY published_at DESC;
+SELECT full_name, phone, facebook, source, created_at
+FROM leads
+ORDER BY created_at DESC;
 ```
 
 ---

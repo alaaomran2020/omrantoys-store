@@ -45,7 +45,6 @@ export default function AdvancedFilters({
   setFilters,
   onReset,
   resultsCount,
-  isMerchant = false
 }) {
   const [openSections, setOpenSections] = useState({
     search: true,
@@ -186,7 +185,7 @@ export default function AdvancedFilters({
       </FilterSection>
 
       {/* Price Range */}
-      <FilterSection title={`السعر ${isMerchant ? '(جملة)' : '(قطاعي)'}`} icon={SlidersHorizontal} sectionKey="price">
+      <FilterSection title="السعر" icon={SlidersHorizontal} sectionKey="price">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <input type="number" min="0" max="2500" value={filters.priceMin} onChange={(e) => setFilters(f => ({ ...f, priceMin: Number(e.target.value) }))} className="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold" placeholder="من" />
@@ -199,7 +198,6 @@ export default function AdvancedFilters({
             <span className="text-toy-red font-black">{filters.priceMin} - {filters.priceMax} ج.م</span>
             <span>2500 ج.م</span>
           </div>
-          {isMerchant && <div className="text-[11px] bg-emerald-50 text-emerald-800 p-2 rounded-lg border border-emerald-200">💼 أسعار الجملة تظهر تلقائياً عند تسجيل دخول التاجر</div>}
         </div>
       </FilterSection>
 

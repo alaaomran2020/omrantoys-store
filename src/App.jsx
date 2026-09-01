@@ -17,21 +17,18 @@ import ProductDetailModal from './components/product/ProductDetailModal';
 import CartDrawer from './components/cart/CartDrawer';
 import CheckoutModal from './components/checkout/CheckoutModal';
 import GiftFinderModal from './components/giftFinder/GiftFinderModal';
+import CustomerSignupModal from './components/common/CustomerSignupModal';
 import WishlistModal from './components/common/WishlistModal';
 import OrderTrackingModal from './components/common/OrderTrackingModal';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import AdminDashboardModal from './components/admin/AdminDashboardModal';
 import LiveSalesNotification from './components/common/LiveSalesNotification';
 import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import Toast from './components/common/Toast';
 
-// B2B & Auth
-import AuthModal from './components/auth/AuthModal';
-import MerchantDashboard from './components/b2b/MerchantDashboard';
-import B2BBlogSection from './components/blog/B2BBlogSection';
-
 function StoreApp() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-toy-red selection:text-white font-cairo">
+    <div id="top" className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-toy-red selection:text-white font-cairo">
       {/* Notifications and System Overlays */}
       <Toast />
       <LiveSalesNotification />
@@ -40,13 +37,12 @@ function StoreApp() {
       <Header />
 
       {/* Hero Section */}
-      <main className="flex-1">
+      <main className="flex-1 pb-20 md:pb-0">
         <HeroBanner />
         <StoreFeaturesBanner />
         <CategoryShowcase />
         <FlashDeals />
         <ProductGrid />
-        <B2BBlogSection />
         <PoliciesSection />
         <TestimonialsSection />
         <FaqSection />
@@ -54,6 +50,7 @@ function StoreApp() {
 
       {/* Footer */}
       <Footer />
+      <MobileBottomNav />
       <FloatingWhatsApp />
 
       {/* Interactive Modals */}
@@ -61,11 +58,10 @@ function StoreApp() {
       <CartDrawer />
       <CheckoutModal />
       <GiftFinderModal />
+      <CustomerSignupModal />
       <WishlistModal />
       <OrderTrackingModal />
       <AdminDashboardModal />
-      <AuthModal />
-      <MerchantDashboard />
     </div>
   );
 }

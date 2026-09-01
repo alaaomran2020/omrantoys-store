@@ -9,7 +9,7 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noreferrer"
       aria-label="تواصل مع شركة عمران التجارية عبر WhatsApp"
-      className="fixed bottom-5 left-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-black text-white shadow-xl shadow-green-900/20 transition-all hover:-translate-y-1 hover:bg-[#1ebe5d] focus:outline-none focus:ring-4 focus:ring-green-300"
+      className="hidden sm:inline-flex fixed bottom-5 left-5 z-40 items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-black text-white shadow-xl shadow-green-900/20 transition-all hover:-translate-y-1 hover:bg-[#1ebe5d] focus:outline-none focus:ring-4 focus:ring-green-300"
     >
       <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-white/20">
         <MessageCircle className="h-5 w-5" />
