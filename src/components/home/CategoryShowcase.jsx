@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   Sparkles, 
   Brain, 
@@ -27,7 +27,23 @@ const iconMap = {
 };
 
 export default function CategoryShowcase() {
-  const { selectedCategory, setSelectedCategory } = useStore();
+  const { selectedCategory, setSelectedCategory, products } = useStore();
+
+  // عدد المنتجات الفعلي لكل قسم (بدل الأرقام الثابتة)
+  const countByCategory = useMemo(() => {
+    const counts = {};
+    for (const p of products || []) {
+      if (p?.is_visible === false) continue;
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    }
+    return counts;
+  }, [products]);
+
+  // إظهار الأقسام التي بها منتجات فقط
+  const visibleCategories = useMemo(
+    () => categories.slice(1).filter((c) => (countByCategory[c.id] || 0) > 0),
+    [countByCategory]
+  );
 
   const handleSelect = (id) => {
     setSelectedCategory(id);
@@ -54,8 +70,8 @@ export default function CategoryShowcase() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
-        {categories.slice(1).map((cat) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
+        {visibleCategories.map((cat) => {
           const IconComponent = iconMap[cat.icon] || Sparkles;
           const isSelected = selectedCategory === cat.id;
 
@@ -78,7 +94,7 @@ export default function CategoryShowcase() {
                 {cat.name}
               </span>
               <span className={`text-[10px] mt-1 font-medium ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
-                {cat.count} لعبة
+                {countByCategory[cat.id] || 0} لعبة
               </span>
             </button>
           );

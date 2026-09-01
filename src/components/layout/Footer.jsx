@@ -180,7 +180,6 @@ export default function Footer() {
           <div className="flex items-center gap-1">
             <span>جميع الحقوق محفوظة © 2026</span>
             <strong className="text-slate-300">متجر عمران للألعاب (مصر)</strong>
-            <span>| التعامل بالجنيه المصري (ج.م)</span>
             <Heart className="w-3.5 h-3.5 text-toy-red fill-toy-red inline" />
           </div>
 

@@ -5,7 +5,7 @@ export const categories = [
     nameEn: 'All Toys',
     icon: 'Sparkles',
     color: 'from-amber-400 to-orange-500',
-    count: 27,
+    count: 3,
     description: 'استكشف تشكيلتنا الشاملة من أفضل الألعاب المختارة بعناية لأحبائنا الصغار'
   },
   {
@@ -14,7 +14,7 @@ export const categories = [
     nameEn: 'Educational & STEM',
     icon: 'Brain',
     color: 'from-blue-500 to-indigo-600',
-    count: 6,
+    count: 0,
     description: 'تجارب علمية، روبوتات ذكية، وألغاز لتنمية مهارات التفكير والابتكار'
   },
   {
@@ -23,7 +23,7 @@ export const categories = [
     nameEn: 'Building & Blocks',
     icon: 'Boxes',
     color: 'from-emerald-400 to-teal-600',
-    count: 5,
+    count: 0,
     description: 'أطقم بناء، ليغو، وهياكل معمارية تنمي الخيال والصبر والتركيز'
   },
   {
@@ -32,7 +32,7 @@ export const categories = [
     nameEn: 'RC & Robotics',
     icon: 'Cpu',
     color: 'from-purple-500 to-violet-700',
-    count: 4,
+    count: 0,
     description: 'سيارات دريفت، طائرات درون، وروبوتات تفاعلية تتحدث وتتحرك'
   },
   {
@@ -41,7 +41,7 @@ export const categories = [
     nameEn: 'Dolls & Action Figures',
     icon: 'HeartHandshake',
     color: 'from-pink-400 to-rose-600',
-    count: 6,
+    count: 2,
     description: 'شخصيات أبطال خارقين، دمى لطيفة، وبيوت دمى خيالية'
   },
   {
@@ -50,7 +50,7 @@ export const categories = [
     nameEn: 'Board Games & Puzzles',
     icon: 'Dices',
     color: 'from-amber-500 to-red-500',
-    count: 3,
+    count: 0,
     description: 'أوقات مرح وتنافس وتواصل أسري ممتع لجميع أفراد العائلة'
   },
   {
@@ -59,7 +59,7 @@ export const categories = [
     nameEn: 'Outdoor & Ride-ons',
     icon: 'Bike',
     color: 'from-cyan-400 to-blue-600',
-    count: 4,
+    count: 0,
     description: 'سكوترات، سيارات كهربائية، ومعدات رياضية لصحة ونشاط دائم'
   },
   {
@@ -68,7 +68,7 @@ export const categories = [
     nameEn: 'Baby & Toddler',
     icon: 'Baby',
     color: 'from-lime-400 to-emerald-600',
-    count: 3,
+    count: 0,
     description: 'ألعاب آمنة 100% خالية من المواد الضارة لتحفيز الحواس والحركة'
   },
   {
@@ -77,7 +77,7 @@ export const categories = [
     nameEn: 'Arts & Crafts',
     icon: 'Palette',
     color: 'from-fuchsia-500 to-pink-600',
-    count: 4,
+    count: 1,
     description: 'ألوان سحرية، صلصال طبيعي، وأدوات تصميم تفجر إبداع طفلك'
   }
 ];
