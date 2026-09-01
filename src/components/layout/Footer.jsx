@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Heart, ArrowUp, Send, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { categories } from '../../data/categories';
+import { activeCategories as categories } from '../../data/categories';
 
 export default function Footer() {
   const { setSelectedCategory, setIsTrackingOpen, showToast } = useStore();

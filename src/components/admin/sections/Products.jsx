@@ -4,7 +4,7 @@ import {
   EyeOff, Check, ChevronLeft, ChevronRight, Download, Star, Archive, X,
 } from 'lucide-react';
 import { SectionHeader, Card, Button, Badge, EmptyState, Field, inputCls, ConfirmDialog, Select } from '../ui';
-import { categories, ageGroups } from '../../../data/categories';
+import { categories, activeCategories, ageGroups } from '../../../data/categories';
 import { exportProducts } from '../../../lib/exporters';
 import { track, EVENTS } from '../../../lib/analytics';
 
@@ -247,7 +247,7 @@ function ProductEditor({ product, ctx, onClose }) {
             <Field label="اسم المنتج (عربي)" required className="sm:col-span-2"><input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="مثال: سيارة شرطة لاسلكية ذكية" /></Field>
             <Field label="الاسم بالإنجليزية"><input className={inputCls} dir="ltr" value={form.nameEn} onChange={(e) => set('nameEn', e.target.value)} /></Field>
             <Field label="SKU"><input className={inputCls} dir="ltr" value={form.sku} onChange={(e) => set('sku', e.target.value)} placeholder="OMR-XXX" /></Field>
-            <Field label="التصنيف"><Select value={form.category} onChange={(v) => set('category', v)} options={categories.slice(1).map((c) => ({ value: c.id, label: c.name }))} /></Field>
+            <Field label="التصنيف"><Select value={form.category} onChange={(v) => set('category', v)} options={activeCategories.slice(1).map((c) => ({ value: c.id, label: c.name }))} /></Field>
             <Field label="الفئة العمرية"><Select value={form.ageGroup} onChange={(v) => set('ageGroup', v)} options={ageGroups.slice(1).map((a) => ({ value: a.id, label: a.label }))} /></Field>
             <Field label="سعر البيع (ج.م)" required><input type="number" min="1" className={inputCls} value={form.price} onChange={(e) => set('price', e.target.value)} /></Field>
             <Field label="السعر قبل الخصم"><input type="number" className={inputCls} value={form.originalPrice} onChange={(e) => set('originalPrice', e.target.value)} /></Field>

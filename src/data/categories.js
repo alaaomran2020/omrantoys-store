@@ -79,8 +79,36 @@ export const categories = [
     color: 'from-fuchsia-500 to-pink-600',
     count: 1,
     description: 'ألوان سحرية، صلصال طبيعي، وأدوات تصميم تفجر إبداع طفلك'
+  },
+  {
+    id: 'ramadan-lanterns',
+    name: 'فوانيس رمضان',
+    nameEn: 'Ramadan Lanterns',
+    icon: 'MoonStar',
+    color: 'from-amber-400 via-yellow-500 to-orange-600',
+    count: 0,
+    comingSoon: true,
+    badge: 'قريباً',
+    description: 'فوانيس رمضان بأشكال وأحجام متنوعة، إضاءة وأنغام، وزينة كاملة للشهر الكريم'
+  },
+  {
+    id: 'seasonal',
+    name: 'المنتجات الموسمية',
+    nameEn: 'Seasonal Products',
+    icon: 'Gift',
+    color: 'from-violet-500 via-purple-600 to-indigo-700',
+    count: 0,
+    comingSoon: true,
+    badge: 'قريباً',
+    description: 'تشكيلات المواسم والأعياد: رمضان، العيد، المدارس، والاحتفالات الخاصة'
   }
 ];
+
+// الأقسام القابلة للتصفح فعلياً (بدون أقسام "قريباً")
+export const activeCategories = categories.filter((c) => !c.comingSoon);
+
+// الأقسام المعلَن عنها كـ "قريباً"
+export const comingSoonCategories = categories.filter((c) => c.comingSoon);
 
 export const ageGroups = [
   { id: 'all', label: 'جميع الأعمار', icon: '👶👦👧' },

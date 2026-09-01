@@ -12,7 +12,7 @@ import {
   Gift,
   Sparkles
 } from 'lucide-react';
-import { categories, ageGroups } from '../../data/categories';
+import { activeCategories as categories, ageGroups } from '../../data/categories';
 
 const toyTypes = [
   { id: 'all', label: 'كل الأنواع', icon: '🧸' },
