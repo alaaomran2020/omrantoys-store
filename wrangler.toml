@@ -1,12 +1,18 @@
+# ============================================================
+# Omran Toys Store — Cloudflare Workers + Static Assets
+# ============================================================
+# النشر: npm run deploy  (يبني Vite ثم يرفع dist/ إلى Cloudflare)
+# ============================================================
+
 name = "omrantoys-store"
 compatibility_date = "2025-06-01"
 
 # ============================================
-# الواجهة الأمامية (Vite build → ./dist)
+# Static Assets (Vite build → ./dist)
 # ============================================
 [assets]
 directory = "./dist"
-# SPA: أي مسار غير موجود يُخدِم index.html (مطلوب لتطبيقات React ذات الواجهة الواحدة)
+# SPA: أي مسار غير موجود يُخدِم index.html (مطلوب لتطبيقات React SPA)
 not_found_handling = "single-page-application"
 
 # ملاحظة: عند إضافة كود خلفي (Worker API) لاحقاً أضف هنا:
@@ -17,12 +23,16 @@ not_found_handling = "single-page-application"
 # ============================================
 # Cloudflare D1 Database (SQLite at the edge)
 # ============================================
-# للاختبار المحلي: database_id اختياري (يُستخدم وضع --local)
-# للنشر الفعلي:
-#   npx wrangler d1 create omran-toys-db
-#   ← انسخ الـ database_id الحقيقي هنا
-#   npx wrangler d1 execute DB --remote --file=cloudflare/d1-schema.sql
-[[d1_databases]]
-binding = "DB"
-database_name = "omran-toys-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+# D1 غير مستخدم حالياً في الواجهة الأمامية.
+# التطبيق يستخدم Supabase (مع fallback إلى localStorage).
+#
+# عند الحاجة لـ D1 مستقبلاً (Worker API):
+#   1. npx wrangler d1 create omran-toys-db
+#   2. انسخ database_id الحقيقي من الناتج
+#   3. ألغِ التعليق عن الأسطر أدناه وضع الـ ID الحقيقي
+#   4. npx wrangler d1 execute DB --remote --file=cloudflare/d1-schema.sql
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "omran-toys-db"
+# database_id = "<YOUR_REAL_D1_DATABASE_ID>"

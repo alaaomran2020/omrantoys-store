@@ -1,0 +1,16 @@
+# Cache static assets aggressively (Vite hashes filenames)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Don't cache the HTML shell
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Security headers for all responses
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

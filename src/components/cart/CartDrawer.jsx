@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Truck, Package, MapPin } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Truck, MapPin } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { getAllGovernorates } from '../../lib/shippingCalculator';
 

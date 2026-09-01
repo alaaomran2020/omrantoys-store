@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "deploy": "npm run build && npx wrangler deploy",
+    "deploy:dry": "npm run build && npx wrangler deploy --dry-run",
     "db:d1:schema": "wrangler d1 execute DB --local --file=cloudflare/d1-schema.sql",
     "db:d1:tests": "wrangler d1 execute DB --local --file=cloudflare/d1-tests.sql",
     "db:d1:test": "bash cloudflare/test-d1.sh"

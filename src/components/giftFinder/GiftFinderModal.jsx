@@ -3,8 +3,8 @@ import {
   X, 
   Gift, 
   Sparkles, 
-  ArrowLeft, 
-  Check, 
+
+
   RotateCcw, 
   ShoppingCart, 
   Star 

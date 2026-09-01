@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { 
   ArrowUpDown, 
   PackageOpen,
@@ -16,7 +16,6 @@ export default function ProductGrid() {
     setAdvancedFilters,
     sortBy,
     setSortBy,
-    formatPrice,
     getEffectivePrice
   } = useStore();
 

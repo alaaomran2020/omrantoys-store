@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Clock, Zap, ShoppingCart, Star } from 'lucide-react';
+import { Flame, ShoppingCart, Star } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function FlashDeals() {
