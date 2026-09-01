@@ -154,9 +154,22 @@ export default function Footer() {
                 <Phone className="w-4 h-4 text-toy-green" />
                 <a href="https://wa.me/201555570269" target="_blank" rel="noreferrer" dir="ltr" className="hover:text-toy-green transition-colors">+20 15 5555 70269</a>
               </div>
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-toy-red" />
-                <span>جمهورية مصر العربية (طنطا - القاهرة)</span>
+              <div className="pt-1">
+                <span className="block text-sm font-bold text-white mb-2">فروعنا</span>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>طنطا — ميدان السيد البدوي</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>شارع درب الابشيهي</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>الاستاد أمام نادي سيتي كلوب و مطعم سي السيد</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
