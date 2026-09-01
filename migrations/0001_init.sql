@@ -111,8 +111,6 @@ CREATE TABLE products (
   -- تحليلات
   views_count INTEGER DEFAULT 0,
   sales_count INTEGER DEFAULT 0,
-  rating REAL DEFAULT 0 CHECK (rating BETWEEN 0 AND 5),
-  reviews_count INTEGER DEFAULT 0,
 
   -- الاستيراد الجماعي
   import_batch_id TEXT,
@@ -172,7 +170,6 @@ CREATE TABLE orders (
   total REAL NOT NULL,
   currency TEXT DEFAULT 'EGP',
 
-  coupon_code TEXT,
   user_type TEXT DEFAULT 'retail',
   wholesale_discount_applied REAL DEFAULT 0,
 
@@ -257,24 +254,7 @@ INSERT INTO shipping_zones (governorate, governorate_ar, base_cost, free_shippin
 ('Matrouh', 'مطروح', 80, 1200, 15, 2, 4);
 
 -- ============================================
--- 8. COUPONS
--- ============================================
-CREATE TABLE coupons (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  code TEXT UNIQUE NOT NULL,
-  discount_percent INTEGER CHECK (discount_percent BETWEEN 0 AND 100),
-  discount_amount REAL,
-  min_spend REAL DEFAULT 0,
-  max_uses INTEGER,
-  used_count INTEGER DEFAULT 0,
-  user_type TEXT DEFAULT 'both' CHECK (user_type IN ('retail', 'wholesale', 'both')),
-  is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),
-  expires_at TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================
--- 9. WISHLISTS
+-- 8. WISHLISTS
 -- ============================================
 CREATE TABLE wishlists (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -282,20 +262,6 @@ CREATE TABLE wishlists (
   product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(user_id, product_id)
-);
-
--- ============================================
--- 10. REVIEWS
--- ============================================
-CREATE TABLE reviews (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  user_id TEXT REFERENCES profiles(id) ON DELETE SET NULL,
-  author_name TEXT NOT NULL,
-  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
-  comment TEXT,
-  is_verified_purchase INTEGER DEFAULT 0 CHECK (is_verified_purchase IN (0, 1)),
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================
@@ -358,7 +324,7 @@ FROM products p
 LEFT JOIN categories c ON c.id = p.category_id;
 
 -- ============================================
--- 11. CUSTOMER LEADS (تسجيل بيانات العملاء)
+-- 10. CUSTOMER LEADS (تسجيل بيانات العملاء)
 -- ============================================
 CREATE TABLE IF NOT EXISTS leads (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),

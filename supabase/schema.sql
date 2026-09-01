@@ -109,8 +109,6 @@ CREATE TABLE public.products (
   -- Analytics
   views_count INT DEFAULT 0,
   sales_count INT DEFAULT 0,
-  rating NUMERIC DEFAULT 0 CHECK (rating >= 0 AND rating <= 5),
-  reviews_count INT DEFAULT 0,
   
   -- Bulk Import
   import_batch_id TEXT,
@@ -174,8 +172,7 @@ CREATE TABLE public.orders (
   total NUMERIC NOT NULL,
   currency TEXT DEFAULT 'EGP',
   
-  -- Coupon & Wholesale
-  coupon_code TEXT,
+  -- Wholesale
   user_type TEXT DEFAULT 'retail',
   wholesale_discount_applied NUMERIC DEFAULT 0,
   
@@ -277,27 +274,7 @@ ALTER TABLE public.shipping_zones ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Shipping zones viewable by everyone" ON public.shipping_zones FOR SELECT USING (true);
 
 -- ============================================
--- 8. COUPONS
--- ============================================
-CREATE TABLE public.coupons (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  code TEXT UNIQUE NOT NULL,
-  discount_percent INT CHECK (discount_percent >= 0 AND discount_percent <= 100),
-  discount_amount NUMERIC,
-  min_spend NUMERIC DEFAULT 0,
-  max_uses INT,
-  used_count INT DEFAULT 0,
-  user_type TEXT CHECK (user_type IN ('retail', 'wholesale', 'both')) DEFAULT 'both',
-  is_active BOOLEAN DEFAULT true,
-  expires_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Coupons viewable by everyone" ON public.coupons FOR SELECT USING (is_active = true);
-
--- ============================================
--- 9. WISHLISTS
+-- 8. WISHLISTS
 -- ============================================
 CREATE TABLE public.wishlists (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -309,24 +286,6 @@ CREATE TABLE public.wishlists (
 
 ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own wishlist" ON public.wishlists FOR ALL USING (auth.uid() = user_id);
-
--- ============================================
--- 10. REVIEWS
--- ============================================
-CREATE TABLE public.reviews (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  author_name TEXT NOT NULL,
-  rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comment TEXT,
-  is_verified_purchase BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Reviews viewable by everyone" ON public.reviews FOR SELECT USING (true);
-CREATE POLICY "Authenticated can create reviews" ON public.reviews FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- ============================================
 -- FUNCTIONS & TRIGGERS
@@ -401,7 +360,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================
--- 11. CUSTOMER LEADS (تسجيل بيانات العملاء)
+-- 10. CUSTOMER LEADS (تسجيل بيانات العملاء)
 -- ============================================
 CREATE TABLE IF NOT EXISTS public.leads (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

@@ -10,7 +10,7 @@ const WHATSAPP_NUMBER = '201555570269';
 
 export default function CheckoutModal() {
   const {
-    isCheckoutOpen, setIsCheckoutOpen, cart, cartSubtotal, shippingCost, discountAmount, vatAmount, cartTotal,
+    isCheckoutOpen, setIsCheckoutOpen, cart, cartSubtotal, shippingCost, vatAmount, cartTotal,
     formatPrice, placeOrder, lastPlacedOrder, setLastPlacedOrder, shippingCalculation, selectedGovernorate, setSelectedGovernorate
   } = useStore();
 
@@ -174,7 +174,6 @@ export default function CheckoutModal() {
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <h4 className="font-bold text-xs text-slate-700 mb-2">ملخص الحساب:</h4>
                 <div className="flex justify-between text-xs text-slate-600"><span>قيمة الألعاب ({cart.length}):</span><span className="font-bold text-slate-900">{formatPrice(cartSubtotal)}</span></div>
-                {discountAmount > 0 && <div className="flex justify-between text-xs text-emerald-600 font-bold"><span>خصم الكوبون:</span><span>- {formatPrice(discountAmount)}</span></div>}
                 <div className="flex justify-between text-xs text-slate-600"><span>الشحن ({shippingCalculation.zone}):</span><span>{shippingCost === 0 ? 'مجاني 🎉' : formatPrice(shippingCost)}</span></div>
                 {paymentFee > 0 && <div className="flex justify-between text-xs text-slate-600"><span>رسوم {PAYMENT_METHODS[paymentMethod.toUpperCase()]?.name}:</span><span>{formatPrice(paymentFee)}</span></div>}
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline"><span className="font-black text-sm text-slate-900">الإجمالي المستحق:</span><span className="text-xl font-black text-toy-red">{formatPrice(totalWithFee)}</span></div>

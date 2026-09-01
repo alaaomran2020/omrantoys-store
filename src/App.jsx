@@ -7,7 +7,6 @@ import StoreFeaturesBanner from './components/layout/StoreFeaturesBanner';
 import CategoryShowcase from './components/home/CategoryShowcase';
 import FlashDeals from './components/home/FlashDeals';
 import ProductGrid from './components/product/ProductGrid';
-import TestimonialsSection from './components/home/TestimonialsSection';
 import PoliciesSection from './components/home/PoliciesSection';
 import FaqSection from './components/home/FaqSection';
 import Footer from './components/layout/Footer';
@@ -16,7 +15,6 @@ import Footer from './components/layout/Footer';
 import ProductDetailModal from './components/product/ProductDetailModal';
 import CartDrawer from './components/cart/CartDrawer';
 import CheckoutModal from './components/checkout/CheckoutModal';
-import GiftFinderModal from './components/giftFinder/GiftFinderModal';
 import CustomerSignupModal from './components/common/CustomerSignupModal';
 import WishlistModal from './components/common/WishlistModal';
 import OrderTrackingModal from './components/common/OrderTrackingModal';
@@ -44,7 +42,6 @@ function StoreApp() {
         <FlashDeals />
         <ProductGrid />
         <PoliciesSection />
-        <TestimonialsSection />
         <FaqSection />
       </main>
 
@@ -57,7 +54,6 @@ function StoreApp() {
       <ProductDetailModal />
       <CartDrawer />
       <CheckoutModal />
-      <GiftFinderModal />
       <CustomerSignupModal />
       <WishlistModal />
       <OrderTrackingModal />

@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Search, ShoppingCart, Heart, Package, Settings, Gift, Menu, X, 
+  Search, ShoppingCart, Heart, Package, Settings, Menu, X, 
   User, LayoutGrid, PhoneCall
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { categories } from '../../data/categories';
+import { track, EVENTS } from '../../lib/analytics';
 
 // شعار المتجر - ملف واحد ثابت: public/brand/logo.png (يُستبدل مباشرة عند تحديث الهوية)
 const BRAND_LOGO = '/brand/logo.png';
@@ -14,7 +15,7 @@ export default function Header() {
   const {
     products, wishlist, formatPrice, totalItemsCount, cartSubtotal,
     searchQuery, setSearchQuery, selectedCategory, setSelectedCategory,
-    setIsCartOpen, setIsWishlistOpen, setIsGiftFinderOpen, setIsAdminOpen,
+    setIsCartOpen, setIsWishlistOpen, setIsAdminOpen,
     setIsTrackingOpen, setSelectedProductModal, setIsSignupOpen
   } = useStore();
 
@@ -65,10 +66,10 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
             <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold animate-pulse shrink-0">عروض مصر 🇪🇬</span>
-            <span className="truncate">شحن مجاني لكافة المحافظات فوق 1,000 ج.م | كود: OMRAN10</span>
+            <span className="truncate">شحن مجاني لكافة المحافظات فوق 1,000 ج.م</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs shrink-0">
-            <button onClick={() => setIsGiftFinderOpen(true)} className="flex items-center gap-1 hover:text-yellow-200 transition-colors cursor-pointer"><Gift className="w-3.5 h-3.5" /><span>مستكشف الهدايا</span></button>
+
             <span className="opacity-40">|</span>
             <button onClick={() => setIsTrackingOpen(true)} className="flex items-center gap-1 hover:text-yellow-200 transition-colors cursor-pointer"><Package className="w-3.5 h-3.5" /><span>تتبع شحنتك</span></button>
             <span className="opacity-40">|</span>
@@ -107,7 +108,7 @@ export default function Header() {
                 <div className="p-2 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs text-slate-500"><span>أفضل النتائج ({liveSearchResults.length})</span><span className="text-[11px] text-toy-blue">اضغط للعرض</span></div>
                 <div className="divide-y divide-slate-50">
                   {liveSearchResults.map((item) => (
-                    <div key={item.id} onClick={() => { setSelectedProductModal(item); setShowSearchResults(false); }} className="p-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <div key={item.id} onClick={() => { setSelectedProductModal(item); setShowSearchResults(false); track(EVENTS.productSearch, { query: searchQuery }); }} className="p-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer transition-colors">
                       <img src={item.images[0]} alt={item.name} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0" />
                       <div className="flex-1 min-w-0"><h4 className="text-sm font-semibold text-slate-800 truncate">{item.name}</h4><div className="flex items-center gap-2 mt-0.5"><span className="text-xs font-bold text-toy-red">{formatPrice(item.price)}</span><span className="text-[11px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{item.ageGroup} سنوات</span></div></div>
                       <span className="text-xs text-toy-blue font-medium shrink-0">عرض ←</span>
@@ -171,7 +172,7 @@ export default function Header() {
           {showSearchResults && liveSearchResults.length > 0 && (
             <div className="absolute right-3 left-3 mt-1 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50">
               {liveSearchResults.map((item) => (
-                <div key={item.id} onClick={() => { setSelectedProductModal(item); setShowSearchResults(false); }} className="p-2.5 flex items-center gap-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0">
+                <div key={item.id} onClick={() => { setSelectedProductModal(item); setShowSearchResults(false); track(EVENTS.productSearch, { query: searchQuery }); }} className="p-2.5 flex items-center gap-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0">
                   <img src={item.images[0]} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-slate-100 shrink-0" />
                   <div className="flex-1 min-w-0"><h4 className="text-xs font-semibold text-slate-800 truncate">{item.name}</h4><span className="text-[11px] font-bold text-toy-red">{formatPrice(item.price)}</span></div>
                 </div>
@@ -210,10 +211,10 @@ export default function Header() {
                     <div className="text-xs text-slate-500" dir="ltr">{customer.phone}</div>
                   </div>
                 ) : (
-                  <button onClick={() => { setIsSignupOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm"><User className="w-5 h-5" /> سجّل بياناتك وخد خصم 10%</button>
+                  <button onClick={() => { setIsSignupOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm"><User className="w-5 h-5" /> سجّل بياناتك بسرعة</button>
                 )}
 
-                <button onClick={() => { setIsGiftFinderOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 text-amber-900 font-bold text-sm"><Gift className="w-5 h-5 text-amber-600" /> مستكشف الهدايا الذكي</button>
+
                 <button onClick={() => { setIsTrackingOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-blue-50 text-blue-900 font-bold text-sm"><Package className="w-5 h-5 text-blue-600" /> تتبع الشحنة</button>
                 <button onClick={() => { setIsWishlistOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-rose-50 text-rose-900 font-bold text-sm"><Heart className="w-5 h-5 text-rose-500" /> المفضلة ({wishlist.length})</button>
                 <button onClick={() => { setIsAdminOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-100 text-slate-800 font-bold text-sm"><Settings className="w-5 h-5 text-slate-600" /> لوحة الإدارة</button>

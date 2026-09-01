@@ -30,8 +30,6 @@ export default function ProductGrid() {
         return sorted.sort((a, b) => getPrice(a) - getPrice(b));
       case 'price-high':
         return sorted.sort((a, b) => getPrice(b) - getPrice(a));
-      case 'rating':
-        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case 'best-seller':
         return sorted.sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0));
       case 'newest':
@@ -60,7 +58,6 @@ export default function ProductGrid() {
       availability: 'all',
       priceMin: 0,
       priceMax: 2500,
-      rating: 0,
     });
     setSortBy('featured');
   };
@@ -98,7 +95,6 @@ export default function ProductGrid() {
             <option value="best-seller">الأكثر مبيعاً</option>
             <option value="price-low">السعر: من الأقل للأعلى</option>
             <option value="price-high">السعر: من الأعلى للأقل</option>
-            <option value="rating">الأعلى تقييماً</option>
             <option value="newest">وصل حديثاً</option>
             <option value="stock">الأكثر توفراً</option>
           </select>

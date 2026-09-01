@@ -8,7 +8,6 @@
  *   GET  /api/products            المنتجات (?category=&search=&limit=&offset=)
  *   GET  /api/products/:id        منتج واحد (بالـ id أو الـ sku)
  *   POST /api/leads               تسجيل بيانات عميل (الاسم + الموبايل + فيسبوك)
- *   POST /api/coupons/validate    التحقق من كوبون { code, subtotal }
  *   POST /api/orders              إنشاء طلب جديد + عناصره
  *   GET  /api/orders/:id          استعلام عن طلب برقمه (OMR-XXXX)
  */
@@ -140,51 +139,6 @@ async function handleApi(request, env, url) {
     return json({ success: true }, 201);
   }
 
-  // ---------- POST /api/coupons/validate ----------
-  if (path === '/api/coupons/validate' && method === 'POST') {
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return badRequest('جسم الطلب يجب أن يكون JSON صالحاً');
-    }
-    const code = String(body.code || '').trim().toUpperCase();
-    const subtotal = Number(body.subtotal || 0);
-    if (!code) return badRequest('كود الكوبون مطلوب');
-
-    const coupon = await env.DB.prepare(
-      `SELECT * FROM coupons
-       WHERE UPPER(code) = ? AND is_active = 1
-         AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
-         AND (max_uses IS NULL OR used_count < max_uses)`
-    ).bind(code).first();
-
-    if (!coupon) return json({ success: false, valid: false, error: 'كوبون غير صالح أو منتهي' }, 200);
-    if (subtotal < (coupon.min_spend || 0)) {
-      return json({
-        success: false,
-        valid: false,
-        error: `الحد الأدنى للطلب ${coupon.min_spend} ج.م لاستخدام هذا الكوبون`,
-      }, 200);
-    }
-
-    const discount = coupon.discount_percent
-      ? Math.round(subtotal * (coupon.discount_percent / 100) * 100) / 100
-      : Number(coupon.discount_amount || 0);
-
-    return json({
-      success: true,
-      valid: true,
-      coupon: {
-        code: coupon.code,
-        discount_percent: coupon.discount_percent,
-        discount_amount: coupon.discount_amount,
-        min_spend: coupon.min_spend,
-      },
-      discount,
-    });
-  }
-
   // ---------- POST /api/orders ----------
   if (path === '/api/orders' && method === 'POST') {
     let body;
@@ -216,8 +170,8 @@ async function handleApi(request, env, url) {
         `INSERT INTO orders (
            id, customer_name, email, phone, governorate, city, address,
            subtotal, discount_amount, shipping_cost, total,
-           coupon_code, shipping_method, payment_method, payment_gateway, notes
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+           shipping_method, payment_method, payment_gateway, notes
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         orderId,
         customerName,
@@ -230,7 +184,6 @@ async function handleApi(request, env, url) {
         discountAmount,
         shippingCost,
         total,
-        String(body.coupon_code || body.couponCode || '').trim() || null,
         String(body.shipping_method || 'standard'),
         String(body.payment_method || body.paymentMethod || 'cod'),
         String(body.payment_gateway || body.paymentGateway || 'cod'),

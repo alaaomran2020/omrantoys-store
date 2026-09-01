@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { categories } from '../../data/categories';
+import { track, EVENTS } from '../../lib/analytics';
 
 const iconMap = {
   Sparkles,
@@ -30,6 +31,7 @@ export default function CategoryShowcase() {
 
   const handleSelect = (id) => {
     setSelectedCategory(id);
+    track(EVENTS.categoryView, { category: id });
     const elem = document.getElementById('products-section');
     if (elem) {
       elem.scrollIntoView({ behavior: 'smooth' });

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { initialProducts, sampleReviews } from '../data/products';
-import { validCoupons } from '../data/coupons';
+import { initialProducts } from '../data/products';
 import { calculateShippingCost, calculateCartWeight, calculateCartVolume } from '../lib/shippingCalculator';
+import { track, EVENTS } from '../lib/analytics';
+import { getSettings } from '../lib/settings';
 
 const StoreContext = createContext();
 
@@ -76,14 +77,6 @@ export const StoreProvider = ({ children }) => {
     } catch { return []; }
   });
 
-  // Reviews
-  const [reviews, setReviews] = useState(() => {
-    try {
-      const saved = localStorage.getItem('omran_toys_reviews');
-      return saved ? JSON.parse(saved) : sampleReviews;
-    } catch { return sampleReviews; }
-  });
-
   // Stock notifications
   const [stockNotifications, setStockNotifications] = useState(() => {
     try {
@@ -102,7 +95,6 @@ export const StoreProvider = ({ children }) => {
     availability: 'all',
     priceMin: 0,
     priceMax: 2500,
-    rating: 0,
   });
 
   // Legacy filters for compatibility
@@ -114,9 +106,6 @@ export const StoreProvider = ({ children }) => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
 
-  // Applied Coupon
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-
   // Shipping
   const [selectedGovernorate, setSelectedGovernorate] = useState('طنطا (الغربية)');
   const [userTypeForShipping, setUserTypeForShipping] = useState('retail');
@@ -125,7 +114,6 @@ export const StoreProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
-  const [isGiftFinderOpen, setIsGiftFinderOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
@@ -144,7 +132,6 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => { localStorage.setItem('omran_toys_cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => { localStorage.setItem('omran_toys_wishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('omran_toys_orders', JSON.stringify(orders)); }, [orders]);
-  useEffect(() => { localStorage.setItem('omran_toys_reviews', JSON.stringify(reviews)); }, [reviews]);
   useEffect(() => { localStorage.setItem('omran_stock_notifications', JSON.stringify(stockNotifications)); }, [stockNotifications]);
 
   // Sync legacy search to advanced
@@ -207,6 +194,7 @@ export const StoreProvider = ({ children }) => {
     } else {
       showToast(`تمت إضافة "${product.name}" إلى السلة 🛍️`);
     }
+    track(EVENTS.addToCart, { productId: product.id, name: product.name, quantity: addedQuantity });
   };
 
   const removeFromCart = (productId) => {
@@ -266,31 +254,14 @@ export const StoreProvider = ({ children }) => {
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const freeShippingThreshold = 1000;
-  const isFreeShipping = shippingCalculation.isFree || cartSubtotal >= freeShippingThreshold || (appliedCoupon && appliedCoupon.code === 'FREESHIP') || cartSubtotal === 0;
+  const isFreeShipping = shippingCalculation.isFree || cartSubtotal >= freeShippingThreshold || cartSubtotal === 0;
   const shippingCost = cartSubtotal === 0 ? 0 : isFreeShipping ? 0 : shippingCalculation.cost;
 
-  let discountAmount = 0;
-  if (appliedCoupon && cartSubtotal > 0) {
-    if (appliedCoupon.discountPercent > 0) {
-      discountAmount = (cartSubtotal * appliedCoupon.discountPercent) / 100;
-    }
-  }
+  const discountAmount = 0;
 
   const taxableAmount = Math.max(0, cartSubtotal - discountAmount);
   const vatAmount = taxableAmount * 0.14;
   const cartTotal = taxableAmount + shippingCost;
-
-  // Coupon
-  const applyCouponCode = (code) => {
-    const cleanCode = code.trim().toUpperCase();
-    const found = validCoupons.find(c => c.code === cleanCode);
-    if (!found) { showToast('كوبون غير صالح أو منتهي!', 'error'); return false; }
-    if (cartSubtotal < found.minSpend) { showToast(`الحد الأدنى ${found.minSpend} ج.م`, 'error'); return false; }
-    setAppliedCoupon(found);
-    showToast(`تم تفعيل الكوبون (${found.code}) 🎉`);
-    return true;
-  };
-  const removeCoupon = () => { setAppliedCoupon(null); showToast('تمت إزالة الكوبون', 'info'); };
 
   // Place order with enhanced data
   const placeOrder = (orderData) => {
@@ -313,7 +284,6 @@ export const StoreProvider = ({ children }) => {
       shipping_breakdown: shippingCalculation.breakdown,
       vat: vatAmount,
       total: cartTotal,
-      couponUsed: appliedCoupon ? appliedCoupon.code : null,
       status: 'قيد الانتظار',
       weight_total_grams: weight,
       estimated_delivery: shippingCalculation.estimatedDays,
@@ -324,7 +294,7 @@ export const StoreProvider = ({ children }) => {
     setOrders(prev => [newOrder, ...prev]);
     setLastPlacedOrder(newOrder);
     clearCart();
-    setAppliedCoupon(null);
+    track(EVENTS.orderPlaced, { orderId: newOrder.id, total: cartTotal });
 
     // Update product stock
     setProducts(prev => prev.map(p => {
@@ -338,27 +308,10 @@ export const StoreProvider = ({ children }) => {
     return newOrder;
   };
 
-  // Reviews
-  const addReview = (productId, reviewData) => {
-    const newRev = { id: Date.now(), productId, date: 'الآن', verified: true, ...reviewData };
-    setReviews(prev => [newRev, ...prev]);
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        const newCount = p.reviewsCount + 1;
-        const newRating = Number(((p.rating * p.reviewsCount + reviewData.rating) / newCount).toFixed(1));
-        return { ...p, rating: newRating, reviewsCount: newCount };
-      }
-      return p;
-    }));
-    showToast('تمت إضافة تقييمك ⭐');
-  };
-
   // Admin & Inventory
   const addProduct = (newProduct) => {
     const productWithDefaults = {
       id: Date.now(),
-      rating: 5.0,
-      reviewsCount: 1,
       isNew: true,
       isBestSeller: false,
       isFeatured: false,
@@ -396,6 +349,13 @@ export const StoreProvider = ({ children }) => {
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: newStatus } : o)));
     showToast(`تم تحديث حالة الطلب #${orderId} إلى: ${newStatus}`);
+  };
+
+  // استعادة نسخة احتياطية (منتجات + طلبات)
+  const restoreData = ({ products: newProducts, orders: newOrders }) => {
+    if (Array.isArray(newProducts)) setProducts(newProducts);
+    if (Array.isArray(newOrders)) setOrders(newOrders);
+    showToast('تمت استعادة النسخة الاحتياطية');
   };
 
   // Stock notification
@@ -454,9 +414,6 @@ export const StoreProvider = ({ children }) => {
       const price = product.price || product.retail_price || 0;
       if (price < advancedFilters.priceMin || price > advancedFilters.priceMax) return false;
 
-      // Rating
-      if (advancedFilters.rating > 0 && (product.rating || 0) < advancedFilters.rating) return false;
-
       // Availability
       if (advancedFilters.availability === 'in_stock' && (product.stock || 0) <= 5) return false;
       if (advancedFilters.availability === 'low_stock' && ((product.stock || 0) > 5 || (product.stock || 0) === 0)) return false;
@@ -480,7 +437,6 @@ export const StoreProvider = ({ children }) => {
         wishlist,
         currency,
         orders,
-        reviews,
         stockNotifications,
         // Filters
         searchQuery,
@@ -499,7 +455,6 @@ export const StoreProvider = ({ children }) => {
         setUserTypeForShipping,
         shippingCalculation,
         // Cart totals
-        appliedCoupon,
         cartSubtotal,
         cartSubtotalRetail,
         totalItemsCount,
@@ -513,7 +468,6 @@ export const StoreProvider = ({ children }) => {
         isCartOpen,
         isCheckoutOpen,
         isWishlistOpen,
-        isGiftFinderOpen,
         isAdminOpen,
         isTrackingOpen,
         isSignupOpen,
@@ -531,7 +485,6 @@ export const StoreProvider = ({ children }) => {
         setIsCartOpen,
         setIsCheckoutOpen,
         setIsWishlistOpen,
-        setIsGiftFinderOpen,
         setIsAdminOpen,
         setIsTrackingOpen,
         setIsSignupOpen,
@@ -546,15 +499,13 @@ export const StoreProvider = ({ children }) => {
         clearCart,
         toggleWishlist,
         isInWishlist,
-        applyCouponCode,
-        removeCoupon,
         placeOrder,
-        addReview,
         addProduct,
         bulkImportProducts,
         updateProduct,
         deleteProduct,
         updateOrderStatus,
+        restoreData,
         subscribeStockNotification,
         showToast
       }}

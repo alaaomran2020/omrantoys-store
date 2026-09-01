@@ -1,11 +1,15 @@
 import { MessageCircle } from 'lucide-react';
-
-const WHATSAPP_URL = 'https://wa.me/201555570269?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20أحتاج%20مساعدة%20في%20اختيار%20لعبة';
+import { getSettings } from '../../lib/settings';
+import { track, EVENTS } from '../../lib/analytics';
 
 export default function FloatingWhatsApp() {
+  const settings = getSettings();
+  if (settings.appearance?.showWhatsAppButton === false) return null;
+  const url = `https://wa.me/${settings.whatsapp.phone}?text=${encodeURIComponent(settings.whatsapp.defaultMessage || 'مرحباً، أحتاج مساعدة في اختيار لعبة')}`;
   return (
     <a
-      href={WHATSAPP_URL}
+      href={url}
+      onClick={() => track(EVENTS.whatsappClick, { source: 'floating_button' })}
       target="_blank"
       rel="noreferrer"
       aria-label="تواصل مع شركة عمران التجارية عبر WhatsApp"

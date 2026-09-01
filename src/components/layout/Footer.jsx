@@ -4,7 +4,7 @@ import { useStore } from '../../context/StoreContext';
 import { categories } from '../../data/categories';
 
 export default function Footer() {
-  const { setSelectedCategory, setIsGiftFinderOpen, setIsTrackingOpen, showToast } = useStore();
+  const { setSelectedCategory, setIsTrackingOpen, showToast } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -15,7 +15,7 @@ export default function Footer() {
       return;
     }
     setSubscribed(true);
-    showToast('شكراً لاشتراكك! تم إرسال كود خصم 10% إلى بريدك الإلكتروني 🎁');
+    showToast('شكراً لاشتراكك! هنوافيك بكل جديد أول بأول 🎁');
     setNewsletterEmail('');
   };
 
@@ -34,10 +34,10 @@ export default function Footer() {
               نادي أصدقاء عمران في مصر 🎈
             </span>
             <h3 className="text-xl sm:text-2xl font-black mb-1">
-              احصل على خصم 10% فورياً عند اشتراكك بنشرتنا
+              كن أول من يعرف بأحدث الألعاب والعروض
             </h3>
             <p className="text-white/80 text-xs sm:text-sm">
-              كن أول من يعرف عن وصول أحدث الألعاب الحصرية، وكوبونات الخصم بالجنيه المصري، ومسابقات الأطفال!
+              اشترك في نشرتنا لتصل إليك أحدث الألعاب الحصرية والعروض ومسابقات الأطفال أولاً بأول!
             </p>
           </div>
 
@@ -127,14 +127,6 @@ export default function Footer() {
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => setIsGiftFinderOpen(true)}
-                  className="hover:text-toy-yellow transition-colors cursor-pointer"
-                >
-                  مساعد اختيار الهدايا
-                </button>
-              </li>
-              <li>
                 <a href="#faq" className="hover:text-toy-yellow transition-colors">
                   الأسئلة الأكثر شيوعاً
                 </a>
@@ -162,9 +154,22 @@ export default function Footer() {
                 <Phone className="w-4 h-4 text-toy-green" />
                 <a href="https://wa.me/201555570269" target="_blank" rel="noreferrer" dir="ltr" className="hover:text-toy-green transition-colors">+20 15 5555 70269</a>
               </div>
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-toy-red" />
-                <span>جمهورية مصر العربية (طنطا - القاهرة)</span>
+              <div className="pt-1">
+                <span className="block text-sm font-bold text-white mb-2">فروعنا</span>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>طنطا — ميدان السيد البدوي</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>شارع درب الابشيهي</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-toy-red shrink-0 mt-0.5" />
+                    <span>الاستاد أمام نادي سيتي كلوب و مطعم سي السيد</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

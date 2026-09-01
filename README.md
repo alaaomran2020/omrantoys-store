@@ -11,7 +11,7 @@
 متجر بيع قطاعي مباشر للعملاء داخل مصر:
 
 - أسعار موحدة بالجنيه المصري لكل العملاء - شحن مجاني فوق 1,000 ج.م
-- **نموذج تسجيل سريع** للزائر (الاسم + رقم الموبايل + حساب الفيسبوك) مقابل كود خصم ترحيبي `OMRAN10`
+- **نموذج تسجيل سريع** للزائر (الاسم + رقم الموبايل + حساب الفيسبوك) لتعبئة طلباته بسرعة
 - لا يوجد تسجيل دخول ولا حسابات تجار - الطلب يتأكد عبر واتساب
 
 ---
@@ -49,7 +49,7 @@
 ```
 omrantoys-store/
 ├── supabase/
-│   └── schema.sql              # مخطط قاعدة البيانات الكامل (11 جدول)
+│   └── schema.sql              # مخطط قاعدة البيانات الكامل (10 جداول)
 ├── src/
 │   ├── lib/
 │   │   ├── supabaseClient.js   # إعداد Supabase + Mock mode
@@ -77,8 +77,7 @@ omrantoys-store/
 │   │       └── CheckoutModal.jsx # Paymob/Fawry + شحن ديناميكي
 │   ├── data/
 │   │   ├── products.js
-│   │   ├── categories.js
-│   │   └── coupons.js
+│   │   └── categories.js
 │   └── App.jsx
 ├── docs/
 │   └── database-schema.md      # توثيق مفصل للـ Schema
@@ -89,7 +88,7 @@ omrantoys-store/
 
 ## 🗄️ مخطط قاعدة البيانات (Supabase Schema)
 
-### الجداول الرئيسية (11 جدول)
+### الجداول الرئيسية (10 جداول)
 
 #### 1. `profiles` - المستخدمين/التجار
 ```sql
@@ -140,7 +139,7 @@ omrantoys-store/
 - created_at
 ```
 
-#### 7. `coupons`, `wishlists`, `reviews`, `categories`
+#### 7. `wishlists`, `categories`
 
 ### Functions
 
@@ -163,9 +162,8 @@ omrantoys-store/
 ### التدفق
 1. عند أول زيارة للموقع يظهر نموذج تسجيل بعد ثانيتين (مرة واحدة فقط).
 2. الحقول المطلوبة: **الاسم بالكامل** + **رقم الموبايل** (تحقق من رقم مصري 01XXXXXXXXX) + **حساب الفيسبوك**.
-3. بعد التسجيل يُفعّل كود الخصم الترحيبي `OMRAN10` (10%) تلقائياً على السلة.
-4. تُحفظ البيانات في `localStorage` تحت `omran_customer` وتُستخدم لتعبئة بيانات إتمام الطلب تلقائياً.
-5. لو Supabase مُعدّ، تُحفظ أيضاً في جدول `leads` (انظر `docs/database-schema.md` - القسم 12).
+3. تُحفظ البيانات في `localStorage` تحت `omran_customer` وتُستخدم لتعبئة بيانات إتمام الطلب تلقائياً.
+4. لو Supabase مُعدّ، تُحفظ أيضاً في جدول `leads` (انظر `docs/database-schema.md` - القسم 12).
 
 > لا يوجد تسجيل دخول بكلمات مرور ولا حسابات تجار جملة - كل الأسعار قطاعية موحدة.
 
@@ -275,7 +273,6 @@ PAYMENT_METHODS = {
 - **نوع اللعبة**: تعليمية، تحكم عن بعد، دمى، بالونات، حفلات، خارجية...
 - **السعر**: min/max + slider بالجنيه المصري
 - **حالة التوفر**: متوفر فقط، كمية محدودة (≤5)، نفد، عروض فقط
-- **التقييم**: 4★ فأكثر، 3★...
 - **العلامة التجارية**: مع count
 
 **Active Chips**: كل فلتر نشط يظهر كـ chip قابل للإزالة + زر "مسح الكل"
@@ -316,7 +313,7 @@ VITE_FAWRY_MERCHANT_CODE=your-fawry-code
 ```bash
 # في Supabase Dashboard → SQL Editor
 # انسخ محتوى supabase/schema.sql وشغله
-# سينشئ 11 جدول + بيانات شحن + RLS
+# سينشئ 10 جداول + بيانات شحن + RLS
 ```
 
 ### 4. تشغيل خادم التطوير
@@ -343,8 +340,8 @@ npm run preview
 - **`wrangler.toml`** — إعداد Worker مع Static Assets (SPA fallback) وربط قاعدة D1
 - **`worker/index.js`** — الـ Worker: يقدم الواجهة المبنية ويوفر API على `/api/*` مدعوم بـ D1
   - `GET /api/health` · `GET /api/categories` · `GET /api/products` · `GET /api/products/:id`
-  - `POST /api/leads` · `POST /api/coupons/validate` · `POST /api/orders` · `GET /api/orders/:id`
-- **`migrations/`** — هجرات D1 (المخطط الكامل + الكوبونات + مقالات B2B)
+  - `POST /api/leads` · `POST /api/orders` · `GET /api/orders/:id`
+- **`migrations/`** — هجرات D1 (المخطط الكامل + مقالات B2B)
 
 ### تشغيل محلي على بيئة Cloudflare
 
@@ -367,7 +364,7 @@ npm run deploy                     # بناء + نشر الـ Worker والأص�
 ### اختبارات D1
 
 ```bash
-npm run db:d1:test    # 18 اختبار: schema + قيود + FTS + triggers
+npm run db:d1:test    # 16 اختبار: schema + قيود + FTS + triggers
 ```
 
 ---
@@ -406,7 +403,7 @@ VALUES ('OMR-BAL-001', 'بالون هيليوم 50 قطعة', 350, 250, 100, 'ba
 
 - افتح الموقع (أو امسح `localStorage`) → هيظهر نموذج التسجيل بعد ثانيتين.
 - جرّب رقم غير مصري (مثل `12345`) → هيظهر رسالة تحقق.
-- بعد التسجيل: كود `OMRAN10` يتفعل تلقائياً في السلة، وبياناتك تتعبأ تلقائياً في شاشة إتمام الطلب.
+- بعد التسجيل: بياناتك تتعبأ تلقائياً في شاشة إتمام الطلب.
 - لإعادة التجربة: نفّذ في الكونسول `localStorage.removeItem('omran_customer'); localStorage.removeItem('omran_signup_seen')` ثم حدّث الصفحة.
 
 ---
