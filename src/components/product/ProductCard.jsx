@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingCart, Eye, Star, Bell, PackageX } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, Bell, PackageX } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import StockNotification from './StockNotification';
@@ -104,18 +104,13 @@ export default function ProductCard({ product }) {
       {/* Product Information */}
       <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
         <div>
-          {/* Brand & Rating */}
+          {/* Brand */}
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
             <span className="font-semibold text-slate-400 flex items-center gap-1">
               {product.brand}
               {product.is_balloon && <span className="bg-sky-100 text-sky-700 text-[9px] px-1.5 py-0.5 rounded-full">🎈 بالون</span>}
               {product.is_party_supply && !product.is_balloon && <span className="bg-yellow-100 text-yellow-700 text-[9px] px-1.5 py-0.5 rounded-full">🎉 حفلات</span>}
             </span>
-            <div className="flex items-center gap-1 text-amber-500">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-slate-700">{product.rating || 5}</span>
-              <span className="text-[11px] text-slate-400">({product.reviewsCount || 0})</span>
-            </div>
           </div>
 
           {/* Product Name */}

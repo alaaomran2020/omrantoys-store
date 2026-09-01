@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Clock, Zap, ShoppingCart, Star } from 'lucide-react';
+import { Flame, Clock, Zap, ShoppingCart } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function FlashDeals() {
@@ -110,10 +110,6 @@ export default function FlashDeals() {
                     />
                     <div className="absolute top-2.5 right-2.5 bg-rose-600 text-white font-black text-xs px-2.5 py-1 rounded-lg shadow">
                       خصم {product.discountPercent}%
-                    </div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-yellow-400 text-xs px-2 py-0.5 rounded flex items-center gap-1 font-bold">
-                      <Star className="w-3.5 h-3.5 fill-yellow-400" />
-                      <span>{product.rating}</span>
                     </div>
                   </div>
 

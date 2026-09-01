@@ -6,13 +6,11 @@ import {
   Search, 
   ChevronDown, 
   ChevronUp,
-  Star,
   Package,
   Tag,
   Baby,
   Gift,
-  Sparkles,
-  Check
+  Sparkles
 } from 'lucide-react';
 import { categories, ageGroups } from '../../data/categories';
 
@@ -90,8 +88,7 @@ export default function AdvancedFilters({
     filters.availability !== 'all' ||
     filters.priceMax < 2500 ||
     filters.priceMin > 0 ||
-    filters.search.trim() !== '' ||
-    filters.rating > 0;
+    filters.search.trim() !== '';
 
   const activeChips = [
     filters.search.trim() && { id: 'search', label: `بحث: ${filters.search.trim()}`, clear: () => setFilters(f => ({ ...f, search: '' })) },
@@ -101,7 +98,6 @@ export default function AdvancedFilters({
     filters.brand !== 'all' && { id: 'brand', label: filters.brand, clear: () => setFilters(f => ({ ...f, brand: 'all' })) },
     filters.availability !== 'all' && { id: 'avail', label: availabilityOptions.find(a => a.id === filters.availability)?.label || filters.availability, clear: () => setFilters(f => ({ ...f, availability: 'all' })) },
     (filters.priceMin > 0 || filters.priceMax < 2500) && { id: 'price', label: `${filters.priceMin}-${filters.priceMax} ج.م`, clear: () => setFilters(f => ({ ...f, priceMin: 0, priceMax: 2500 })) },
-    filters.rating > 0 && { id: 'rating', label: `${filters.rating}★ فأكثر`, clear: () => setFilters(f => ({ ...f, rating: 0 })) },
   ].filter(Boolean);
 
   const FilterSection = ({ title, icon: Icon, sectionKey, children }) => (
@@ -216,33 +212,16 @@ export default function AdvancedFilters({
         </div>
       </FilterSection>
 
-      {/* Rating */}
-      <FilterSection title="التقييم" icon={Star} sectionKey="brand">
-        <div className="space-y-1.5">
-          {[4, 3, 2, 0].map(r => (
-            <button key={r} onClick={() => setFilters(f => ({ ...f, rating: r }))} className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold cursor-pointer ${filters.rating === r ? 'bg-amber-50 border border-amber-200 text-amber-800' : 'hover:bg-slate-50 text-slate-700'}`}>
-              {r > 0 ? (
-                <>
-                  <span className="flex">{Array.from({ length: r }).map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}</span>
-                  <span>{r} نجوم فأكثر</span>
-                </>
-              ) : <span>كل التقييمات</span>}
-              {filters.rating === r && <Check className="w-3 h-3 ml-auto text-amber-600" />}
+      {/* Brand */}
+      <FilterSection title="العلامة التجارية" icon={Tag} sectionKey="brand">
+        <div className="space-y-1">
+          <button onClick={() => setFilters(f => ({ ...f, brand: 'all' }))} className={`w-full text-right px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer ${filters.brand === 'all' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50'}`}>كل العلامات</button>
+          {brandOptions.map(b => (
+            <button key={b} onClick={() => setFilters(f => ({ ...f, brand: b }))} className={`w-full text-right px-3 py-1.5 rounded-lg text-xs font-bold flex justify-between cursor-pointer ${filters.brand === b ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}>
+              <span>{b}</span>
+              <span className="text-[10px] opacity-60">{facetCounts.brands[b] || 0}</span>
             </button>
           ))}
-        </div>
-
-        <div className="mt-4 pt-3 border-t border-slate-100">
-          <h4 className="text-xs font-bold text-slate-500 mb-2">العلامة التجارية</h4>
-          <div className="space-y-1">
-            <button onClick={() => setFilters(f => ({ ...f, brand: 'all' }))} className={`w-full text-right px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer ${filters.brand === 'all' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50'}`}>كل العلامات</button>
-            {brandOptions.map(b => (
-              <button key={b} onClick={() => setFilters(f => ({ ...f, brand: b }))} className={`w-full text-right px-3 py-1.5 rounded-lg text-xs font-bold flex justify-between cursor-pointer ${filters.brand === b ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}>
-                <span>{b}</span>
-                <span className="text-[10px] opacity-60">{facetCounts.brands[b] || 0}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </FilterSection>
     </div>

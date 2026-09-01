@@ -111,8 +111,6 @@ CREATE TABLE products (
   -- تحليلات
   views_count INTEGER DEFAULT 0,
   sales_count INTEGER DEFAULT 0,
-  rating REAL DEFAULT 0 CHECK (rating BETWEEN 0 AND 5),
-  reviews_count INTEGER DEFAULT 0,
 
   -- الاستيراد الجماعي
   import_batch_id TEXT,
@@ -267,20 +265,6 @@ CREATE TABLE wishlists (
 );
 
 -- ============================================
--- 10. REVIEWS
--- ============================================
-CREATE TABLE reviews (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  user_id TEXT REFERENCES profiles(id) ON DELETE SET NULL,
-  author_name TEXT NOT NULL,
-  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
-  comment TEXT,
-  is_verified_purchase INTEGER DEFAULT 0 CHECK (is_verified_purchase IN (0, 1)),
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================
 -- TRIGGERS (بديل دوال plpgsql)
 -- ============================================
 -- تحديث updated_at تلقائياً (recursive_triggers=OFF افتراضياً → لا تكرار)
@@ -340,7 +324,7 @@ FROM products p
 LEFT JOIN categories c ON c.id = p.category_id;
 
 -- ============================================
--- 11. CUSTOMER LEADS (تسجيل بيانات العملاء)
+-- 10. CUSTOMER LEADS (تسجيل بيانات العملاء)
 -- ============================================
 CREATE TABLE IF NOT EXISTS leads (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),

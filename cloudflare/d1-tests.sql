@@ -141,55 +141,45 @@ SELECT CASE WHEN (SELECT updated_at > '2000-01-01 00:00:01' FROM products WHERE 
   THEN '✅ PASS T16: trigger يعيد updated_at للتوقيت الحالي'
   ELSE '❌ FAIL T16: updated_at=' || (SELECT updated_at FROM products WHERE id='p-rc-001') END AS result;
 
--- [T18] المراجعات + متوسط التقييم
-INSERT INTO reviews (product_id, author_name, rating, comment, is_verified_purchase) VALUES
-('p-rc-001', 'منال ع.', 5, 'سريعة وبطاريتها تدوم', 1),
-('p-rc-001', 'خالد م.', 4, 'جيدة مقابل السعر', 1);
-SELECT CASE WHEN (SELECT AVG(rating) FROM reviews WHERE product_id='p-rc-001') = 4.5
-  THEN '✅ PASS T17: متوسط التقييم = 4.5'
-  ELSE '❌ FAIL T17' END AS result;
-
--- [T18] إشعار توفار صالح (بالهاتف)
+-- [T17] إشعار نفاد صالح (بالهاتف)
 INSERT INTO stock_notifications (product_id, phone) VALUES ('p-doll-007', '201555570269');
 SELECT CASE WHEN (SELECT COUNT(*) FROM stock_notifications WHERE product_id='p-doll-007') = 1
-  THEN '✅ PASS T18: إشعار نفاد مخزون محفوظ (هاتف)'
-  ELSE '❌ FAIL T18' END AS result;
+  THEN '✅ PASS T17: إشعار نفاد مخزون محفوظ (هاتف)'
+  ELSE '❌ FAIL T17' END AS result;
 
--- [T19] المقالات B2B + JSON مصادر
+-- [T18] المقالات B2B + JSON مصادر
 INSERT INTO b2b_articles (slug, title_ar, excerpt_ar, content_ar, category, target_audience, data_sources, is_published, published_at) VALUES
 ('toy-wholesale-margins-2026', 'هوامش تجارة الألعاب بالجملة 2026', 'تحليل أرقام هوامش الجملة في السوق المصري.', 'تشير بيانات 2026 إلى متوسط هامش 18-25% بعد الشحن...', 'market_data', 'wholesale', '["تقارير سوق 2026","عينة 40 تاجر"]', 1, '2026-08-01 10:00:00');
 SELECT CASE WHEN (SELECT COUNT(*) FROM b2b_articles WHERE is_published=1) = 1
               AND json_array_length((SELECT data_sources FROM b2b_articles WHERE slug='toy-wholesale-margins-2026')) = 2
-  THEN '✅ PASS T19: مقال B2B منشور + data_sources كـ JSON (عنصران)'
-  ELSE '❌ FAIL T19' END AS result;
+  THEN '✅ PASS T18: مقال B2B منشور + data_sources كـ JSON (عنصران)'
+  ELSE '❌ FAIL T18' END AS result;
 
--- [T20] المفضلة (UNIQUE user+product)
+-- [T19] المفضلة (UNIQUE user+product)
 INSERT INTO wishlists (user_id, product_id) VALUES ('u-test-merchant-1', 'p-rc-001');
 SELECT CASE WHEN (SELECT COUNT(*) FROM wishlists) = 1
-  THEN '✅ PASS T20: إضافة للمفضلة'
-  ELSE '❌ FAIL T20' END AS result;
+  THEN '✅ PASS T19: إضافة للمفضلة'
+  ELSE '❌ FAIL T19' END AS result;
 
--- [T21] حذف المنتج التجريبي: CASCADE للمراجعات/الإشعارات + SET NULL لعناصر الطلب
-INSERT INTO reviews (product_id, author_name, rating) VALUES ('p-del-001', 'تجربة', 3);
+-- [T20] حذف المنتج التجريبي: CASCADE للإشعارات + SET NULL لعناصر الطلب
 INSERT INTO stock_notifications (product_id, email) VALUES ('p-del-001', 'x@test.omran');
 INSERT INTO order_items (order_id, product_id, product_sku, product_name, quantity, unit_price, total_price) VALUES
 ('OMR-TEST-0001', 'p-del-001', 'OMR-DEL-001', 'منتج للحذف التجريبي', 1, 75, 75);
 DELETE FROM products WHERE id = 'p-del-001';
-SELECT CASE WHEN (SELECT COUNT(*) FROM reviews WHERE product_id='p-del-001') = 0
-              AND (SELECT COUNT(*) FROM stock_notifications WHERE product_id='p-del-001') = 0
+SELECT CASE WHEN (SELECT COUNT(*) FROM stock_notifications WHERE product_id='p-del-001') = 0
               AND (SELECT product_id FROM order_items WHERE product_sku='OMR-DEL-001') IS NULL
               AND (SELECT COUNT(*) FROM order_items WHERE order_id='OMR-TEST-0001') = 3
-  THEN '✅ PASS T21: ON DELETE CASCADE (مراجعات/إشعارات) + SET NULL (عناصر الطلب) تعمل'
-  ELSE '❌ FAIL T21' END AS result;
+  THEN '✅ PASS T20: ON DELETE CASCADE (الإشعارات) + SET NULL (عناصر الطلب) تعمل'
+  ELSE '❌ FAIL T20' END AS result;
 
--- [T22] مسار الطلب بالحالات العربية + trigger الطلبات
+-- [T21] مسار الطلب بالحالات العربية + trigger الطلبات
 UPDATE orders SET status = 'تم الشحن' WHERE id = 'OMR-TEST-0001';
 SELECT CASE WHEN (SELECT status FROM orders WHERE id='OMR-TEST-0001') = 'تم الشحن'
               AND (SELECT updated_at >= '2026-01-01' FROM orders WHERE id='OMR-TEST-0001')
-  THEN '✅ PASS T22: تحديث حالة عربية (تم الشحن) + trigger updated_at'
-  ELSE '❌ FAIL T22' END AS result;
+  THEN '✅ PASS T21: تحديث حالة عربية (تم الشحن) + trigger updated_at'
+  ELSE '❌ FAIL T21' END AS result;
 
--- [T23] تكامل المفاتيح الأجنبية (بديل فحص RLS الأساسي في D1)
+-- [T22] تكامل المفاتيح الأجنبية (بديل فحص RLS الأساسي في D1)
 SELECT CASE WHEN (SELECT COUNT(*) FROM pragma_foreign_key_check) = 0
-  THEN '✅ PASS T23: pragma_foreign_key_check = 0 مخالفات'
-  ELSE '❌ FAIL T23: ' || (SELECT COUNT(*) FROM pragma_foreign_key_check) || ' مخالفة' END AS result;
+  THEN '✅ PASS T22: pragma_foreign_key_check = 0 مخالفات'
+  ELSE '❌ FAIL T22: ' || (SELECT COUNT(*) FROM pragma_foreign_key_check) || ' مخالفة' END AS result;

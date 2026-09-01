@@ -53,8 +53,6 @@ export default function BulkImport({ onImport, existingProducts }) {
             description: item.description || 'منتج جديد',
             images: item.images || ['https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80'],
             tags: item.tags || [],
-            rating: 0,
-            reviewsCount: 0,
             isNew: true,
             isBestSeller: false,
             isFeatured: false,

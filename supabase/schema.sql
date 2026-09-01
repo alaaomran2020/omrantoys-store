@@ -109,8 +109,6 @@ CREATE TABLE public.products (
   -- Analytics
   views_count INT DEFAULT 0,
   sales_count INT DEFAULT 0,
-  rating NUMERIC DEFAULT 0 CHECK (rating >= 0 AND rating <= 5),
-  reviews_count INT DEFAULT 0,
   
   -- Bulk Import
   import_batch_id TEXT,
@@ -288,24 +286,6 @@ CREATE TABLE public.wishlists (
 
 ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own wishlist" ON public.wishlists FOR ALL USING (auth.uid() = user_id);
-
--- ============================================
--- 9. REVIEWS
--- ============================================
-CREATE TABLE public.reviews (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  author_name TEXT NOT NULL,
-  rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comment TEXT,
-  is_verified_purchase BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Reviews viewable by everyone" ON public.reviews FOR SELECT USING (true);
-CREATE POLICY "Authenticated can create reviews" ON public.reviews FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- ============================================
 -- FUNCTIONS & TRIGGERS

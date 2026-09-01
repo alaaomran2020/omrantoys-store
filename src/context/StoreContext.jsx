@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { initialProducts, sampleReviews } from '../data/products';
+import { initialProducts } from '../data/products';
 import { calculateShippingCost, calculateCartWeight, calculateCartVolume } from '../lib/shippingCalculator';
 
 const StoreContext = createContext();
@@ -75,14 +75,6 @@ export const StoreProvider = ({ children }) => {
     } catch { return []; }
   });
 
-  // Reviews
-  const [reviews, setReviews] = useState(() => {
-    try {
-      const saved = localStorage.getItem('omran_toys_reviews');
-      return saved ? JSON.parse(saved) : sampleReviews;
-    } catch { return sampleReviews; }
-  });
-
   // Stock notifications
   const [stockNotifications, setStockNotifications] = useState(() => {
     try {
@@ -101,7 +93,6 @@ export const StoreProvider = ({ children }) => {
     availability: 'all',
     priceMin: 0,
     priceMax: 2500,
-    rating: 0,
   });
 
   // Legacy filters for compatibility
@@ -139,7 +130,6 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => { localStorage.setItem('omran_toys_cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => { localStorage.setItem('omran_toys_wishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('omran_toys_orders', JSON.stringify(orders)); }, [orders]);
-  useEffect(() => { localStorage.setItem('omran_toys_reviews', JSON.stringify(reviews)); }, [reviews]);
   useEffect(() => { localStorage.setItem('omran_stock_notifications', JSON.stringify(stockNotifications)); }, [stockNotifications]);
 
   // Sync legacy search to advanced
@@ -314,27 +304,10 @@ export const StoreProvider = ({ children }) => {
     return newOrder;
   };
 
-  // Reviews
-  const addReview = (productId, reviewData) => {
-    const newRev = { id: Date.now(), productId, date: 'الآن', verified: true, ...reviewData };
-    setReviews(prev => [newRev, ...prev]);
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        const newCount = p.reviewsCount + 1;
-        const newRating = Number(((p.rating * p.reviewsCount + reviewData.rating) / newCount).toFixed(1));
-        return { ...p, rating: newRating, reviewsCount: newCount };
-      }
-      return p;
-    }));
-    showToast('تمت إضافة تقييمك ⭐');
-  };
-
   // Admin & Inventory
   const addProduct = (newProduct) => {
     const productWithDefaults = {
       id: Date.now(),
-      rating: 5.0,
-      reviewsCount: 1,
       isNew: true,
       isBestSeller: false,
       isFeatured: false,
@@ -430,9 +403,6 @@ export const StoreProvider = ({ children }) => {
       const price = product.price || product.retail_price || 0;
       if (price < advancedFilters.priceMin || price > advancedFilters.priceMax) return false;
 
-      // Rating
-      if (advancedFilters.rating > 0 && (product.rating || 0) < advancedFilters.rating) return false;
-
       // Availability
       if (advancedFilters.availability === 'in_stock' && (product.stock || 0) <= 5) return false;
       if (advancedFilters.availability === 'low_stock' && ((product.stock || 0) > 5 || (product.stock || 0) === 0)) return false;
@@ -456,7 +426,6 @@ export const StoreProvider = ({ children }) => {
         wishlist,
         currency,
         orders,
-        reviews,
         stockNotifications,
         // Filters
         searchQuery,
@@ -520,7 +489,6 @@ export const StoreProvider = ({ children }) => {
         toggleWishlist,
         isInWishlist,
         placeOrder,
-        addReview,
         addProduct,
         bulkImportProducts,
         updateProduct,

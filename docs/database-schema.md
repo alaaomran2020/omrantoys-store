@@ -2,7 +2,7 @@
 
 ## نظرة عامة
 
-قاعدة بيانات PostgreSQL عبر Supabase مع 10 جداول، مصممة لدعم B2B & B2C، آلاف المنتجات، وشحن ديناميكي.
+قاعدة بيانات PostgreSQL عبر Supabase مع 9 جداول، مصممة لدعم B2B & B2C، آلاف المنتجات، وشحن ديناميكي.
 
 ---
 
@@ -111,8 +111,6 @@ safety_notice TEXT
 -- Analytics
 views_count INT DEFAULT 0
 sales_count INT DEFAULT 0
-rating NUMERIC CHECK 0-5
-reviews_count INT DEFAULT 0
 
 -- Bulk Import
 import_batch_id TEXT
@@ -271,22 +269,7 @@ UNIQUE(user_id, product_id)
 
 ---
 
-## 9. `reviews` - التقييمات
-
-```sql
-id UUID PK
-product_id UUID FK products(id) ON DELETE CASCADE NOT NULL
-user_id UUID FK profiles(id) ON DELETE SET NULL
-author_name TEXT NOT NULL
-rating INT CHECK 1-5
-comment TEXT
-is_verified_purchase BOOLEAN DEFAULT false
-created_at
-```
-
----
-
-## 10. `leads` - بيانات العملاء المسجلين (نموذج التسجيل)
+## 9. `leads` - بيانات العملاء المسجلين (نموذج التسجيل)
 
 ```sql
 id UUID PK
@@ -349,7 +332,6 @@ FUNCTION get_product_price(
 auth.users 1--1 profiles
 profiles 1--* orders
 profiles 1--* wishlists
-profiles 1--* reviews
 profiles 1--* stock_notifications
 
 categories 1--* products
@@ -357,7 +339,6 @@ categories 1--* categories (self parent)
 
 products 1--* stock_notifications
 products 1--* order_items
-products 1--* reviews
 products 1--* wishlists
 
 orders 1--* order_items

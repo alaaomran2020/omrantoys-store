@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  Star, 
   ShoppingCart, 
   Heart, 
   ShieldCheck, 
@@ -11,7 +10,6 @@ import {
   Battery, 
   Ruler, 
   Share2, 
-  MessageSquarePlus,
   Flame
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
@@ -28,8 +26,6 @@ export default function ProductDetailModal() {
     isInWishlist,
     formatPrice,
     getEffectivePrice,
-    reviews,
-    addReview,
     products,
     setIsCheckoutOpen
   } = useStore();
@@ -38,12 +34,6 @@ export default function ProductDetailModal() {
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('details');
-
-  // New review form
-  const [newReviewAuthor, setNewReviewAuthor] = useState('');
-  const [newReviewRating, setNewReviewRating] = useState(5);
-  const [newReviewComment, setNewReviewComment] = useState('');
 
   if (!selectedProductModal) return null;
 
@@ -52,9 +42,6 @@ export default function ProductDetailModal() {
   const effectivePrice = getEffectivePrice(product);
   const isOutOfStock = (product.stock || 0) <= 0;
   const [showNotify, setShowNotify] = useState(false);
-
-  // Product reviews
-  const productReviews = reviews.filter(r => r.productId === product.id);
 
   // Related products
   const relatedProducts = products
@@ -69,18 +56,6 @@ export default function ProductDetailModal() {
     addToCart(product, quantity);
     setSelectedProductModal(null);
     setIsCheckoutOpen(true);
-  };
-
-  const handleReviewSubmit = (e) => {
-    e.preventDefault();
-    if (!newReviewAuthor.trim() || !newReviewComment.trim()) return;
-    addReview(product.id, {
-      author: newReviewAuthor,
-      rating: newReviewRating,
-      comment: newReviewComment
-    });
-    setNewReviewAuthor('');
-    setNewReviewComment('');
   };
 
   const handleShare = () => {
@@ -192,22 +167,8 @@ export default function ProductDetailModal() {
                 {product.name}
               </h1>
 
-              {/* Rating */}
+              {/* Stock */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(product.rating)
-                          ? 'text-amber-400 fill-amber-400'
-                          : 'text-slate-200 fill-slate-200'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-slate-700">{product.rating}</span>
-                <span className="text-xs text-slate-400">({product.reviewsCount} تقييم موثق)</span>
                 <span className="text-emerald-600 font-bold text-xs bg-emerald-50 px-2 py-0.5 rounded">
                   متوفر في المخزون ({product.stock} قطعة)
                 </span>
@@ -309,125 +270,6 @@ export default function ProductDetailModal() {
 
             </div>
 
-          </div>
-
-          {/* Tabs Section: Reviews & Related */}
-          <div className="pt-8 border-t border-slate-100">
-            <div className="flex gap-4 border-b border-slate-100 pb-3">
-              <button
-                onClick={() => setActiveTab('details')}
-                className={`text-sm font-bold pb-2 transition-colors cursor-pointer border-b-2 ${
-                  activeTab === 'details'
-                    ? 'text-toy-red border-toy-red'
-                    : 'text-slate-400 border-transparent hover:text-slate-600'
-                }`}
-              >
-                تقييمات وآراء العملاء ({productReviews.length})
-              </button>
-            </div>
-
-            {/* Reviews Tab Content */}
-            <div className="pt-4 space-y-6">
-              
-              {/* Existing Reviews List */}
-              <div className="space-y-3">
-                {productReviews.length > 0 ? (
-                  productReviews.map((rev) => (
-                    <div
-                      key={rev.id}
-                      className="bg-slate-50 p-4 rounded-2xl border border-slate-100"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-slate-800">{rev.author}</span>
-                          {rev.verified && (
-                            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                              مشتري مؤكد ✓
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs text-slate-400">{rev.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1 mb-1.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3.5 h-3.5 ${
-                              i < rev.rating
-                                ? 'text-amber-400 fill-amber-400'
-                                : 'text-slate-200 fill-slate-200'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">{rev.comment}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-slate-400 italic">
-                    لا توجد تقييمات حتى الآن. كن أول من يشارك رأيه حول هذه اللعبة!
-                  </p>
-                )}
-              </div>
-
-              {/* Add New Review Form */}
-              <form onSubmit={handleReviewSubmit} className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
-                <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                  <MessageSquarePlus className="w-4 h-4 text-toy-red" />
-                  <span>أضف تقييمك وتجربتك</span>
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    required
-                    value={newReviewAuthor}
-                    onChange={(e) => setNewReviewAuthor(e.target.value)}
-                    placeholder="اسمك الكريم (مثال: أم يوسف أو أحمد علي)"
-                    className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-toy-red/20"
-                  />
-
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 px-3 rounded-xl border border-slate-200">
-                    <span>تقييمك:</span>
-                    <div className="flex items-center gap-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setNewReviewRating(star)}
-                          className="cursor-pointer"
-                        >
-                          <Star
-                            className={`w-4 h-4 ${
-                              star <= newReviewRating
-                                ? 'text-amber-400 fill-amber-400'
-                                : 'text-slate-300'
-                            }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <textarea
-                  required
-                  rows="3"
-                  value={newReviewComment}
-                  onChange={(e) => setNewReviewComment(e.target.value)}
-                  placeholder="اكتب انطباعك عن جودة اللعبة وفرحة طفلك بها..."
-                  className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-toy-red/20"
-                />
-
-                <button
-                  type="submit"
-                  className="bg-slate-900 hover:bg-toy-red text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
-                >
-                  إرسال التقييم
-                </button>
-              </form>
-
-            </div>
           </div>
 
           {/* Related Toys Section */}

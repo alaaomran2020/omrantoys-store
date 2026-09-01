@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowLeft, ShieldCheck, Truck, Star, Zap, Coins } from 'lucide-react';
+import { Sparkles, ArrowLeft, ShieldCheck, Truck, Zap, Coins } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function HeroBanner() {
@@ -84,10 +84,6 @@ export default function HeroBanner() {
                   />
                   <div className="absolute top-3 right-3 bg-toy-red text-white text-xs font-black px-3 py-1 rounded-full shadow">
                     الأكثر مبيعاً 🏆
-                  </div>
-                  <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-yellow-400 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-yellow-400" />
-                    <span>4.9 (142 تقييم)</span>
                   </div>
                 </div>
 
