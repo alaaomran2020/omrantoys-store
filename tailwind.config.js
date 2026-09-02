@@ -20,7 +20,35 @@ export default {
           purple: '#8338EC',   // بنفسجي - لمسات مرحة
           pink: '#FF006E',
           cream: '#FFFDF8',    // أبيض دافئ للخلفيات
-        }
+        },
+        // ============================================
+        // Admin Console — Dark Digital Brutalism
+        // خلفية رمادي مزرق (Slate) + أزرق كهربائي للعناصر
+        // النشطة + أصفر Sunbeam حصرياً لأزرار الإجراء الأساسية
+        // ============================================
+        electric: {
+          DEFAULT: '#2E62FF',  // Electric Blue — العناصر النشطة/التركيز/الروابط
+          hover:   '#1F4FE0',
+          soft:    '#9DB4FF',
+        },
+        sunbeam: {
+          DEFAULT: '#FFD60A',  // Sunbeam Yellow — أزرار الحفظ/الإجراء الأساسي فقط
+          hover:   '#FFC300',
+          ink:     '#1A1B25',
+        },
+        ink: {
+          DEFAULT: '#0B1220',  // خطوط/ظلال Brutalist
+          deep:    '#050A18',
+        },
+      },
+      boxShadow: {
+        // ظلال Brutalist صلبة بإزاحة (بدون Blur)
+        brutal:        '6px 6px 0 0 #050A18',
+        'brutal-sm':   '3px 3px 0 0 #050A18',
+        'brutal-lg':   '10px 10px 0 0 #050A18',
+        'brutal-blue': '6px 6px 0 0 #2E62FF',
+        'brutal-yellow':'6px 6px 0 0 #B8860B',
+        'brutal-inset': 'inset 3px 3px 0 0 rgba(255,255,255,0.06)',
       },
       fontFamily: {
         cairo: ['Cairo', 'Tajawal', 'sans-serif'],
