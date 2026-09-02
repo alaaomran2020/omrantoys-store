@@ -2,7 +2,7 @@
  * Omran Toys Store — Cloudflare Worker
  * API خلفية على D1 لطلبات /api/* + تقديم الواجهة (Static Assets / SPA)
  *
- * Endpoints:
+ * Endpoints العامة:
  *   GET  /api/health              فحص الحالة واتصال قاعدة البيانات
  *   GET  /api/categories          كل التصنيفات النشطة
  *   GET  /api/products            المنتجات (?category=&search=&limit=&offset=)
@@ -10,7 +10,16 @@
  *   POST /api/leads               تسجيل بيانات عميل (الاسم + الموبايل + فيسبوك)
  *   POST /api/orders              إنشاء طلب جديد + عناصره
  *   GET  /api/orders/:id          استعلام عن طلب برقمه (OMR-XXXX)
+ *
+ * Endpoints الإدارية (مصادقة واتساب + RBAC — انظر worker/admin.js):
+ *   /api/admin/auth/*             طلب كود OTP / تحقق / خروج / جلستي
+ *   /api/admin/products/*         قراءة + تعديل محدود الحقول + حذف للمالك فقط
+ *   /api/webhooks/whatsapp        Webhook لواتساب (تحقق الاشتراك + التوقيع + الإشعارات)
  */
+
+import { handleAdminApi } from './admin.js';
+import { verifyWebhookSubscription, handleWebhookPost } from './whatsapp.js';
+
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
@@ -238,6 +247,21 @@ export default {
 
     if (url.pathname.startsWith('/api/')) {
       try {
+        // ---- مسارات إدارية: مصادقة واتساب + حماية مسار/حقل ----
+        if (url.pathname.startsWith('/api/admin/')) {
+          return await handleAdminApi(request, env, url);
+        }
+
+        // ---- Webhook واتساب (Meta Cloud API) ----
+        if (url.pathname === '/api/webhooks/whatsapp') {
+          if (request.method === 'GET') return verifyWebhookSubscription(url, env);
+          if (request.method === 'POST') {
+            const rawBody = await request.text();
+            return await handleWebhookPost(request, env, rawBody);
+          }
+          return new Response(null, { status: 405 });
+        }
+
         return await handleApi(request, env, url);
       } catch (err) {
         console.error('API error:', err);

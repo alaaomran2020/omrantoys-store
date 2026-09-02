@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
   Home, Package, Image as ImageIcon, Palette, Globe, HeartPulse, BarChart3,
   Search, Database, FileDown, DatabaseBackup, Settings as SettingsIcon, X, Menu,
-  Sparkles, Bell, Command, ShoppingBag,
+  Sparkles, Bell, Command, ShoppingBag, ShieldCheck,
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { ToastStack, useToasts } from './ui';
@@ -143,6 +143,10 @@ export default function ControlCenter() {
         ))}
       </div>
       <div className="p-3 border-t border-slate-800 text-[10px] text-slate-500">
+        <a href="#/admin" className="mb-2 flex items-center justify-center gap-1.5 rounded-lg bg-toy-yellow px-2 py-2 text-[11px] font-black text-slate-900 hover:opacity-90 transition-opacity">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          لوحة الإدارة المؤمَّنة (واتساب)
+        </a>
         صحة الموقع: <b className={nextStep.priority === 'low' ? 'text-emerald-400' : 'text-amber-400'}>{nextStep.priority === 'low' ? 'جيدة' : nextStep.title.split(' ').slice(0, 3).join(' ')}</b>
         <div className="mt-1.5 text-[9px] opacity-60">البيانات محلية • متوافق مع Cloudflare</div>
       </div>

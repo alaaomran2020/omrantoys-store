@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StoreProvider } from './context/StoreContext';
 import { AuthProvider } from './context/AuthContext';
+import AdminApp from './admin/AdminApp';
 import Header from './components/layout/Header';
 import HeroBanner from './components/home/HeroBanner';
 import StoreFeaturesBanner from './components/layout/StoreFeaturesBanner';
@@ -65,6 +66,19 @@ function StoreApp() {
 }
 
 export default function App() {
+  // لوحة الإدارة تطبيق مستقل (Dark Brutalist) يعمل على مسار #/admin —
+  // يُركَّب بدلاً من واجهة المتجر بدون تحميل contexts الخاصة بالعميل
+  const [isAdminRoute, setIsAdminRoute] = useState(
+    () => window.location.hash.startsWith('#/admin')
+  );
+  useEffect(() => {
+    const onHash = () => setIsAdminRoute(window.location.hash.startsWith('#/admin'));
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  if (isAdminRoute) return <AdminApp />;
+
   return (
     <AuthProvider>
       <StoreProvider>
