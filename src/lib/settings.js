@@ -55,7 +55,6 @@ export const defaultSettings = {
     showCart: true,
   },
   store: {
-    freeShippingThreshold: 1000,
     lowStockThreshold: 12,
     vatRate: 0.14,
     currency: 'EGP',

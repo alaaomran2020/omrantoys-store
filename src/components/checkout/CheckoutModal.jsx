@@ -148,7 +148,7 @@ export default function CheckoutModal() {
                     <select value={city} onChange={(e) => { setCity(e.target.value); setSelectedGovernorate(e.target.value); }} className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-toy-red/20 cursor-pointer">
                       {governorates.map(g => <option key={g.value} value={g.value}>{g.label} - {g.base} ج.م ({g.days})</option>)}
                     </select>
-                    <div className="text-[11px] text-slate-500 mt-1">المنطقة: {shippingCalculation.region} • المدة: {shippingCalculation.estimatedDays} • تكلفة: {shippingCalculation.isFree ? 'مجاني' : formatPrice(shippingCalculation.cost)}</div>
+                    <div className="text-[11px] text-slate-500 mt-1">المنطقة: {shippingCalculation.region} • المدة: {shippingCalculation.estimatedDays} • تكلفة: {formatPrice(shippingCalculation.cost)}</div>
                   </div>
                   <div><label className="block text-xs font-bold text-slate-700 mb-1">البريد (اختياري)</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.com" className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-toy-red/20" /></div>
                 </div>

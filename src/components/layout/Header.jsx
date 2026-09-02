@@ -66,7 +66,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
             <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold animate-pulse shrink-0">عروض مصر 🇪🇬</span>
-            <span className="truncate">شحن مجاني لكافة المحافظات فوق 1,000 ج.م</span>
+            <span className="truncate">توصيل سريع لكافة محافظات مصر</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs shrink-0">
 

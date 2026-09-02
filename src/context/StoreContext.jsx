@@ -253,9 +253,7 @@ export const StoreProvider = ({ children }) => {
   const cartSubtotal = cartSubtotalRetail;
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const freeShippingThreshold = 1000;
-  const isFreeShipping = shippingCalculation.isFree || cartSubtotal >= freeShippingThreshold || cartSubtotal === 0;
-  const shippingCost = cartSubtotal === 0 ? 0 : isFreeShipping ? 0 : shippingCalculation.cost;
+  const shippingCost = cartSubtotal === 0 ? 0 : shippingCalculation.cost;
 
   const discountAmount = 0;
 
@@ -458,8 +456,6 @@ export const StoreProvider = ({ children }) => {
         cartSubtotal,
         cartSubtotalRetail,
         totalItemsCount,
-        freeShippingThreshold,
-        isFreeShipping,
         shippingCost,
         discountAmount,
         vatAmount,

@@ -116,10 +116,6 @@ export default function HeroBanner() {
                 <span>خصومات الموسم بالجنيه المصري</span>
               </div>
 
-              <div className="absolute -bottom-4 -left-3 bg-white text-slate-900 font-bold text-xs px-3.5 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2">
-                <span className="text-lg">🚚</span>
-                <span>شحن مجاني فوق 1000 ج.م</span>
-              </div>
             </div>
 
           </div>

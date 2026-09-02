@@ -139,7 +139,6 @@ export default function Design({ ctx }) {
         <Card>
           <CardHeader title="إعدادات المتجر" icon={Sparkles} />
           <div className="p-4 space-y-3">
-            <Field label="حد الشحن المجاني (ج.م)"><input type="number" className={inputCls} value={settings.store.freeShippingThreshold} onChange={(e) => set('store', 'freeShippingThreshold', Number(e.target.value))} /></Field>
             <Field label="حد تنبيه المخزون المنخفض"><input type="number" className={inputCls} value={settings.store.lowStockThreshold} onChange={(e) => set('store', 'lowStockThreshold', Number(e.target.value))} /></Field>
             <Field label="نسبة الضريبة"><input type="number" step="0.01" className={inputCls} value={settings.store.vatRate} onChange={(e) => set('store', 'vatRate', Number(e.target.value))} /></Field>
           </div>
