@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowLeft, ShieldCheck, Truck, Zap, Coins } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Truck, Zap, Coins } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function HeroBanner() {
@@ -20,21 +20,23 @@ export default function HeroBanner() {
           {/* Left / Main Text (RTL: right side) */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-right">
             
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-toy-red/30 to-purple-500/30 border border-toy-red/40 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold text-yellow-300 shadow-sm animate-bounce-slow">
-              <Sparkles className="w-4 h-4 text-toy-yellow" />
-              <span>أكبر تشكيل لعب أطفال</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-tight">
-              عالم السحر والمرح <br />
-              <span className="bg-gradient-to-l from-yellow-300 via-pink-400 to-cyan-300 bg-clip-text text-transparent">
-                لأبطال المستقبل الصغار!
-              </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-tight text-white">
+              كل اللي تحتاجه لأطفالك في مكان واحد! 🎈✨
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              اكتشف تشكيلة واسعة من أحدث الألعاب التفاعلية، أطقم ليغو وبناء، روبوتات ذكية، ومستلزمات الأطفال بأفضل الأسعار بالجنيه المصري مع شحن سريع لكل المحافظات وضمان الجودة.
-            </p>
+            {/* النص التسويقي */}
+            <div className="space-y-4 pt-1">
+              <p className="inline-flex items-center gap-2 text-slate-100 text-lg sm:text-2xl font-bold">
+                <span>أكبر تشكيلة ألعاب أطفال</span>
+                <span className="text-xl sm:text-2xl" aria-hidden="true">🎯</span>
+              </p>
+
+              {/* أهم رسالة تجارية — أسعار جملة */}
+              <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 bg-gradient-to-r from-toy-yellow via-amber-400 to-orange-500 text-slate-950 font-black text-lg sm:text-2xl px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl shadow-lg shadow-toy-yellow/30">
+                <span>أسعار جملة.. برة المنافسة!</span>
+                <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-slate-950 flex-shrink-0" />
+              </div>
+            </div>
 
             {/* Action CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
