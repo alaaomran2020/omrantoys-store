@@ -82,7 +82,6 @@ export default function Settings({ ctx }) {
         {tab === 'products' && (
           <Card className="lg:col-span-2"><CardHeader title="إعدادات المنتجات والمخزون" icon={SettingsIcon} />
             <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="حد الشحن المجاني (ج.م)"><input type="number" className={inputCls} value={settings.store.freeShippingThreshold} onChange={(e) => set('store', 'freeShippingThreshold', Number(e.target.value))} /></Field>
               <Field label="حد تنبيه المخزون المنخفض"><input type="number" className={inputCls} value={settings.store.lowStockThreshold} onChange={(e) => set('store', 'lowStockThreshold', Number(e.target.value))} /></Field>
               <Field label="نسبة الضريبة (%)"><input type="number" step="0.01" className={inputCls} value={settings.store.vatRate} onChange={(e) => set('store', 'vatRate', Number(e.target.value))} /></Field>
               <Field label="العملة"><input className={inputCls} dir="ltr" value={settings.store.currency} onChange={(e) => set('store', 'currency', e.target.value)} /></Field>

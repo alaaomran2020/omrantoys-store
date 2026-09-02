@@ -63,11 +63,8 @@ export function calculateShippingCost({ governorate, totalWeightGrams = 1000, su
   const normalizedGov = normalizeGov(governorate);
   const zone = shippingZones[normalizedGov] || shippingZones['القاهرة'];
 
-  // Wholesale gets better free threshold
-  const freeThreshold = userType === 'wholesale' ? Math.max(500, zone.freeThreshold - 200) : zone.freeThreshold;
-
-  // Free shipping check
-  if (subtotal >= freeThreshold || subtotal === 0) {
+  // Empty cart has no shipping fee
+  if (subtotal === 0) {
     return {
       cost: 0,
       isFree: true,
@@ -78,8 +75,9 @@ export function calculateShippingCost({ governorate, totalWeightGrams = 1000, su
         base: zone.base,
         extraWeight: 0,
         volumeExtra: 0,
-        discount: zone.base,
-        reason: subtotal === 0 ? 'سلة فارغة' : `طلب فوق ${freeThreshold} ج.م - شحن مجاني`,
+        totalWeightGrams,
+        extraKg: 0,
+        remainingForFree: 0,
       },
     };
   }
@@ -109,8 +107,7 @@ export function calculateShippingCost({ governorate, totalWeightGrams = 1000, su
       volumeExtra,
       totalWeightGrams,
       extraKg,
-      freeThreshold,
-      remainingForFree: Math.max(0, freeThreshold - subtotal),
+      remainingForFree: 0,
     },
   };
 }

@@ -1,20 +1,18 @@
 import React from 'react';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Truck, Package, MapPin } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MapPin } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { getAllGovernorates } from '../../lib/shippingCalculator';
 
 export default function CartDrawer() {
   const {
     isCartOpen, setIsCartOpen, cart, totalItemsCount, removeFromCart, updateQuantity,
-    cartSubtotal, freeShippingThreshold, isFreeShipping, shippingCost, vatAmount, cartTotal,
+    cartSubtotal, shippingCost, vatAmount, cartTotal,
     clearCart, setIsCheckoutOpen, formatPrice,
     shippingCalculation, selectedGovernorate, setSelectedGovernorate
   } = useStore();
 
   if (!isCartOpen) return null;
 
-  const remainingForFree = Math.max(0, freeShippingThreshold - cartSubtotal);
-  const progressPercent = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
   const governorates = getAllGovernorates();
 
   const handleProceed = () => {
@@ -55,23 +53,6 @@ export default function CartDrawer() {
               <span>المدة: {shippingCalculation.estimatedDays}</span>
               <span>الوزن: {(shippingCalculation.breakdown?.totalWeightGrams || 0)} جم</span>
             </div>
-          </div>
-
-          {/* Free Shipping Meter */}
-          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100">
-            <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-              <div className="flex items-center gap-1.5 text-amber-900">
-                <Truck className="w-4 h-4 text-amber-600" />
-                {isFreeShipping ? <span className="text-emerald-700">مبروك! شحن مجاني 🚚🎉</span> : <span>أضف {formatPrice(remainingForFree)} للشحن المجاني</span>}
-              </div>
-              <span className="text-slate-500 font-mono text-[11px]">{progressPercent}%</span>
-            </div>
-            <div className="w-full h-2 bg-amber-200/60 rounded-full overflow-hidden"><div className={`h-full rounded-full transition-all duration-500 ${isFreeShipping ? 'bg-emerald-500' : 'bg-gradient-to-r from-amber-500 to-orange-500'}`} style={{ width: `${progressPercent}%` }} /></div>
-            {shippingCalculation.breakdown && !isFreeShipping && (
-              <div className="mt-2 text-[10px] text-amber-800 bg-white/60 p-2 rounded-lg border border-amber-200">
-                أساسي {shippingCalculation.breakdown.base} ج.م + وزن إضافي {shippingCalculation.breakdown.extraWeight || 0} ج.م {shippingCalculation.breakdown.volumeExtra ? `+ حجم ${shippingCalculation.breakdown.volumeExtra} ج.م` : ''}
-              </div>
-            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 divide-y divide-slate-100">

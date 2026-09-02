@@ -73,9 +73,6 @@ export default function ProductGrid() {
               <Sparkles className="w-6 h-6 text-amber-500" />
               كتالوج الألعاب
             </h2>
-            <span className="bg-toy-red/10 text-toy-red font-black text-xs px-2.5 py-1 rounded-full">
-              {sortedProducts.length} من {products.length} لعبة
-            </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             'ألعاب ممتعة وتعليمية مختارة بأعلى معايير الجودة والسلامة • الأسعار بالجنيه المصري (ج.م)'
