@@ -4,6 +4,12 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // The storefront is a single-page application; the current production bundle
+    // is ~203 kB gzip. Keep the warning threshold aligned with the measured,
+    // acceptable payload while route-level lazy loading is introduced separately.
+    chunkSizeWarningLimit: 800,
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,

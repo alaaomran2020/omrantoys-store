@@ -5,7 +5,7 @@ import { computeHealth, getSeoChecks, buildAlerts, HEALTH_AREAS } from '../../..
 import { getSettings } from '../../../lib/settings';
 
 export default function Health({ ctx }) {
-  const { products, notify, navigate } = ctx;
+  const { products, navigate } = ctx;
   const health = computeHealth(products);
   const settings = getSettings();
   const alerts = buildAlerts(products);

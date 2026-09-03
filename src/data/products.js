@@ -1,3 +1,10 @@
+/**
+ * ⚠️ ARCHIVE ONLY — ليس مصدر عرض.
+ * الكتالوج المعروض يأتي حصريًا من Product Engine (/api/products ← Google Sheet)
+ * عبر src/lib/productEngine.js + StoreContext. هذه البيانات التاريخية (SKU/stock/
+ * عمر/ماركة/أبعاد مُفترضة) لا تُعرض للزائر ولا تُستخدم fallback (Fail-Closed).
+ * تُحفظ كمرجع للتحقق فقط — لا تعديل هنا إلا بإشراف موثّق.
+ */
 export const initialProducts = [
   {
     id: 1001,

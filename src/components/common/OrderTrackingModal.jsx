@@ -7,7 +7,6 @@ import {
   Clock, 
   Truck, 
   MapPin, 
-  PhoneCall, 
   AlertCircle 
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';

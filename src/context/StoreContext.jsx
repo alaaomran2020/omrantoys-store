@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { initialProducts } from '../data/products';
 import { fetchStorefrontProducts } from '../lib/productEngine';
 import { calculateShippingCost, calculateCartWeight, calculateCartVolume } from '../lib/shippingCalculator';
 import { track, EVENTS } from '../lib/analytics';
@@ -7,11 +6,12 @@ import { track, EVENTS } from '../lib/analytics';
 const StoreContext = createContext();
 const CATALOG_CACHE_KEY = 'omran_toys_products';
 
-const legacyFallback = initialProducts.map(product => ({
-  ...product,
-  retail_price: product.price ?? null,
-  catalogSource: 'legacy-fallback',
-}));
+/**
+ * Fail-Closed: لا نعرض أبدًا كتالوجًا مصنوعًا يدويًا كـ fallback.
+ * المصدر الوحيد للعرض = Product Engine (Google Sheet بعد بوابات النشر).
+ * عند تعذر المحرك: نعرض آخر نسخة موثقة من المحرك نفسه (cache) أو لا شيء.
+ * ملف src/data/products.js يبقى أرشيفًا مرجعيًا — ليس مصدر عرض.
+ */
 
 const hasKnownPrice = product => Number.isFinite(product?.price) || Number.isFinite(product?.retail_price);
 const getKnownPrice = product => Number.isFinite(product?.price)
@@ -23,8 +23,8 @@ const getKnownStock = product => Number.isFinite(product?.stock)
   : Number.isFinite(product?.stock_quantity) ? product.stock_quantity : null;
 
 export const StoreProvider = ({ children }) => {
-  const [products, setProducts] = useState(legacyFallback);
-  const [catalogState, setCatalogState] = useState({ source: 'legacy-fallback', status: 'loading', fetchedAt: null, error: null });
+  const [products, setProducts] = useState([]);
+  const [catalogState, setCatalogState] = useState({ source: 'uninitialized', status: 'loading', fetchedAt: null, error: null });
 
   const [cart, setCart] = useState(() => { try { return JSON.parse(localStorage.getItem('omran_toys_cart') || '[]'); } catch { return []; } });
   const [wishlist, setWishlist] = useState(() => { try { return JSON.parse(localStorage.getItem('omran_toys_wishlist') || '[]'); } catch { return []; } });
@@ -58,7 +58,7 @@ export const StoreProvider = ({ children }) => {
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Product Engine is authoritative. Cache/legacy data is only an availability fallback.
+  // Product Engine is the ONLY catalog source. Cache is engine-originated only.
   useEffect(() => {
     const controller = new AbortController();
     fetchStorefrontProducts({ signal: controller.signal })
@@ -71,12 +71,13 @@ export const StoreProvider = ({ children }) => {
         if (error?.name === 'AbortError') return;
         let cached = null;
         try { cached = JSON.parse(localStorage.getItem(CATALOG_CACHE_KEY) || 'null'); } catch { cached = null; }
-        if (Array.isArray(cached) && cached.length) {
+        if (Array.isArray(cached) && cached.length && cached.every(item => item?.catalogSource === 'product-engine')) {
           setProducts(cached);
           setCatalogState({ source: 'cache-fallback', status: 'degraded', fetchedAt: null, error: error?.message || 'Product Engine unavailable' });
         } else {
-          setProducts(legacyFallback);
-          setCatalogState({ source: 'legacy-fallback', status: 'degraded', fetchedAt: null, error: error?.message || 'Product Engine unavailable' });
+          // Fail-Closed: لا منتجات مختلقة. صفحة فارغة + حالة واضحة أفضل من كتالوج مزيف.
+          setProducts([]);
+          setCatalogState({ source: 'unavailable', status: 'degraded', fetchedAt: null, error: error?.message || 'Product Engine unavailable' });
         }
       });
     return () => controller.abort();

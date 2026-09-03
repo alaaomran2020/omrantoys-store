@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Upload, FileJson, CheckCircle, AlertTriangle, Download, Trash2, Plus } from 'lucide-react';
+import { Upload, FileJson, CheckCircle, AlertTriangle, Download, Plus } from 'lucide-react';
 
-export default function BulkImport({ onImport, existingProducts }) {
+export default function BulkImport({ onImport }) {
   const [jsonInput, setJsonInput] = useState('');
   const [preview, setPreview] = useState([]);
   const [errors, setErrors] = useState([]);

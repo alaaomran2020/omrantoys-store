@@ -5,11 +5,10 @@ import { getSeoChecks, computeHealth } from '../../../lib/adminUtils';
 import { getSettings } from '../../../lib/settings';
 
 export default function Visibility({ ctx }) {
-  const { products, navigate } = ctx;
+  const { products } = ctx;
   const settings = getSettings();
   const checks = getSeoChecks(products, settings);
   const health = computeHealth(products);
-  const okCount = checks.filter((c) => c.status === 'ok').length;
   const score = health.scores.seo;
 
   const missingDesc = products.filter((p) => !p.description || !String(p.description).trim()).length;

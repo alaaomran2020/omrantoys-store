@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download, FileSpreadsheet, FileJson, FileText, File, FileCode, Printer, Table, Globe, HeartPulse, Search, BarChart3 } from 'lucide-react';
-import { SectionHeader, Card, CardHeader, Button, Badge } from '../ui';
+import { SectionHeader, Card, CardHeader, Button } from '../ui';
 import { exportProducts, exportSiteData, toMarkdown, downloadBlob, toCSV, toJSON, toHTML, toTXT, printReport } from '../../../lib/exporters';
 import { getEventStats } from '../../../lib/analytics';
 import { computeHealth, buildAlerts, getSeoChecks } from '../../../lib/adminUtils';

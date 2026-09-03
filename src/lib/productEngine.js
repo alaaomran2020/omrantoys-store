@@ -48,8 +48,28 @@ export function adaptEngineProduct(product) {
     sortOrder: Number.isFinite(product.sortOrder) ? product.sortOrder : null,
     productPrompt: asText(product.productPrompt),
     rowIndex: Number.isFinite(product.rowIndex) ? product.rowIndex : null,
+    // حقول النشر أول-فئة (تصل من Product Engine البوابة) — تُمرَّر كما هي
+    workflowStatus: asText(product.workflowStatus),
+    qaStatus: asText(product.qaStatus),
+    sourceDriveId: asText(product.sourceDriveId) || null,
+    processedImage: asText(product.processedImage) || null,
+    reviewReason: asText(product.reviewReason),
     catalogSource: 'product-engine',
   };
+}
+
+/**
+ * Strict Product Engine payload validation (Fail-Closed):
+ * - `status === 'ok'` مطلوب (الرد القديم/stale بلا status يُرفض فورًا)
+ * - `products` مصفوفة ومؤكدة
+ * أي شك → نحن لا نعرض شيئًا بدل أن نعرض بيانات غير موثقة.
+ */
+function isValidEnginePayload(payload) {
+  return Boolean(
+    payload &&
+    payload.status === 'ok' &&
+    Array.isArray(payload.products)
+  );
 }
 
 export async function fetchStorefrontProducts({
@@ -69,8 +89,8 @@ export async function fetchStorefrontProducts({
     if (!response.ok) throw new Error(`Product Engine HTTP ${response.status}`);
 
     const payload = await response.json();
-    if (!payload || !Array.isArray(payload.products)) {
-      throw new Error('Invalid Product Engine payload');
+    if (!isValidEnginePayload(payload)) {
+      throw new Error('Invalid Product Engine payload (status must be "ok")');
     }
 
     const products = payload.products
@@ -80,7 +100,7 @@ export async function fetchStorefrontProducts({
 
     return {
       products,
-      status: payload.status || 'ok',
+      status: payload.status,
       fetchedAt: payload.fetchedAt || new Date().toISOString(),
     };
   } finally {

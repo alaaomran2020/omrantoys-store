@@ -37,7 +37,7 @@ export default function StockNotification({ product, onClose }) {
       setTimeout(() => {
         onClose?.();
       }, 2000);
-    } catch (err) {
+    } catch {
       setError('حدث خطأ، حاول مرة أخرى');
     } finally {
       setLoading(false);

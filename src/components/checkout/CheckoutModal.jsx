@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, CreditCard, Truck, ShoppingBag, MapPin, User, ArrowLeft, ExternalLink, Printer } from 'lucide-react';
+import { X, CheckCircle, CreditCard, User, ArrowLeft, ExternalLink, Printer } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
@@ -10,7 +10,7 @@ const WHATSAPP_NUMBER = '201555570269';
 
 export default function CheckoutModal() {
   const {
-    isCheckoutOpen, setIsCheckoutOpen, cart, cartSubtotal, shippingCost, vatAmount, cartTotal,
+    isCheckoutOpen, setIsCheckoutOpen, cart, cartSubtotal, shippingCost, cartTotal,
     formatPrice, placeOrder, lastPlacedOrder, setLastPlacedOrder, shippingCalculation, selectedGovernorate, setSelectedGovernorate
   } = useStore();
 
@@ -64,7 +64,7 @@ export default function CheckoutModal() {
       }
 
       setTimeout(() => {
-        const order = placeOrder({
+        placeOrder({
           customerName: fullName,
           phone,
           email,
