@@ -32,11 +32,15 @@ jobs:
           assert.equal(inquiry.price, null);
           assert.equal(inquiry.stock, null);
           assert.equal(inquiry.sku, '');
+          assert.equal(inquiry.workflowStatus, '');
+          assert.equal(inquiry.qaStatus, '');
 
-          const priced = adaptEngineProduct({ id: 'P-2', name: 'منتج مسعر', price: 350, category: 'toys', active: true });
+          const priced = adaptEngineProduct({ id: 'P-2', name: 'منتج مسعر', price: 350, category: 'toys', active: true, workflowStatus: 'PUBLISHED', qaStatus: 'PASS' });
           assert.equal(priced.price, 350);
           assert.equal(priced.retail_price, 350);
           assert.equal(priced.stock, null);
+          assert.equal(priced.workflowStatus, 'PUBLISHED');
+          assert.equal(priced.qaStatus, 'PASS');
 
           assert.equal(adaptEngineProduct({ id: '', name: 'invalid' }), null);
           assert.equal(adaptEngineProduct({ id: 'P-3', name: '' }), null);
@@ -61,7 +65,24 @@ jobs:
           assert.match(source, /const checkoutEligible = cart\.length > 0 && cart\.every/);
           assert.match(source, /if \(!checkoutEligible\)/);
           assert.doesNotMatch(source, /const stockLimit = Number\(product\.stock\) > 0 \? Number\(product\.stock\) : 0/);
-          console.log('StoreContext capability regression: PASS');
+          // Fail-Closed: لا legacyFallback ولا كتالوج مختلق عند تعذر المحرك
+          assert.doesNotMatch(source, /legacyFallback/);
+          assert.match(source, /unavailable/);
+          console.log('StoreContext capability + fail-closed regression: PASS');
+
+      - name: Regression — gateway is transparent + fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const gw = fs.readFileSync('functions/api/products.js', 'utf8');
+          assert.match(gw, /isEnginePayloadValid/);
+          assert.match(gw, /edge-api\/products/);
+          assert.match(gw, /x-storefront-gateway/);
+          assert.match(gw, /status === 'ok'|status: 'ok'/);
+          console.log('Storefront gateway regression: PASS');
           NODE
       - name: Regression — critical storefront surfaces compile
         shell: bash

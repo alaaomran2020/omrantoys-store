@@ -36,7 +36,6 @@ export default function Products({ ctx }) {
   const pageItems = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   const catName = (id) => categories.find((c) => c.id === id)?.name || id;
-  const ageLabel = (id) => ageGroups.find((a) => a.id === id)?.label || id;
 
   const toggleSelect = (id) => setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
   const allSelected = pageItems.length > 0 && pageItems.every((p) => selected.includes(p.id));
@@ -162,7 +161,7 @@ const PackageIcon = Package;
 const ImageOff = Archive;
 
 function ProductEditor({ product, ctx, onClose }) {
-  const { addProduct, updateProduct, notify, formatPrice } = ctx;
+  const { addProduct, updateProduct, notify } = ctx;
   const isNew = !product;
   const [form, setForm] = useState(() => product ? {
     ...product,

@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { ShoppingBag, Search, Package } from 'lucide-react';
-import { SectionHeader, Card, EmptyState, Badge, Button } from '../ui';
+import { ShoppingBag, Search } from 'lucide-react';
+import { SectionHeader, Card, EmptyState } from '../ui';
 
 const STATUSES = ['قيد الانتظار', 'قيد التجهيز', 'تم الشحن', 'تم التوصيل', 'ملغي', 'مرتجع'];
 
 export default function Orders({ ctx }) {
-  const { orders, updateOrderStatus, formatPrice, notify } = ctx;
+  const { orders, updateOrderStatus, formatPrice } = ctx;
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 

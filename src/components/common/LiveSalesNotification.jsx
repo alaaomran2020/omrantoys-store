@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, X, CheckCircle2 } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
+import { X } from 'lucide-react';
 
 const demoSales = [
   { name: 'أم يوسف', city: 'طنطا', item: 'روبوت الذكاء الاصطناعي كوزمو', time: 'منذ دقيقة', img: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=150&q=80' },

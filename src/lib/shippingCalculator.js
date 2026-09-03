@@ -59,7 +59,7 @@ const normalizeGov = (gov) => {
  * @param {number} params.totalVolume - Optional volume factor
  * @returns {Object} { cost, isFree, estimatedDays, zone, breakdown }
  */
-export function calculateShippingCost({ governorate, totalWeightGrams = 1000, subtotal = 0, userType = 'retail', totalVolume = 0 }) {
+export function calculateShippingCost({ governorate, totalWeightGrams = 1000, subtotal = 0, totalVolume = 0 }) {
   const normalizedGov = normalizeGov(governorate);
   const zone = shippingZones[normalizedGov] || shippingZones['القاهرة'];
 

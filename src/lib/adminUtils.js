@@ -5,7 +5,7 @@
 // قياسه يعرض "غير متاح".
 // ============================================================
 
-import { getEventStats, getEvents, EVENTS } from './analytics';
+import { getEvents, EVENTS } from './analytics';
 import { getSettings } from './settings';
 
 export const HEALTH_AREAS = [
@@ -223,5 +223,4 @@ export function getNextStep(products) {
     action: top.action,
   };
 }
-
 

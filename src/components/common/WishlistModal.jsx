@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Heart, ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
+import { X, Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export default function WishlistModal() {

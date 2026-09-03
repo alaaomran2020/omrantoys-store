@@ -49,15 +49,13 @@ export default {
         'brutal-blue': '6px 6px 0 0 #2E62FF',
         'brutal-yellow':'6px 6px 0 0 #B8860B',
         'brutal-inset': 'inset 3px 3px 0 0 rgba(255,255,255,0.06)',
+        soft: '0 10px 30px -12px rgba(16, 21, 47, 0.12)',
+        'soft-lg': '0 22px 48px -20px rgba(16, 21, 47, 0.22)',
+        pop: '0 6px 0 0 rgba(16, 21, 47, 0.12)',
       },
       fontFamily: {
         cairo: ['Cairo', 'Tajawal', 'sans-serif'],
         display: ['"Baloo Bhaijaan 2"', 'Cairo', 'Tajawal', 'sans-serif'],
-      },
-      boxShadow: {
-        soft: '0 10px 30px -12px rgba(16, 21, 47, 0.12)',
-        'soft-lg': '0 22px 48px -20px rgba(16, 21, 47, 0.22)',
-        pop: '0 6px 0 0 rgba(16, 21, 47, 0.12)',
       },
       borderRadius: {
         blob: '2rem',
