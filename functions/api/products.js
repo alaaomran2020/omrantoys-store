@@ -1,94 +1,96 @@
 /**
- * Storefront same-origin gateway: /api/products
+ * Cloudflare Pages gateway: GET|HEAD /api/products
  *
- * شفاف تمامًا: يعيد جسم الـProduct Engine كما هو (بدون اختلاق أو تحوير حقول).
- * ترتيب المحاولات:
- *   1. https://omrantoys.store/api/products        (المسار الأساسي)
- *   2. https://omrantoys.store/edge-api/products   (مرآة — نفس محرك الحافة)
- * القبول فقط لو body = { status: 'ok', products: [...] }.
- * أي رد قديم/stale بلا status، أو غير صالح، أو خطأ → لا نعرض بيانات غير موثقة.
+ * Ownership contract:
+ * - Pages owns the public storefront and this same-origin gateway.
+ * - The Product Engine owns a distinct upstream endpoint.
+ * - The gateway must never call its own /api/products route.
  */
-const PRIMARY_ENGINE_URL = 'https://omrantoys.store/api/products';
-const MIRROR_ENGINE_URL = 'https://omrantoys.store/edge-api/products';
+const DEFAULT_ENGINE_URL = 'https://omrantoys.store/edge-api/products';
 const REQUEST_TIMEOUT_MS = 8000;
 
-function isEnginePayloadValid(payload) {
+export function isEnginePayloadValid(payload) {
   return Boolean(payload && payload.status === 'ok' && Array.isArray(payload.products));
 }
 
-async function fetchEngine(url, method, signal) {
-  const response = await fetch(url, {
-    method,
-    headers: { accept: 'application/json' },
-    signal,
-    redirect: 'follow',
-  });
-  const text = await response.text();
-  let body = null;
-  try {
-    body = text ? JSON.parse(text) : null;
-  } catch {
-    body = null;
+export function resolveEngineUrl(requestUrl, configuredUrl) {
+  const incoming = new URL(requestUrl);
+  const upstream = new URL(configuredUrl || DEFAULT_ENGINE_URL, incoming.origin);
+
+  if (upstream.protocol !== 'https:' && upstream.hostname !== 'localhost' && upstream.hostname !== '127.0.0.1') {
+    throw new Error('product_engine_url_must_use_https');
   }
-  return { response, body, source: url };
+
+  const sameGateway = upstream.origin === incoming.origin && upstream.pathname.replace(/\/+$/, '') === '/api/products';
+  if (sameGateway) throw new Error('product_engine_recursive_url');
+
+  for (const [key, value] of incoming.searchParams) upstream.searchParams.append(key, value);
+  return upstream;
+}
+
+function jsonError(error, status = 502) {
+  return new Response(JSON.stringify({
+    products: [],
+    status: 'error',
+    fetchedAt: new Date().toISOString(),
+    error,
+  }), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-storefront-gateway': 'pages',
+    },
+  });
 }
 
 export async function onRequest(context) {
-  const request = context.request;
+  const { request } = context;
   if (request.method !== 'GET' && request.method !== 'HEAD') {
-    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
-      status: 405,
-      headers: { 'content-type': 'application/json; charset=utf-8', allow: 'GET, HEAD' },
-    });
+    return jsonError('method_not_allowed', 405);
+  }
+
+  let upstream;
+  try {
+    upstream = resolveEngineUrl(request.url, context.env?.PRODUCT_ENGINE_URL);
+  } catch (error) {
+    return jsonError(error instanceof Error ? error.message : 'product_engine_configuration_invalid', 500);
   }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  const errorResponse = (message) => new Response(JSON.stringify({
-    products: [],
-    status: 'error',
-    fetchedAt: new Date().toISOString(),
-    error: message,
-  }), {
-    status: 502,
-    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-storefront-gateway': 'pages' },
-  });
-
   try {
-    // 1) المسار الأساسي لـ Product Engine
-    let attempt = await fetchEngine(PRIMARY_ENGINE_URL, request.method, controller.signal);
-    if (attempt.response.ok && isEnginePayloadValid(attempt.body)) {
-      const headers = new Headers();
-      headers.set('content-type', attempt.response.headers.get('content-type') || 'application/json; charset=utf-8');
-      headers.set('cache-control', 'public, max-age=60');
-      headers.set('x-storefront-gateway', 'pages');
-      headers.set('x-storefront-source', 'product-engine');
-      return new Response(request.method === 'HEAD' ? null : JSON.stringify(attempt.body), {
-        status: attempt.response.status,
-        headers,
-      });
+    const response = await fetch(upstream, {
+      method: request.method,
+      headers: { accept: 'application/json' },
+      signal: controller.signal,
+      redirect: 'error',
+    });
+
+    const text = request.method === 'HEAD' ? '' : await response.text();
+    let body = null;
+    try { body = text ? JSON.parse(text) : null; } catch { body = null; }
+
+    if (!response.ok || (request.method !== 'HEAD' && !isEnginePayloadValid(body))) {
+      return jsonError('product_engine_unavailable_or_invalid');
     }
 
-    // 2) المرآة الـedge (نفس العقد) — لا نعرض ردًا بلا status أبدًا
-    attempt = await fetchEngine(MIRROR_ENGINE_URL, request.method, controller.signal);
-    if (attempt.response.ok && isEnginePayloadValid(attempt.body)) {
-      const headers = new Headers();
-      headers.set('content-type', attempt.response.headers.get('content-type') || 'application/json; charset=utf-8');
-      headers.set('cache-control', 'public, max-age=60');
-      headers.set('x-storefront-gateway', 'pages');
-      headers.set('x-storefront-source', 'edge-mirror');
-      return new Response(request.method === 'HEAD' ? null : JSON.stringify(attempt.body), {
-        status: attempt.response.status,
-        headers,
-      });
-    }
-
-    return errorResponse('product_engine_unavailable_or_invalid');
+    return new Response(request.method === 'HEAD' ? null : JSON.stringify(body), {
+      status: response.status,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'public, max-age=60, stale-while-revalidate=120',
+        'x-storefront-gateway': 'pages',
+        'x-storefront-source': 'product-engine',
+      },
+    });
   } catch (error) {
     const timeout = error instanceof Error && error.name === 'AbortError';
-    return errorResponse(timeout ? 'product_engine_timeout' : 'product_engine_unreachable');
+    return jsonError(timeout ? 'product_engine_timeout' : 'product_engine_unreachable');
   } finally {
     clearTimeout(timer);
   }
 }
+
+export { DEFAULT_ENGINE_URL };
