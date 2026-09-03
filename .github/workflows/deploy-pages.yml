@@ -1,0 +1,139 @@
+name: Deploy Storefront to Cloudflare Pages
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: omran-pages-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  PAGES_PROJECT: omrantoys-live-app
+  SITE_URL: https://omrantoys.store
+  WWW_URL: https://www.omrantoys.store
+
+jobs:
+  quality:
+    name: Lint and build storefront
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies reproducibly
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build storefront
+        run: npm run build
+
+      - name: Assert Pages artifact
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          test -d dist/assets
+          test -d functions
+          echo 'Storefront Pages artifact: PASS'
+
+  deploy:
+    name: Deploy the canonical storefront build
+    needs: quality
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Check required Cloudflare secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN}" || { echo '::error::CLOUDFLARE_API_TOKEN is not configured in this repository'; exit 1; }
+          test -n "${CLOUDFLARE_ACCOUNT_ID}" || { echo '::error::CLOUDFLARE_ACCOUNT_ID is not configured in this repository'; exit 1; }
+          echo 'Required Cloudflare secret names are configured.'
+
+      - name: Install dependencies reproducibly
+        run: npm ci
+
+      - name: Build storefront
+        run: npm run build
+
+      - name: Deploy to omrantoys-live-app Pages
+        run: npx wrangler pages deploy dist --project-name="${PAGES_PROJECT}" --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify apex and www use the same storefront build
+        env:
+          SITE_URL: ${{ env.SITE_URL }}
+          WWW_URL: ${{ env.WWW_URL }}
+        run: |
+          set -euo pipefail
+
+          fetch_html() {
+            local url="$1"
+            local output="$2"
+            local headers="$3"
+            local status
+            status="$(curl -sS -L --connect-timeout 10 --max-time 30 -D "${headers}" -o "${output}" -w '%{http_code}' "${url}")"
+            test "${status}" = '200' || { echo "::error::${url} returned ${status}; expected 200"; cat "${headers}"; exit 1; }
+            grep -qiE '<html|<!doctype html' "${output}" || { echo "::error::${url} is not HTML"; exit 1; }
+          }
+
+          fetch_html "${SITE_URL}/" /tmp/apex-home.html /tmp/apex-home.hdr
+          fetch_html "${WWW_URL}/" /tmp/www-home.html /tmp/www-home.hdr
+          fetch_html "${SITE_URL}/products" /tmp/apex-products.html /tmp/apex-products.hdr
+          fetch_html "${WWW_URL}/products" /tmp/www-products.html /tmp/www-products.hdr
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def assets(path):
+              text = Path(path).read_text(encoding='utf-8', errors='replace')
+              return sorted(set(re.findall(r'/assets/[^\"\'<> ]+', text)))
+
+          apex_home = assets('/tmp/apex-home.html')
+          www_home = assets('/tmp/www-home.html')
+          apex_products = assets('/tmp/apex-products.html')
+          www_products = assets('/tmp/www-products.html')
+
+          assert apex_home, 'apex homepage contains no hashed assets'
+          assert apex_home == www_home, f'homepage build differs: {apex_home} != {www_home}'
+          assert apex_products == www_products, f'products build differs: {apex_products} != {www_products}'
+          print('Apex/www Pages build parity: PASS')
+          PY
+
+      - name: Report deployment
+        run: |
+          echo "Pages project: ${PAGES_PROJECT}"
+          echo "Storefront source: alaaomran2020/omrantoys-store"
+          echo "Commit: ${GITHUB_SHA}"
