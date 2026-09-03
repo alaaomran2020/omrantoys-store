@@ -56,8 +56,10 @@ jobs:
           assert.match(source, /stockKnown/);
           assert.match(source, /canCheckout/);
           assert.match(source, /inquiryOnly/);
+          assert.match(source, /availability: !stockKnown \? 'unknown'/);
           assert.match(source, /للاستفسار والكميات/);
-          assert.match(source, /checkout-blocked/);
+          assert.match(source, /const checkoutEligible = cart\.length > 0 && cart\.every/);
+          assert.match(source, /if \(!checkoutEligible\)/);
           assert.doesNotMatch(source, /const stockLimit = Number\(product\.stock\) > 0 \? Number\(product\.stock\) : 0/);
           console.log('StoreContext capability regression: PASS');
           NODE
