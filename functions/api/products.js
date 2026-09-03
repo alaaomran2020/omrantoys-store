@@ -10,7 +10,19 @@ const DEFAULT_ENGINE_URL = 'https://omrantoys.store/edge-api/products';
 const REQUEST_TIMEOUT_MS = 8000;
 
 export function isEnginePayloadValid(payload) {
-  return Boolean(payload && payload.status === 'ok' && Array.isArray(payload.products));
+  return Boolean(
+    payload &&
+    payload.status === 'ok' &&
+    Array.isArray(payload.products) &&
+    payload.products.every((product) =>
+      product &&
+      typeof product.id === 'string' && product.id.trim() &&
+      typeof product.name === 'string' && product.name.trim() &&
+      product.active === true &&
+      product.workflowStatus === 'PUBLISHED' &&
+      product.qaStatus === 'PASS'
+    )
+  );
 }
 
 export function resolveEngineUrl(requestUrl, configuredUrl) {
