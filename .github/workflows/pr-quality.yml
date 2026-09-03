@@ -30,12 +30,12 @@ jobs:
           import assert from 'node:assert/strict';
           import { adaptEngineProduct } from './src/lib/productEngine.js';
 
-          const inquiry = adaptEngineProduct({ id: 'P-1', name: 'منتج استفسار', price: null, category: 'toys', active: true });
+          const inquiry = adaptEngineProduct({ id: 'P-1', name: 'منتج استفسار', price: null, category: 'toys', active: true, workflowStatus: 'PUBLISHED', qaStatus: 'PASS' });
           assert.equal(inquiry.price, null);
           assert.equal(inquiry.stock, null);
           assert.equal(inquiry.sku, '');
-          assert.equal(inquiry.workflowStatus, '');
-          assert.equal(inquiry.qaStatus, '');
+          assert.equal(inquiry.workflowStatus, 'PUBLISHED');
+          assert.equal(inquiry.qaStatus, 'PASS');
 
           const priced = adaptEngineProduct({ id: 'P-2', name: 'منتج مسعر', price: 350, category: 'toys', active: true, workflowStatus: 'PUBLISHED', qaStatus: 'PASS' });
           assert.equal(priced.price, 350);
