@@ -64,6 +64,21 @@ function parseProductRow(row) {
   return parsed;
 }
 
+function toPublicProduct(row) {
+  const parsed = parseProductRow(row);
+  return {
+    id: String(parsed.id),
+    name: String(parsed.name_ar),
+    category: parsed.category_id || '',
+    price: Number.isFinite(parsed.retail_price) ? parsed.retail_price : null,
+    description: parsed.description || '',
+    image: Array.isArray(parsed.images) ? parsed.images[0] || null : null,
+    active: parsed.is_active === 1,
+    workflowStatus: parsed.workflow_status,
+    qaStatus: parsed.qa_status,
+  };
+}
+
 async function handleApi(request, env, url) {
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const method = request.method.toUpperCase();
@@ -99,7 +114,7 @@ async function handleApi(request, env, url) {
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10) || 50, 100);
     const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
-    let query = 'SELECT * FROM products WHERE is_active = 1';
+    let query = "SELECT * FROM products WHERE is_active = 1 AND is_visible = 1 AND workflow_status = 'PUBLISHED' AND qa_status = 'PASS'";
     const params = [];
     if (category && category !== 'all') {
       query += ' AND category_id = ?';
@@ -114,7 +129,7 @@ async function handleApi(request, env, url) {
     params.push(limit, offset);
 
     const { results } = await env.DB.prepare(query).bind(...params).all();
-    return json({ success: true, products: results.map(parseProductRow) });
+    return json({ status: 'ok', products: results.map(toPublicProduct), fetchedAt: new Date().toISOString() });
   }
 
   // ---------- GET /api/products/:id ----------
@@ -122,10 +137,10 @@ async function handleApi(request, env, url) {
   if (productMatch && method === 'GET') {
     const id = decodeURIComponent(productMatch[1]);
     const row = await env.DB.prepare(
-      'SELECT * FROM products WHERE (id = ?1 OR sku = ?1) AND is_active = 1'
+      "SELECT * FROM products WHERE (id = ?1 OR sku = ?1) AND is_active = 1 AND is_visible = 1 AND workflow_status = 'PUBLISHED' AND qa_status = 'PASS'"
     ).bind(id).first();
     if (!row) return notFound('المنتج غير موجود');
-    return json({ success: true, product: parseProductRow(row) });
+    return json({ status: 'ok', product: toPublicProduct(row), fetchedAt: new Date().toISOString() });
   }
 
   // ---------- POST /api/leads ----------

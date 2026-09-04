@@ -3,6 +3,15 @@ const REQUEST_TIMEOUT_MS = 8000;
 
 const asText = (value) => (typeof value === 'string' ? value.trim() : '');
 
+export function isPublishedProduct(product) {
+  return Boolean(
+    product &&
+    product.active === true &&
+    asText(product.workflowStatus) === 'PUBLISHED' &&
+    asText(product.qaStatus) === 'PASS'
+  );
+}
+
 /**
  * Convert the Product Engine public contract into the legacy Storefront shape.
  * Unknown commerce fields stay unknown; we never manufacture SKU, stock, brand,
@@ -11,7 +20,7 @@ const asText = (value) => (typeof value === 'string' ? value.trim() : '');
 export function adaptEngineProduct(product) {
   const id = asText(product?.id);
   const name = asText(product?.name);
-  if (!id || !name) return null;
+  if (!id || !name || !isPublishedProduct(product)) return null;
 
   const price = typeof product.price === 'number' && Number.isFinite(product.price)
     ? product.price
@@ -43,8 +52,8 @@ export function adaptEngineProduct(product) {
     images: image ? [image] : [],
     imageSource: asText(product.imageSource) || null,
     tags: [],
-    active: product.active !== false,
-    is_visible: product.active !== false,
+    active: true,
+    is_visible: true,
     sortOrder: Number.isFinite(product.sortOrder) ? product.sortOrder : null,
     productPrompt: asText(product.productPrompt),
     rowIndex: Number.isFinite(product.rowIndex) ? product.rowIndex : null,
@@ -95,8 +104,7 @@ export async function fetchStorefrontProducts({
 
     const products = payload.products
       .map(adaptEngineProduct)
-      .filter(Boolean)
-      .filter((product) => product.active !== false);
+      .filter(Boolean);
 
     return {
       products,

@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [architecture/storefront-product-engine]
+    branches: [architecture/storefront-product-engine, stabilization/architecture-cleanup]
 
 jobs:
   quality:
@@ -20,6 +20,8 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
+      - name: Runtime tests
+        run: npm test
       - name: Regression — Product Engine contract
         shell: bash
         run: |
@@ -28,12 +30,12 @@ jobs:
           import assert from 'node:assert/strict';
           import { adaptEngineProduct } from './src/lib/productEngine.js';
 
-          const inquiry = adaptEngineProduct({ id: 'P-1', name: 'منتج استفسار', price: null, category: 'toys', active: true });
+          const inquiry = adaptEngineProduct({ id: 'P-1', name: 'منتج استفسار', price: null, category: 'toys', active: true, workflowStatus: 'PUBLISHED', qaStatus: 'PASS' });
           assert.equal(inquiry.price, null);
           assert.equal(inquiry.stock, null);
           assert.equal(inquiry.sku, '');
-          assert.equal(inquiry.workflowStatus, '');
-          assert.equal(inquiry.qaStatus, '');
+          assert.equal(inquiry.workflowStatus, 'PUBLISHED');
+          assert.equal(inquiry.qaStatus, 'PASS');
 
           const priced = adaptEngineProduct({ id: 'P-2', name: 'منتج مسعر', price: 350, category: 'toys', active: true, workflowStatus: 'PUBLISHED', qaStatus: 'PASS' });
           assert.equal(priced.price, 350);
@@ -69,6 +71,7 @@ jobs:
           assert.doesNotMatch(source, /legacyFallback/);
           assert.match(source, /unavailable/);
           console.log('StoreContext capability + fail-closed regression: PASS');
+          NODE
 
       - name: Regression — gateway is transparent + fail-closed
         shell: bash
@@ -76,12 +79,12 @@ jobs:
           set -euo pipefail
           node --input-type=module <<'NODE'
           import assert from 'node:assert/strict';
-          import fs from 'node:fs';
-          const gw = fs.readFileSync('functions/api/products.js', 'utf8');
-          assert.match(gw, /isEnginePayloadValid/);
-          assert.match(gw, /edge-api\/products/);
-          assert.match(gw, /x-storefront-gateway/);
-          assert.match(gw, /status === 'ok'|status: 'ok'/);
+          import { DEFAULT_ENGINE_URL, resolveEngineUrl } from './functions/api/products.js';
+          assert.equal(DEFAULT_ENGINE_URL, 'https://omrantoys.store/edge-api/products');
+          assert.throws(
+            () => resolveEngineUrl('https://omrantoys.store/api/products', 'https://omrantoys.store/api/products'),
+            /product_engine_recursive_url/,
+          );
           console.log('Storefront gateway regression: PASS');
           NODE
       - name: Regression — critical storefront surfaces compile
