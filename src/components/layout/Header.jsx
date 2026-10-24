@@ -27,6 +27,8 @@ export default function Header() {
   const desktopSearchRef = useRef(null);
   const mobileSearchRef = useRef(null);
   const userMenuRef = useRef(null);
+  const menuRef = useRef(null);
+  const menuButtonRef = useRef(null);
 
   const liveSearchResults = searchQuery.trim() === '' ? [] : products.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -46,10 +48,28 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // قفل تمرير الصفحة عند فتح قائمة الموبايل
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (!isMobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const trigger = menuButtonRef.current;
+    menuRef.current?.querySelector('button')?.focus();
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+      if (event.key !== 'Tab') return;
+      const controls = menuRef.current?.querySelectorAll('button, a[href], input');
+      if (!controls?.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      trigger?.focus();
+    };
   }, [isMobileMenuOpen]);
 
   const handleClearCustomer = () => {
@@ -60,12 +80,12 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white shadow-sm transition-all">
+    <header className="omran-header sticky top-0 z-40 bg-white">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-toy-red via-toy-purple to-toy-blue text-white text-[11px] sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4 font-medium">
+      <div className="bg-toy-navy text-white text-[11px] sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4 font-medium">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold animate-pulse shrink-0">عروض مصر 🇪🇬</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold shrink-0">عمران للألعاب</span>
             <span className="truncate">توصيل سريع لكافة محافظات مصر</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs shrink-0">
@@ -83,14 +103,14 @@ export default function Header() {
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2 -mr-1 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer" aria-label="القائمة"><Menu className="w-6 h-6" /></button>
+            <button ref={menuButtonRef} aria-expanded={isMobileMenuOpen} aria-controls="omran-mobile-menu" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2 -mr-1 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer" aria-label="القائمة"><Menu className="w-6 h-6" /></button>
             <a href="#top" className="flex items-center gap-2.5 group" aria-label="عمران للألعاب">
               {/* حاوية مرنة تناسب أي نسبة أبعاد للوجو (مربع أو اسم ممتد) */}
-              <div className="h-12 sm:h-14 max-w-[8.5rem] sm:max-w-[11rem] brand-ring px-1.5 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="h-12 sm:h-14 max-w-[8.5rem] sm:max-w-[11rem] px-3 flex items-center justify-center">
                 <img
                   src={BRAND_LOGO}
                   alt="عمران للألعاب"
-                  className="h-full w-auto max-h-full object-contain drop-shadow-sm"
+                  className="h-full w-auto max-h-full object-contain"
                 />
               </div>
             </a>
@@ -99,9 +119,9 @@ export default function Header() {
           {/* Search (Desktop) */}
           <div ref={desktopSearchRef} className="hidden md:flex flex-1 max-w-xl mx-4 relative">
             <div className="relative w-full">
-              <input type="text" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setShowSearchResults(true); }} onFocus={() => setShowSearchResults(true)} placeholder="ابحث عن روبوت، مكعبات، بالونات، مستلزمات حفلات..." className="w-full pl-10 pr-11 py-2.5 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-toy-red rounded-2xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-toy-red/20 text-slate-800 placeholder-slate-400" />
+              <input aria-label="البحث في المنتجات" type="search" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setShowSearchResults(true); }} onFocus={() => setShowSearchResults(true)} placeholder="ابحث عن روبوت، مكعبات، بالونات، مستلزمات حفلات..." className="w-full pl-10 pr-11 py-2.5 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-toy-red rounded-2xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-toy-red/20 text-slate-800 placeholder-slate-400" />
               <Search className="w-5 h-5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
-              {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
+              {searchQuery && <button aria-label="مسح البحث" onClick={() => setSearchQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
             </div>
             {showSearchResults && liveSearchResults.length > 0 && (
               <div className="absolute top-full right-0 left-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50">
@@ -152,7 +172,7 @@ export default function Header() {
 
             <button onClick={() => setIsWishlistOpen(true)} className="relative p-2.5 text-slate-600 hover:text-toy-red hover:bg-red-50 rounded-xl transition-all cursor-pointer" aria-label="المفضلة"><Heart className="w-5 h-5" />{wishlist.length > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-toy-red text-white text-[11px] font-black rounded-full flex items-center justify-center shadow-sm">{wishlist.length}</span>}</button>
 
-            <button onClick={() => setIsCartOpen(true)} className="relative flex items-center gap-2 sm:gap-2.5 bg-toy-red hover:bg-rose-600 text-white px-2.5 sm:px-3.5 py-2 rounded-xl font-bold text-sm shadow-md shadow-toy-red/20 transition-all cursor-pointer active:scale-95">
+            <button aria-label={`السلة، ${totalItemsCount} منتج`} onClick={() => setIsCartOpen(true)} className="relative flex items-center gap-2 sm:gap-2.5 bg-toy-red hover:bg-rose-600 text-white px-2.5 sm:px-3.5 py-2 rounded-xl font-bold text-sm shadow-md shadow-toy-red/20 transition-all cursor-pointer active:scale-95">
               <div className="relative"><ShoppingCart className="w-5 h-5" />{totalItemsCount > 0 && <span className="absolute -top-2.5 -right-2.5 bg-yellow-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-toy-red shadow-sm">{totalItemsCount}</span>}</div>
               <div className="hidden sm:flex flex-col text-right leading-tight"><span className="text-[10px] font-normal text-rose-100">السلة</span><span className="text-xs font-black">{formatPrice(cartSubtotal)}</span></div>
             </button>
@@ -164,9 +184,9 @@ export default function Header() {
         {/* Search (Mobile) */}
         <div className="mt-2.5 md:hidden relative">
           <div ref={mobileSearchRef} className="relative w-full">
-            <input type="text" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setShowSearchResults(true); }} onFocus={() => setShowSearchResults(true)} placeholder="ابحث عن ألعاب، بالونات، حفلات..." className="w-full pl-9 pr-10 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-toy-red/20" />
+            <input aria-label="البحث في المنتجات" type="search" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setShowSearchResults(true); }} onFocus={() => setShowSearchResults(true)} placeholder="ابحث عن ألعاب، بالونات، حفلات..." className="w-full pl-9 pr-10 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-toy-red/20" />
             <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
-            {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><X className="w-4 h-4" /></button>}
+            {searchQuery && <button aria-label="مسح البحث" onClick={() => setSearchQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><X className="w-4 h-4" /></button>}
           </div>
 
           {showSearchResults && liveSearchResults.length > 0 && (
@@ -183,25 +203,25 @@ export default function Header() {
       </div>
 
       {/* Categories */}
-      <div className="border-t border-slate-100 bg-white/95 backdrop-blur-sm shadow-sm overflow-x-auto no-scrollbar">
+      <div aria-label="أقسام المنتجات" className="omran-category-nav border-t border-slate-100 bg-white/95 backdrop-blur-sm shadow-sm overflow-x-auto no-scrollbar">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 flex items-center gap-2 whitespace-nowrap">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
-            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${isActive ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100/70 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'}`}><span>{cat.name}</span>{cat.id !== 'all' && <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>{cat.count}</span>}</button>;
+            return <button key={cat.id} aria-pressed={isActive} onClick={() => setSelectedCategory(cat.id)} className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${isActive ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100/70 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'}`}><span>{cat.name}</span>{cat.id !== 'all' && <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>{cat.count}</span>}</button>;
           })}
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 flex flex-col justify-between overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex" onClick={(event) => { if (event.target === event.currentTarget) setIsMobileMenuOpen(false); }}>
+          <div id="omran-mobile-menu" ref={menuRef} role="dialog" aria-modal="true" aria-label="قائمة المتجر" className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 flex flex-col justify-between overflow-y-auto">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <img src={BRAND_LOGO} alt="عمران للألعاب" width="40" height="40" className="w-10 h-10 rounded-xl object-contain drop-shadow-sm" />
+                  <img src={BRAND_LOGO} alt="عمران للألعاب" width="40" height="40" className="w-10 h-10 rounded-xl object-contain" />
                 </div>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="w-6 h-6" /></button>
+                <button aria-label="إغلاق القائمة" onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="w-6 h-6" /></button>
               </div>
 
               <div className="mt-4 space-y-2.5">

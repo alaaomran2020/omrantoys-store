@@ -22,14 +22,14 @@ export default function ProductCard({ product }) {
   const isLowStock = (product.stock || 0) > 0 && (product.stock || 0) <= 5;
 
   return (
-    <div className="bg-white rounded-blob border border-slate-100/90 shadow-soft hover:shadow-soft-lg hover:border-toy-red/20 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
+    <div className="omran-product-card bg-white rounded-blob border border-slate-100/90 shadow-soft hover:shadow-soft-lg hover:border-toy-red/20 transition-all duration-300 flex flex-col justify-between overflow-hidden group relative">
       
       {/* Top Media Area */}
       <div className="relative bg-toy-cream overflow-hidden aspect-square">
         <img
           src={product.images[0]}
           alt={product.name}
-          className={`w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
+          className={`w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
           loading="lazy"
         />
 
@@ -82,7 +82,7 @@ export default function ProductCard({ product }) {
 
           <button
             onClick={() => setSelectedProductModal(product)}
-            className="p-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 hover:text-toy-blue backdrop-blur-md transition-all shadow-sm cursor-pointer opacity-0 group-hover:opacity-100"
+            className="p-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 hover:text-toy-blue backdrop-blur-md transition-all shadow-sm cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
             title="معاينة سريعة"
           >
             <Eye className="w-4 h-4" />
